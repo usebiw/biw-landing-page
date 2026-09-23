@@ -1,0 +1,9 @@
+{
+  "order": 4,
+  "icon": "reports",
+  "status": "live",
+  "name": "Reports and Evidence",
+  "summary": "Geolocated photos and videos, automatic reports, and an immutable digital site logbook.",
+  "detail": "Photos and videos are captured from the camera with geolocation, PDF and Excel reports are generated asynchronously, and the digital site logbook is immutable. Export is one click, and every file is stored in S3 with CDN distribution.",
+  "locale": "en"
+}

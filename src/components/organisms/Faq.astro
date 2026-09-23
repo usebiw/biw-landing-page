@@ -1,0 +1,26 @@
+---
+/**
+ * Faq.astro — one FaqItem per faqs entry.
+ */
+import { getCollection } from 'astro:content';
+import { useTranslations, type Locale } from '../../lib/i18n';
+import SectionHeader from '../molecules/SectionHeader.astro';
+import FaqItem from '../molecules/FaqItem.astro';
+
+const locale = (Astro.currentLocale === 'en' ? 'en' : 'es') as Locale;
+const t = useTranslations(locale);
+const faqs = (await getCollection('faqs', (e) => e.data.locale === locale)).sort(
+  (a, b) => a.data.order - b.data.order,
+);
+---
+
+<section id="faqs" class="relative mx-auto max-w-3xl px-6 py-24 md:py-32">
+  <div class="glow-sphere left-1/2 top-1/2 size-[30rem] -translate-x-1/2 opacity-25" aria-hidden="true"></div>
+  <SectionHeader title={t('faqs.heading')} align="center" />
+
+  <div class="glass-light glass-edge relative mt-12 flex flex-col divide-y divide-[var(--border-hairline)] rounded-3xl px-5 md:px-8">
+    {faqs.map((faq) => (
+      <FaqItem question={faq.data.question} answer={faq.data.answer} id={faq.id} />
+    ))}
+  </div>
+</section>

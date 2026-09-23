@@ -1,0 +1,11 @@
+---
+/**
+ * Thin locale route. Astro's i18n routing infers `Astro.currentLocale`
+ * from this folder name ("es"); the real page lives in
+ * `../_shared/HomePage.astro` (a `_`-prefixed dir, excluded from routing)
+ * so both locales render the exact same implementation.
+ */
+import HomePage from '../_shared/HomePage.astro';
+---
+
+<HomePage />

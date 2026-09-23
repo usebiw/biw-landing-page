@@ -1,0 +1,159 @@
+---
+/**
+ * FactsBand.astro — asymmetric, not a uniform stat grid. The two budget
+ * gates (80% alert, 110% block) are drawn as the instrument they are: an
+ * execution gauge with both thresholds marked (signal orange here is the
+ * budget-gate reading itself — its one sanctioned use). The remaining
+ * product facts sit beside it as a compact list whose numbers count up
+ * once, when the band first scrolls into view.
+ */
+import { getCollection } from 'astro:content';
+import { type Locale } from '../../lib/i18n';
+import Atmosphere from '../molecules/Atmosphere.astro';
+
+const locale = (Astro.currentLocale === 'en' ? 'en' : 'es') as Locale;
+const facts = await getCollection('facts', (e) => e.data.locale === locale);
+const warn = facts.find((f) => f.data.value === '80%');
+const block = facts.find((f) => f.data.value === '110%');
+const rest = facts.filter((f) => f !== warn && f !== block);
+
+// Gauge scale runs 0–120% so the 110% block sits inside the track.
+const pos = (pct: number) => `${(pct / 120) * 100}%`;
+---
+
+<section class="relative isolate overflow-hidden border-y border-[var(--border-hairline)] bg-[var(--surface-raised)]">
+  <Atmosphere variant="right" grid={false} />
+
+  <div data-facts class="relative z-10 mx-auto grid max-w-7xl gap-8 px-6 py-20 md:py-24 lg:grid-cols-[1.25fr_1fr] lg:items-stretch lg:gap-10">
+    {warn && block && (
+      <div data-spotlight class="glass-strong glass-edge spotlight relative flex flex-col justify-between gap-10 rounded-3xl p-7 md:p-10">
+        <div class="grid gap-8 sm:grid-cols-2">
+          <div>
+            <p class="font-display text-6xl font-extrabold tabular-nums tracking-tight text-[var(--text-primary)] md:text-7xl" data-count={warn.data.value}>
+              {warn.data.value}
+            </p>
+            <p class="mt-3 max-w-[30ch] text-sm leading-relaxed text-[var(--text-secondary)]">{warn.data.label}</p>
+          </div>
+          <div>
+            <p class="font-display text-6xl font-extrabold tabular-nums tracking-tight text-signal-500 md:text-7xl" data-count={block.data.value}>
+              {block.data.value}
+            </p>
+            <p class="mt-3 max-w-[30ch] text-sm leading-relaxed text-[var(--text-secondary)]">{block.data.label}</p>
+          </div>
+        </div>
+
+        <div class="gauge relative pt-8" aria-hidden="true">
+          <div class="relative h-3 overflow-hidden rounded-full bg-[var(--border-hairline-strong)]">
+            <div class="gauge-fill absolute inset-y-0 left-0 rounded-full" style={`width:${pos(112)}`}></div>
+          </div>
+          <span class="gauge-mark" style={`left:${pos(80)}`}><span>80%</span></span>
+          <span class="gauge-mark gauge-mark-block" style={`left:${pos(110)}`}><span>110%</span></span>
+          <div class="mt-2 flex justify-between text-[0.6875rem] font-semibold tabular-nums text-[var(--text-secondary)]">
+            <span>0%</span>
+            <span>120%</span>
+          </div>
+        </div>
+      </div>
+    )}
+
+    <ul class="glass-light glass-edge relative flex flex-col divide-y divide-[var(--border-hairline)] rounded-3xl px-6 md:px-8">
+      {rest.map((fact) => (
+        <li class="flex items-center gap-6 py-6">
+          <span class="w-20 shrink-0 font-display text-4xl font-extrabold tabular-nums tracking-tight text-gradient md:text-5xl" data-count={fact.data.value}>
+            {fact.data.value}
+          </span>
+          <span class="max-w-[34ch] text-sm leading-relaxed text-[var(--text-secondary)]">
+            {fact.data.label}
+          </span>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .gauge-fill {
+    background: linear-gradient(90deg, #0d3ad1 0%, #1450ff 55%, #4d7bff 66%, #ff5a1f 72%, #ff5a1f 100%);
+    box-shadow: 0 0 20px rgb(20 80 255 / 0.55);
+    transform-origin: left;
+    transform: scaleX(0.08);
+    transition: transform 1.6s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  [data-facts][data-seen] .gauge-fill,
+  [data-facts]:not([data-armed]) .gauge-fill {
+    transform: scaleX(1);
+  }
+
+  .gauge-mark {
+    position: absolute;
+    top: 1.35rem;
+    bottom: 1.25rem;
+    width: 2px;
+    translate: -50% 0;
+    background: var(--text-primary);
+    opacity: 0.6;
+  }
+
+  .gauge-mark span {
+    position: absolute;
+    bottom: calc(100% + 0.3rem);
+    left: 50%;
+    translate: -50% 0;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    white-space: nowrap;
+  }
+
+  .gauge-mark-block {
+    background: var(--color-signal-500);
+    opacity: 1;
+    box-shadow: 0 0 12px rgb(255 90 31 / 0.8);
+  }
+
+  .gauge-mark-block span {
+    color: var(--color-signal-500);
+  }
+</style>
+
+<script>
+  let observer: IntersectionObserver | null = null;
+
+  function countUp(el: HTMLElement) {
+    const raw = el.dataset.count ?? '';
+    const match = raw.match(/^(\d+)(.*)$/);
+    if (!match) return;
+    const target = Number(match[1]);
+    const suffix = match[2];
+    const duration = 1200;
+    const start = performance.now();
+    const tick = (now: number) => {
+      const p = Math.min(1, (now - start) / duration);
+      const eased = 1 - Math.pow(1 - p, 4);
+      el.textContent = `${Math.round(target * eased)}${suffix}`;
+      if (p < 1) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  }
+
+  document.addEventListener('astro:page-load', () => {
+    observer?.disconnect();
+    const band = document.querySelector<HTMLElement>('[data-facts]');
+    if (!band || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if (!('IntersectionObserver' in window)) return;
+
+    // Armed only once JS runs — without it the gauge renders full, numbers final.
+    band.setAttribute('data-armed', '');
+    observer = new IntersectionObserver(
+      (entries) => {
+        if (!entries.some((e) => e.isIntersecting)) return;
+        band.setAttribute('data-seen', '');
+        band.querySelectorAll<HTMLElement>('[data-count]').forEach(countUp);
+        observer?.disconnect();
+      },
+      { threshold: 0.35 },
+    );
+    observer.observe(band);
+  });
+</script>

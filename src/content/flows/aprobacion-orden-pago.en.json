@@ -1,0 +1,12 @@
+{
+  "order": 1,
+  "name": "Payment order approval",
+  "description": "Every payment order above the configured threshold moves through a cascading approval flow before it executes.",
+  "steps": [
+    "Finance files the payment order with its invoice and supporting documents",
+    "The Project Director reviews and approves",
+    "Executive Management approves if the order exceeds the configured threshold",
+    "The order is recorded and cleared for payment"
+  ],
+  "locale": "en"
+}

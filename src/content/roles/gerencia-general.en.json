@@ -1,0 +1,12 @@
+{
+  "order": 1,
+  "roleKey": "gerencia-general",
+  "name": "Executive Management",
+  "access": "Read-only plus approvals",
+  "responsibilities": [
+    "Executive dashboard with KPIs across every project",
+    "Approves scope and budget changes",
+    "Receives critical alerts in real time"
+  ],
+  "locale": "en"
+}

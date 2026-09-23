@@ -1,0 +1,49 @@
+---
+/**
+ * Seo.astro — title, description, canonical, hreflang alternates, Open
+ * Graph, Twitter card, theme-color. One instance per page, in <head>.
+ */
+import { locales, localeMeta, getLocalizedPath } from '../../lib/i18n';
+
+interface Props {
+  title: string;
+  description: string;
+  canonical: string;
+  ogImage: string;
+}
+
+const { title, description, canonical, ogImage } = Astro.props;
+const absoluteOgImage = new URL(ogImage, Astro.site ?? canonical).toString();
+const currentLocale = Astro.currentLocale === 'en' ? 'en' : 'es';
+const pathname = Astro.url.pathname;
+---
+
+<title>{title}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={canonical} />
+<meta name="theme-color" content="#04060b" />
+
+{locales.map((locale) => (
+  <link
+    rel="alternate"
+    hreflang={localeMeta[locale].htmlLang}
+    href={new URL(getLocalizedPath(pathname, locale), Astro.site).toString()}
+  />
+))}
+<link
+  rel="alternate"
+  hreflang="x-default"
+  href={new URL(getLocalizedPath(pathname, 'es'), Astro.site).toString()}
+/>
+
+<meta property="og:type" content="website" />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={canonical} />
+<meta property="og:image" content={absoluteOgImage} />
+<meta property="og:locale" content={localeMeta[currentLocale].ogLocale} />
+
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={absoluteOgImage} />

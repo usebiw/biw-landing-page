@@ -1,0 +1,12 @@
+{
+  "order": 5,
+  "roleKey": "contratistas-externos",
+  "name": "Contractors / External",
+  "access": "Restricted access",
+  "responsibilities": [
+    "Sees only their assigned activities",
+    "Checks the status of their contracts",
+    "Reviews the status of their payments"
+  ],
+  "locale": "en"
+}

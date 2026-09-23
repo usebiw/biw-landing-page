@@ -1,0 +1,20 @@
+{
+  "hero-es": {
+    "locale": "es",
+    "headline": "Control y gestión de obras, en un solo lugar.",
+    "headlineAccent": "un solo lugar",
+    "subcopy": "Avance de obra, presupuesto y contratistas bajo control, con datos que se calculan solos y aprobaciones que quedan registradas.",
+    "ctaPrimary": "Contáctanos",
+    "ctaWhatsapp": "Escribir por WhatsApp",
+    "chips": ["Obras en tiempo real", "Mayor eficiencia", "Decisiones inteligentes"]
+  },
+  "hero-en": {
+    "locale": "en",
+    "headline": "Construction project control and management, in one place.",
+    "headlineAccent": "in one place",
+    "subcopy": "Progress, budget, and contractors under control, with data that calculates itself and approvals that stay on record.",
+    "ctaPrimary": "Contact us",
+    "ctaWhatsapp": "Chat on WhatsApp",
+    "chips": ["Real-time job sites", "Greater efficiency", "Smarter decisions"]
+  }
+}

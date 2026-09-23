@@ -1,0 +1,26 @@
+---
+/**
+ * TickerItem.astro — one entry in the module marquee/ticker.
+ * The parent marquee is responsible for the scrolling mechanism and for
+ * disabling motion under prefers-reduced-motion (global.css handles the
+ * animation-duration override).
+ */
+interface Props {
+  label: string;
+  class?: string;
+}
+
+const { label, class: className = '' } = Astro.props;
+---
+
+<span
+  class={[
+    'inline-flex items-center gap-3 font-display text-2xl font-extrabold uppercase tracking-tight text-[var(--text-primary)]/80 md:text-3xl',
+    className,
+  ]
+    .filter(Boolean)
+    .join(' ')}
+>
+  {label}
+  <span class="size-1.5 rounded-full bg-biw-500" aria-hidden="true"></span>
+</span>

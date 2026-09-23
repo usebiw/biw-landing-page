@@ -1,0 +1,12 @@
+{
+  "order": 3,
+  "roleKey": "ingeniero-residente",
+  "name": "Ingeniero Residente",
+  "access": "Edición completa",
+  "responsibilities": [
+    "Registra el avance diario por frente de obra",
+    "Sube fotos de evidencia obligatorias",
+    "Reporta incidencias y asistencia de cuadrilla"
+  ],
+  "locale": "es"
+}

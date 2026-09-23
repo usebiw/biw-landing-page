@@ -1,0 +1,83 @@
+---
+/**
+ * BaseLayout.astro — root document shell. Pages provide their own <h1>
+ * and, if needed, extra <head> content via the `head` slot (e.g. a
+ * dedicated Seo.astro component). `lang` defaults to the current i18n
+ * locale (Astro.currentLocale) rather than being hardcoded.
+ *
+ * <ClientRouter /> turns same-origin navigations (ES ↔ EN, privacy page)
+ * into in-place swaps so RouteLoader can show a frosted skeleton instead
+ * of a blank reload. Consequence for every component script: bundled
+ * <script>s run ONCE per session, not once per page — per-page setup must
+ * hang off `astro:page-load` (or use document-level event delegation).
+ */
+import '../styles/global.css';
+import { ClientRouter } from 'astro:transitions';
+import RouteLoader from '../components/molecules/RouteLoader.astro';
+import { useTranslations } from '../lib/i18n';
+
+interface Props {
+  lang?: string;
+}
+
+const { lang = Astro.currentLocale ?? 'es' } = Astro.props;
+const htmlLang = lang === 'en' ? 'en-US' : lang === 'es' ? 'es-CO' : lang;
+const loadingLabel = useTranslations(lang === 'en' ? 'en' : 'es')('loading.page');
+---
+
+<html lang={htmlLang}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#04060b" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <script is:inline>
+      // Blocking, pre-paint theme init — avoids a flash of the wrong
+      // theme. Default (no stored/system preference) is dark, BIW's
+      // original committed world; a stored choice or the OS "light"
+      // preference overrides it.
+      (function () {
+        try {
+          const stored = localStorage.getItem('biw-theme');
+          const theme =
+            stored === 'light' || stored === 'dark'
+              ? stored
+              : window.matchMedia('(prefers-color-scheme: light)').matches
+                ? 'light'
+                : 'dark';
+          document.documentElement.dataset.theme = theme;
+        } catch {
+          document.documentElement.dataset.theme = 'dark';
+        }
+      })();
+    </script>
+    <ClientRouter fallback="animate" />
+    <slot name="head" />
+  </head>
+  <body>
+    <RouteLoader label={loadingLabel} />
+    <slot />
+  </body>
+</html>
+
+<script>
+  // Cursor spotlight for `[data-spotlight]` glass panes — one delegated
+  // listener for the whole session (survives ClientRouter swaps).
+  if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+    let frame = 0;
+    document.addEventListener(
+      'pointermove',
+      (event) => {
+        const host = (event.target as Element | null)?.closest<HTMLElement>('[data-spotlight]');
+        if (!host) return;
+        cancelAnimationFrame(frame);
+        frame = requestAnimationFrame(() => {
+          const rect = host.getBoundingClientRect();
+          host.style.setProperty('--mx', `${event.clientX - rect.left}px`);
+          host.style.setProperty('--my', `${event.clientY - rect.top}px`);
+        });
+      },
+      { passive: true },
+    );
+  }
+</script>

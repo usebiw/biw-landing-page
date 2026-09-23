@@ -1,0 +1,48 @@
+---
+/**
+ * NavLink.astro — header/nav anchor with visible focus ring and an active
+ * state (`data-active`, set by SiteHeader's scroll-spy, or `active` prop):
+ * brighter text plus a short glowing blue underline.
+ */
+interface Props {
+  href: string;
+  label: string;
+  active?: boolean;
+  class?: string;
+}
+
+const { href, label, active = false, class: className = '' } = Astro.props;
+---
+
+<a
+  href={href}
+  aria-current={active ? 'page' : undefined}
+  data-active={active ? '' : undefined}
+  class:list={[
+    'nav-link relative rounded-lg px-2.5 py-1.5 font-sans text-sm font-medium text-[var(--text-secondary)] transition-colors duration-200 hover:text-[var(--text-primary)] data-[active]:text-[var(--text-primary)]',
+    className,
+  ]}
+>
+  {label}
+</a>
+
+<style>
+  .nav-link::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: 0.1rem;
+    width: 1.25rem;
+    height: 2px;
+    border-radius: 9999px;
+    background: linear-gradient(90deg, var(--color-biw-600), var(--color-biw-400));
+    box-shadow: 0 0 10px rgb(77 123 255 / 0.9);
+    translate: -50% 0;
+    scale: 0 1;
+    transition: scale 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .nav-link[data-active]::after {
+    scale: 1 1;
+  }
+</style>

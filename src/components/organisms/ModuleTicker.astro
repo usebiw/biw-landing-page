@@ -1,0 +1,50 @@
+---
+/**
+ * ModuleTicker.astro — pure-CSS marquee of module names. Pauses on hover
+ * and is fully disabled under prefers-reduced-motion (row shown static).
+ */
+import { getCollection } from 'astro:content';
+import { type Locale } from '../../lib/i18n';
+import TickerItem from '../molecules/TickerItem.astro';
+
+const locale = (Astro.currentLocale === 'en' ? 'en' : 'es') as Locale;
+const modules = (await getCollection('modules', (e) => e.data.locale === locale)).sort(
+  (a, b) => a.data.order - b.data.order,
+);
+// Duplicate the list so the CSS loop can scroll -50% seamlessly.
+const loop = [...modules, ...modules];
+---
+
+<div class="border-y border-[var(--border-hairline)] bg-[var(--surface-raised)] py-4">
+  <div class="group overflow-hidden [mask-image:linear-gradient(90deg,transparent,black_8%,black_92%,transparent)]">
+    <ul class="ticker-track flex w-max items-center gap-10 group-hover:[animation-play-state:paused]">
+      {loop.map((mod, i) => (
+        <TickerItem label={mod.data.name} aria-hidden={i >= modules.length ? 'true' : undefined} />
+      ))}
+    </ul>
+  </div>
+</div>
+
+<style>
+  .ticker-track {
+    animation: ticker-scroll 32s linear infinite;
+  }
+
+  @keyframes ticker-scroll {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-50%);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ticker-track {
+      animation: none;
+      transform: translateX(0);
+      flex-wrap: wrap;
+      width: 100%;
+    }
+  }
+</style>

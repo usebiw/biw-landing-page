@@ -1,0 +1,179 @@
+---
+/**
+ * RouteLoader.astro — the waiting state for client-side route changes
+ * (ES ↔ EN, landing ↔ privacy page) under Astro's <ClientRouter />.
+ * No spinner: a thin electric-blue progress bar runs across the top edge
+ * while the current page frosts over (global.css `html[data-navigating]`)
+ * and a skeleton of the incoming layout shimmers in its place.
+ *
+ * - The bar is `transition:persist` so it survives the DOM swap and can
+ *   finish its sweep (100% → fade) on the new page instead of vanishing.
+ * - A short minimum duration keeps the state readable on fast/prefetched
+ *   navigations instead of flashing for one frame; reduced motion skips
+ *   the minimum entirely.
+ * - A locale switch keeps the reader at the same relative scroll depth —
+ *   both locales share one structure, so "same place, other language" is
+ *   the expected result, not a jump back to the hero.
+ */
+interface Props {
+  label: string;
+}
+
+const { label } = Astro.props;
+---
+
+<div class="route-bar" data-route-bar transition:persist="route-bar" aria-hidden="true"></div>
+
+<div class="route-skeleton" aria-hidden="true">
+  <div class="mx-auto grid h-full max-w-7xl gap-12 px-6 pt-28 lg:grid-cols-[55%_45%] lg:items-center lg:pt-0">
+    <div class="flex flex-col gap-4">
+      <div class="skeleton h-14 w-[85%] rounded-xl md:h-20"></div>
+      <div class="skeleton h-14 w-[70%] rounded-xl md:h-20"></div>
+      <div class="skeleton h-14 w-[55%] rounded-xl md:h-20"></div>
+      <div class="mt-4 flex flex-col gap-2.5">
+        <div class="skeleton h-3.5 w-[90%] rounded-md"></div>
+        <div class="skeleton h-3.5 w-[65%] rounded-md"></div>
+      </div>
+      <div class="mt-6 flex gap-3">
+        <div class="skeleton h-12 w-40 rounded-lg"></div>
+        <div class="skeleton h-12 w-52 rounded-lg"></div>
+      </div>
+    </div>
+    <div class="glass-light hidden flex-col gap-4 rounded-2xl p-6 lg:flex">
+      <div class="flex justify-between">
+        <div class="skeleton h-4 w-44 rounded-md"></div>
+        <div class="skeleton h-4 w-24 rounded-md"></div>
+      </div>
+      {[92, 74, 58].map((w) => (
+        <div class="flex flex-col gap-2">
+          <div class="skeleton h-3 rounded-md" style={`width:${w / 2}%`}></div>
+          <div class="skeleton h-2.5 rounded-lg" style={`width:${w}%`}></div>
+        </div>
+      ))}
+      <div class="skeleton mt-2 h-16 rounded-lg"></div>
+    </div>
+  </div>
+  <p class="sr-only" role="status">{label}</p>
+</div>
+
+<style>
+  .route-bar {
+    position: fixed;
+    inset-inline: 0;
+    top: 0;
+    z-index: 100;
+    height: 2px;
+    transform-origin: left;
+    transform: scaleX(0);
+    opacity: 0;
+    background: linear-gradient(90deg, var(--color-biw-600), var(--color-biw-400), #b9ccff);
+    box-shadow:
+      0 0 12px rgb(77 123 255 / 0.9),
+      0 0 2px rgb(185 204 255 / 1);
+    pointer-events: none;
+  }
+
+  .route-bar[data-state='loading'] {
+    opacity: 1;
+    transform: scaleX(0.72);
+    transition:
+      transform 2.4s cubic-bezier(0.08, 0.82, 0.17, 1),
+      opacity 0.15s ease;
+  }
+
+  .route-bar[data-state='done'] {
+    opacity: 0;
+    transform: scaleX(1);
+    transition:
+      transform 0.25s ease-out,
+      opacity 0.35s ease 0.2s;
+  }
+
+  .route-skeleton {
+    position: fixed;
+    inset: 0;
+    z-index: 40;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition:
+      opacity 0.3s ease,
+      visibility 0s linear 0.3s;
+  }
+
+  :global(html[data-navigating]) .route-skeleton {
+    opacity: 1;
+    visibility: visible;
+    transition:
+      opacity 0.3s ease 0.08s,
+      visibility 0s;
+  }
+</style>
+
+<script>
+  const MIN_VISIBLE_MS = 420;
+  const reducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let pendingScrollRatio: number | null = null;
+
+  function bar() {
+    return document.querySelector<HTMLElement>('[data-route-bar]');
+  }
+
+  function clearNavigating() {
+    delete document.documentElement.dataset.navigating;
+  }
+
+  document.addEventListener('astro:before-preparation', (event) => {
+    // Same-page hash jumps never reach preparation; everything here is a
+    // real document fetch.
+    const root = document.documentElement;
+    const started = performance.now();
+    root.dataset.navigating = '';
+
+    const el = bar();
+    if (el) {
+      el.dataset.state = '';
+      void el.offsetWidth; // restart the sweep if a navigation is re-triggered
+      el.dataset.state = 'loading';
+    }
+
+    pendingScrollRatio = event.sourceElement?.closest('[data-locale-switch]')
+      ? window.scrollY / Math.max(1, document.documentElement.scrollHeight - window.innerHeight)
+      : null;
+
+    const originalLoader = event.loader;
+    event.loader = async () => {
+      await originalLoader();
+      const remaining = (reducedMotion() ? 0 : MIN_VISIBLE_MS) - (performance.now() - started);
+      if (remaining > 0) await new Promise((resolve) => setTimeout(resolve, remaining));
+    };
+
+    event.signal.addEventListener('abort', () => {
+      clearNavigating();
+      const current = bar();
+      if (current) current.dataset.state = 'done';
+    });
+  });
+
+  document.addEventListener('astro:before-swap', (event) => {
+    // The router copies the incoming <html> attributes over the live one;
+    // carry the user's theme across so the new page never flashes the
+    // other theme mid-swap.
+    event.newDocument.documentElement.dataset.theme =
+      document.documentElement.dataset.theme === 'light' ? 'light' : 'dark';
+  });
+
+  document.addEventListener('astro:after-swap', () => {
+    if (pendingScrollRatio !== null) {
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      window.scrollTo({ top: Math.round(pendingScrollRatio * max), behavior: 'instant' });
+      pendingScrollRatio = null;
+    }
+  });
+
+  document.addEventListener('astro:page-load', () => {
+    clearNavigating();
+    const el = bar();
+    if (el && el.dataset.state === 'loading') el.dataset.state = 'done';
+  });
+</script>

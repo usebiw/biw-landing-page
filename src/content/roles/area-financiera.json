@@ -1,0 +1,12 @@
+{
+  "order": 4,
+  "roleKey": "area-financiera",
+  "name": "Área Financiera",
+  "access": "Edición sobre presupuesto y pagos",
+  "responsibilities": [
+    "Administra el presupuesto por capítulos",
+    "Gestiona facturas y órdenes de pago",
+    "Controla el flujo de caja del proyecto"
+  ],
+  "locale": "es"
+}

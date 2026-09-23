@@ -1,0 +1,12 @@
+{
+  "order": 2,
+  "roleKey": "director-proyecto",
+  "name": "Director de Proyecto",
+  "access": "Lectura y aprobación",
+  "responsibilities": [
+    "Supervisa múltiples proyectos simultáneamente",
+    "Aprueba órdenes de pago, no conformidades y cambios",
+    "Gestiona la asignación de contratistas"
+  ],
+  "locale": "es"
+}

@@ -1,0 +1,36 @@
+---
+/**
+ * Heading.astro — renders <h{level}> in font-display.
+ * `size` controls the type scale independently of semantic level.
+ * `gradient` paints the text with the theme's heading gradient
+ * (`--grad-heading`: mist → electric blue on dark, ink → deep blue on
+ * light). Pass no color class alongside it — the gradient is the color.
+ */
+interface Props {
+  level: 1 | 2 | 3 | 4;
+  size: 'display' | 'xl' | 'lg' | 'md';
+  gradient?: boolean;
+  class?: string;
+}
+
+const { level, size, gradient = false, class: className = '' } = Astro.props;
+const Tag = `h${level}` as 'h1' | 'h2' | 'h3' | 'h4';
+
+const sizes: Record<string, string> = {
+  display: 'text-5xl md:text-6xl lg:text-[6rem] leading-[0.98] font-extrabold',
+  xl: 'text-4xl md:text-5xl lg:text-[3.5rem] leading-[1.05] font-extrabold',
+  lg: 'text-2xl md:text-3xl leading-tight font-bold',
+  md: 'text-xl md:text-2xl leading-snug font-bold',
+};
+
+const classes = [
+  'font-display tracking-tight text-balance-display',
+  sizes[size],
+  gradient && 'text-gradient pb-[0.08em]',
+  className,
+]
+  .filter(Boolean)
+  .join(' ');
+---
+
+<Tag class={classes}><slot /></Tag>

@@ -1,0 +1,12 @@
+{
+  "order": 3,
+  "name": "Solicitud de cantidades",
+  "description": "Cuando un contratista necesita ejecutar más cantidad de la contratada, el cambio requiere aprobación explícita antes de registrarse.",
+  "steps": [
+    "El residente detecta que la cantidad a ejecutar excede lo contratado",
+    "El residente crea la Solicitud de Cantidades",
+    "El director revisa y aprueba o rechaza la solicitud",
+    "Solo con aprobación se habilita el registro de la cantidad adicional"
+  ],
+  "locale": "es"
+}

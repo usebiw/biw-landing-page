@@ -1,0 +1,501 @@
+@import 'tailwindcss';
+@import '@fontsource-variable/archivo';
+@import '@fontsource-variable/montserrat';
+
+/*
+ * BIW design tokens — inherited from the production login screen.
+ * Electric-blue accent/glow (#1450FF) is constant across themes; the
+ * ground and text tokens below are the ones that flip between dark (the
+ * original committed world, default) and light via [data-theme="light"]
+ * on <html>. Signal orange (#FF5A1F) is SEMANTIC ONLY (budget 80%/110%
+ * gates) — never decorative, in either theme.
+ */
+@theme {
+  --color-ink-950: #04060b;
+  --color-ink-900: #070a12;
+  --color-ink-800: #0a0d14;
+
+  --color-biw-400: #4d7bff;
+  --color-biw-500: #1450ff;
+  --color-biw-600: #0d3ad1;
+
+  --color-mist-50: #f4f6fa;
+  --color-mist-100: #e7ebf3;
+
+  --color-slate-500: #6b7789;
+
+  --color-signal-500: #ff5a1f;
+
+  --font-display: 'Archivo Variable', sans-serif;
+  --font-sans: 'Montserrat Variable', sans-serif;
+}
+
+/* ---------------------------------------------------------------------
+   Theme tokens — dark is the default/original world; [data-theme="light"]
+   overrides. Every "canvas" surface in the page is built from these vars
+   (not literal ink-950/white classes) so the runtime toggle actually
+   repaints the whole site, not just a hardcoded subset of it.
+--------------------------------------------------------------------- */
+
+:root,
+html:not([data-theme='light']) {
+  color-scheme: dark;
+
+  --surface-canvas: var(--color-ink-950);
+  --surface-raised: var(--color-ink-800);
+  --surface-card: rgb(255 255 255 / 0.03);
+  --surface-card-strong: rgb(255 255 255 / 0.06);
+
+  --text-primary: var(--color-mist-50);
+  --text-secondary: #7f8b9e;
+  --text-accent: var(--color-biw-400);
+
+  --border-hairline: rgb(255 255 255 / 0.1);
+  --border-hairline-strong: rgb(255 255 255 / 0.16);
+
+  --glass-bg: rgb(255 255 255 / 0.07);
+  --glass-bg-strong: rgb(255 255 255 / 0.11);
+  --glass-border: rgb(255 255 255 / 0.12);
+  --glass-border-strong: rgb(255 255 255 / 0.18);
+  --glass-highlight: rgb(255 255 255 / 0.14);
+  --glass-fallback-solid: var(--color-ink-800);
+
+  --scrollbar-track: var(--color-ink-900);
+  --theme-color-meta: #04060b;
+
+  /* Headings: mist → electric blue (user-requested gradient headings). */
+  --grad-heading: linear-gradient(100deg, #f4f6fa 0%, #c9d6ff 38%, #4d7bff 100%);
+  --grad-accent: linear-gradient(100deg, #4d7bff 0%, #1450ff 55%, #7aa0ff 100%);
+
+  /* Atmosphere: drifting blue mesh, dot grid, film grain. */
+  --mesh-a: rgb(20 80 255 / 0.32);
+  --mesh-b: rgb(77 123 255 / 0.2);
+  --mesh-c: rgb(13 58 209 / 0.26);
+  --grid-dot: rgb(255 255 255 / 0.07);
+  --noise-opacity: 0.05;
+
+  /* Glass edge light (gradient hairline) + cursor spotlight. */
+  --edge-hi: rgb(160 186 255 / 0.55);
+  --edge-lo: rgb(255 255 255 / 0.04);
+  --spotlight: rgb(77 123 255 / 0.16);
+
+  --skeleton-base: rgb(255 255 255 / 0.05);
+  --skeleton-shine: rgb(160 186 255 / 0.14);
+}
+
+html[data-theme='light'] {
+  color-scheme: light;
+
+  --surface-canvas: #f7f9fc;
+  --surface-raised: #eaeff7;
+  --surface-card: rgb(4 6 11 / 0.035);
+  --surface-card-strong: rgb(4 6 11 / 0.06);
+
+  --text-primary: var(--color-ink-800);
+  --text-secondary: #4b5565;
+  --text-accent: var(--color-biw-600);
+
+  --border-hairline: rgb(4 6 11 / 0.09);
+  --border-hairline-strong: rgb(4 6 11 / 0.16);
+
+  --glass-bg: rgb(255 255 255 / 0.55);
+  --glass-bg-strong: rgb(255 255 255 / 0.72);
+  --glass-border: rgb(4 6 11 / 0.1);
+  --glass-border-strong: rgb(4 6 11 / 0.18);
+  --glass-highlight: rgb(255 255 255 / 0.85);
+  --glass-fallback-solid: #fff;
+
+  --scrollbar-track: var(--color-mist-100);
+  --theme-color-meta: #f7f9fc;
+
+  --grad-heading: linear-gradient(100deg, #0a0d14 0%, #1b2a5c 45%, #0d3ad1 100%);
+  --grad-accent: linear-gradient(100deg, #0d3ad1 0%, #1450ff 55%, #4d7bff 100%);
+
+  --mesh-a: rgb(20 80 255 / 0.16);
+  --mesh-b: rgb(77 123 255 / 0.14);
+  --mesh-c: rgb(120 160 255 / 0.18);
+  --grid-dot: rgb(4 6 11 / 0.08);
+  --noise-opacity: 0.035;
+
+  --edge-hi: rgb(255 255 255 / 0.95);
+  --edge-lo: rgb(4 6 11 / 0.06);
+  --spotlight: rgb(20 80 255 / 0.1);
+
+  --skeleton-base: rgb(4 6 11 / 0.05);
+  --skeleton-shine: rgb(20 80 255 / 0.08);
+}
+
+/* ---------------------------------------------------------------------
+   Base
+--------------------------------------------------------------------- */
+
+html {
+  scrollbar-color: var(--color-biw-500) var(--scrollbar-track);
+}
+
+body {
+  background-color: var(--surface-canvas);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  transition:
+    background-color 0.25s ease,
+    color 0.25s ease;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-display);
+  letter-spacing: -0.04em;
+}
+
+/* ---------------------------------------------------------------------
+   Selection, scrollbar, focus — the browser surfaces the palette owns
+--------------------------------------------------------------------- */
+
+::selection {
+  background: var(--color-biw-500);
+  color: #fff;
+}
+
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--scrollbar-track);
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--color-biw-600);
+  border-radius: 9999px;
+  border: 3px solid var(--scrollbar-track);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--color-biw-500);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-biw-400);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ---------------------------------------------------------------------
+   Glass utilities — REQUIRE a ground with a blue glow behind them (the
+   `glow-sphere` element). Without the glow motif, the backdrop-blur reads
+   as flat, decorative frosting. Tokens flip with the theme; the blur
+   itself is intentionally heavy (BIW's signature material, not a subtle
+   accent) — three depths for how much of the surface it commands.
+--------------------------------------------------------------------- */
+
+@utility glass {
+  background-color: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(36px) saturate(175%);
+  -webkit-backdrop-filter: blur(36px) saturate(175%);
+  box-shadow:
+    inset 0 1px 0 var(--glass-highlight),
+    0 24px 70px -16px rgb(20 80 255 / 0.38);
+}
+
+@utility glass-strong {
+  background-color: var(--glass-bg-strong);
+  border: 1px solid var(--glass-border-strong);
+  backdrop-filter: blur(52px) saturate(190%);
+  -webkit-backdrop-filter: blur(52px) saturate(190%);
+  box-shadow:
+    inset 0 1px 0 var(--glass-highlight),
+    0 30px 90px -18px rgb(20 80 255 / 0.48);
+}
+
+@utility glass-light {
+  background-color: var(--surface-card);
+  border: 1px solid var(--border-hairline);
+  backdrop-filter: blur(30px) saturate(160%);
+  -webkit-backdrop-filter: blur(30px) saturate(160%);
+  box-shadow:
+    inset 0 1px 0 var(--glass-highlight),
+    0 20px 50px -20px rgb(20 80 255 / 0.22);
+}
+
+@utility glass-interactive {
+  transition:
+    transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 0.25s ease;
+
+  &:hover {
+    transform: translateY(-4px);
+    border-color: var(--glass-border-strong);
+    box-shadow:
+      inset 0 1px 0 var(--glass-highlight),
+      0 34px 90px -20px rgb(20 80 255 / 0.55);
+  }
+}
+
+/* Light catching the top edge of a glass pane: a 1px gradient hairline
+   drawn with a masked pseudo-element, brighter at the top-left where the
+   glow sits. The host must be positioned (`relative`/`absolute`) — the
+   utility deliberately doesn't set position so it never fights those. */
+@utility glass-edge {
+  isolation: isolate;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(145deg, var(--edge-hi), var(--edge-lo) 40%, var(--edge-lo) 70%, rgb(77 123 255 / 0.35));
+    -webkit-mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+    z-index: 1;
+  }
+}
+
+/* Cursor-following blue light inside a glass pane. `--mx/--my` are set by
+   the spotlight script (BaseLayout) on `[data-spotlight]` hosts; without
+   JS the light simply rests off-canvas. */
+@utility spotlight {
+  background-image: radial-gradient(
+    520px circle at var(--mx, -999px) var(--my, -999px),
+    var(--spotlight),
+    transparent 42%
+  );
+}
+
+/* Negative display tracking pulls the last glyph's ink past the text box,
+   and background-clip:text only paints inside the box — the inline-end
+   padding (cancelled by an equal negative margin) keeps that ink lit. */
+@utility text-gradient {
+  padding-inline-end: 0.08em;
+  margin-inline-end: -0.08em;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+  background-image: var(--grad-heading);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+
+@utility text-gradient-accent {
+  padding-inline-end: 0.08em;
+  margin-inline-end: -0.08em;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+  background-image: var(--grad-accent);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+
+/* ---------------------------------------------------------------------
+   Atmosphere — slow drifting blue mesh, dot grid, film grain. The glass
+   panels refract this; it is the "something behind the glass".
+--------------------------------------------------------------------- */
+
+@utility atmosphere {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+
+@utility mesh-blob {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(90px);
+  will-change: transform;
+  animation: blob-drift 38s ease-in-out infinite;
+}
+
+@utility dot-grid {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(var(--grid-dot) 1px, transparent 1px);
+  background-size: 28px 28px;
+  -webkit-mask-image: radial-gradient(ellipse 75% 70% at 50% 40%, #000 25%, transparent 100%);
+  mask-image: radial-gradient(ellipse 75% 70% at 50% 40%, #000 25%, transparent 100%);
+}
+
+@utility grain {
+  position: absolute;
+  inset: 0;
+  opacity: var(--noise-opacity);
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+@keyframes blob-drift {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  33% {
+    transform: translate3d(50px, -40px, 0) scale(1.06);
+  }
+  66% {
+    transform: translate3d(-35px, 45px, 0) scale(0.95);
+  }
+}
+
+/* ---------------------------------------------------------------------
+   Skeleton — shimmer placeholder for content that is genuinely still on
+   its way (remote photos, the next locale during a route change).
+--------------------------------------------------------------------- */
+
+@utility skeleton {
+  background-color: var(--skeleton-base);
+  background-image: linear-gradient(
+    100deg,
+    transparent 20%,
+    var(--skeleton-shine) 45%,
+    transparent 70%
+  );
+  background-size: 220% 100%;
+  background-repeat: no-repeat;
+  animation: skeleton-shimmer 1.4s ease-in-out infinite;
+}
+
+@keyframes skeleton-shimmer {
+  from {
+    background-position: 160% 0;
+  }
+  to {
+    background-position: -60% 0;
+  }
+}
+
+@supports not (backdrop-filter: blur(1px)) {
+  .glass,
+  .glass-strong,
+  .glass-light {
+    background-color: var(--glass-fallback-solid);
+  }
+}
+
+/* ---------------------------------------------------------------------
+   Glow / luminous sphere motif — the blue accent behind glass panels
+--------------------------------------------------------------------- */
+
+@utility glow-sphere {
+  position: absolute;
+  border-radius: 9999px;
+  background: radial-gradient(
+    circle at 35% 30%,
+    rgb(77 123 255 / 0.9),
+    rgb(20 80 255 / 0.55) 45%,
+    rgb(20 80 255 / 0) 72%
+  );
+  filter: blur(56px);
+  pointer-events: none;
+}
+
+@utility text-balance-display {
+  text-wrap: balance;
+}
+
+/* Translucent canvas surfaces (sticky header, mobile menu panel) — mixed
+   from the theme's own canvas token so they repaint with the toggle. */
+@utility surface-translucent {
+  background-color: color-mix(in srgb, var(--surface-canvas) 70%, transparent);
+}
+
+@utility surface-translucent-strong {
+  background-color: color-mix(in srgb, var(--surface-canvas) 95%, transparent);
+}
+
+/* ---------------------------------------------------------------------
+   Route loading — while the next page (other locale, privacy page) is
+   fetched by the ClientRouter, the current page frosts over and a
+   skeleton of the incoming layout shimmers on top. `data-navigating` is
+   set on <html> by RouteLoader.astro; no spinner anywhere.
+--------------------------------------------------------------------- */
+
+main,
+footer {
+  transition:
+    filter 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+html[data-navigating] main,
+html[data-navigating] footer {
+  filter: blur(14px) saturate(120%);
+  opacity: 0.25;
+  pointer-events: none;
+}
+
+/* Theme switch — circular reveal from the toggle button via the View
+   Transition API. Scoped to data-vt="theme" so it never overrides the
+   ClientRouter's own page-swap crossfade. */
+html[data-vt='theme']::view-transition-old(root),
+html[data-vt='theme']::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+html[data-vt='theme']::view-transition-new(root) {
+  z-index: 2;
+}
+
+/* The new-theme snapshot must be the finished palette, not a frame of
+   the 0.25s color transitions mid-way. */
+html[data-vt='theme'] *,
+html[data-vt='theme'] *::before,
+html[data-vt='theme'] *::after {
+  transition: none !important;
+}
+
+/* ---------------------------------------------------------------------
+   Motion — one authored moment, disabled entirely under reduced motion
+--------------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .mesh-blob {
+    animation: none !important;
+  }
+}
+
+/* Island content swap (ProductDemo tab change, form states): content
+   settles in from a slight blur rather than popping. */
+.demo-fade {
+  animation: demo-fade 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes demo-fade {
+  from {
+    opacity: 0.2;
+    filter: blur(6px);
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+    transform: none;
+  }
+}

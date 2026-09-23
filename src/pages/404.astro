@@ -1,0 +1,40 @@
+---
+import { getEntry } from 'astro:content';
+import { useTranslations, getLocalizedPath, type Locale } from '../lib/i18n';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Seo from '../components/seo/Seo.astro';
+import Heading from '../components/atoms/Heading.astro';
+import Button from '../components/atoms/Button.astro';
+import Logo from '../components/atoms/Logo.astro';
+
+const locale = (Astro.currentLocale === 'en' ? 'en' : 'es') as Locale;
+const t = useTranslations(locale);
+const site = await getEntry('site', `site-${locale}`);
+const canonical = new URL(Astro.url.pathname, Astro.site).toString();
+const homeHref = getLocalizedPath('/', locale);
+---
+
+<BaseLayout>
+  <Fragment slot="head">
+    <Seo
+      title={t('notFound.title')}
+      description={t('notFound.description')}
+      canonical={canonical}
+      ogImage={site!.data.ogImage}
+    />
+  </Fragment>
+
+  <main class="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-[var(--surface-canvas)] px-6 text-center">
+    <div class="glow-sphere pointer-events-none absolute left-1/2 top-1/3 size-[32rem] -translate-x-1/2 opacity-60" aria-hidden="true"></div>
+
+    <div class="relative">
+      <Logo class="mx-auto items-center" />
+      <p class="mt-10 font-display text-7xl font-extrabold text-[var(--text-primary)] md:text-8xl">404</p>
+      <Heading level={1} size="lg" class="mt-4 text-[var(--text-primary)]">{t('notFound.heading')}</Heading>
+      <p class="mx-auto mt-3 max-w-[50ch] text-[var(--text-secondary)]">{t('notFound.body')}</p>
+      <div class="mt-8 flex justify-center">
+        <Button variant="primary" size="lg" href={homeHref}>{t('notFound.cta')}</Button>
+      </div>
+    </div>
+  </main>
+</BaseLayout>

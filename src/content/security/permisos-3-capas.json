@@ -1,0 +1,7 @@
+{
+  "order": 2,
+  "icon": "layers",
+  "title": "Permisos en 3 capas",
+  "description": "El control de acceso se aplica en el backend (require_permission), en los roles sembrados por defecto (seeds) y en la interfaz (UI gating), con navegación y pestañas visibles según el rol.",
+  "locale": "es"
+}

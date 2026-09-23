@@ -1,0 +1,44 @@
+---
+import { getCollection, getEntry } from 'astro:content';
+import { type Locale } from '../../lib/i18n';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Seo from '../../components/seo/Seo.astro';
+import JsonLd from '../../components/seo/JsonLd.astro';
+import LandingTemplate from '../../components/templates/LandingTemplate.astro';
+
+const locale = (Astro.currentLocale === 'en' ? 'en' : 'es') as Locale;
+const site = await getEntry('site', `site-${locale}`);
+const faqs = (await getCollection('faqs', (e) => e.data.locale === locale)).sort(
+  (a, b) => a.data.order - b.data.order,
+);
+
+const canonical = new URL(Astro.url.pathname, Astro.site).toString();
+const orgUrl = Astro.site?.toString() ?? canonical;
+---
+
+<BaseLayout>
+  <Fragment slot="head">
+    <Seo
+      title={site!.data.metaTitle}
+      description={site!.data.metaDescription}
+      canonical={canonical}
+      ogImage={site!.data.ogImage}
+    />
+    <JsonLd type="Organization" data={{ name: site!.data.brandFull, url: orgUrl }} />
+    <JsonLd
+      type="SoftwareApplication"
+      data={{
+        name: site!.data.brandName,
+        description: site!.data.metaDescription,
+        url: orgUrl,
+        applicationCategory: 'BusinessApplication',
+      }}
+    />
+    <JsonLd
+      type="FAQPage"
+      data={{ faqs: faqs.map((f) => ({ question: f.data.question, answer: f.data.answer })) }}
+    />
+  </Fragment>
+
+  <LandingTemplate />
+</BaseLayout>

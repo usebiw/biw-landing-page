@@ -1,0 +1,6 @@
+{
+  "order": 3,
+  "question": "How secure is the platform?",
+  "answer": "BIW already has authentication hardening in place: refresh-token reuse detection, account lockout by email, and proxy-header controls. We're also running an OWASP security audit ahead of commercial launch.",
+  "locale": "en"
+}

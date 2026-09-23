@@ -1,0 +1,43 @@
+---
+/**
+ * Logo.astro — wordmark "BIW" + blue dot + tracked caption
+ * "BUILDING INTEGRATED WORKFLOW" (variant full), inherited verbatim
+ * from the production login screen.
+ */
+interface Props {
+  variant?: 'full' | 'mark';
+  /**
+   * Default `auto` tracks the live theme toggle via CSS vars — use this
+   * everywhere the logo sits on the page's own canvas (header, footer,
+   * 404). Pass `onDark`/`onLight` only to force a fixed color regardless
+   * of theme, for a surface that never repaints (none currently do).
+   */
+  tone?: 'auto' | 'onDark' | 'onLight';
+  class?: string;
+}
+
+const { variant = 'full', tone = 'auto', class: className = '' } = Astro.props;
+
+const textColor =
+  tone === 'onDark' ? 'text-white' : tone === 'onLight' ? 'text-ink-950' : 'text-[var(--text-primary)]';
+const captionColor =
+  tone === 'onDark'
+    ? 'text-slate-500'
+    : tone === 'onLight'
+      ? 'text-ink-950/60'
+      : 'text-[var(--text-secondary)]';
+---
+
+<div class={['inline-flex flex-col gap-1', className].filter(Boolean).join(' ')}>
+  <span class={['inline-flex items-center gap-1.5 font-display text-2xl font-extrabold tracking-tight', textColor].filter(Boolean).join(' ')}>
+    BIW
+    <span class="size-1.5 rounded-full bg-biw-500"></span>
+  </span>
+  {
+    variant === 'full' && (
+      <span class={['font-sans text-[0.6rem] font-semibold uppercase tracking-[0.22em]', captionColor].filter(Boolean).join(' ')}>
+        Building Integrated Workflow
+      </span>
+    )
+  }
+</div>

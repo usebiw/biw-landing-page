@@ -1,0 +1,12 @@
+{
+  "order": 3,
+  "roleKey": "ingeniero-residente",
+  "name": "Site Engineer",
+  "access": "Full edit access",
+  "responsibilities": [
+    "Logs daily progress by work front",
+    "Uploads mandatory evidence photos",
+    "Reports incidents and crew attendance"
+  ],
+  "locale": "en"
+}

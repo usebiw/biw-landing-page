@@ -1,0 +1,38 @@
+{
+  "site-es": {
+    "locale": "es",
+    "brandName": "BIW",
+    "brandFull": "Building Integrated Workflow",
+    "tagline": "Control y seguimiento de obras, en un solo lugar",
+    "metaTitle": "BIW — Control y seguimiento de obras",
+    "metaDescription": "Software para controlar avance, presupuesto y contratistas de tus obras en tiempo real, desde gerencia hasta el residente.",
+    "ogImage": "/og-biw.png",
+    "whatsappNumber": "573000000000",
+    "whatsappMessage": "Hola, quiero saber más sobre BIW",
+    "nav": [
+      { "label": "Producto", "href": "#producto" },
+      { "label": "Módulos", "href": "#modulos" },
+      { "label": "Roles", "href": "#roles" },
+      { "label": "Seguridad", "href": "#seguridad" },
+      { "label": "Preguntas frecuentes", "href": "#faqs" }
+    ]
+  },
+  "site-en": {
+    "locale": "en",
+    "brandName": "BIW",
+    "brandFull": "Building Integrated Workflow",
+    "tagline": "Construction project control and tracking, in one place",
+    "metaTitle": "BIW — Construction project control",
+    "metaDescription": "Software to control progress, budget, and contractors on your job sites in real time, from management to the site engineer.",
+    "ogImage": "/og-biw.png",
+    "whatsappNumber": "573000000000",
+    "whatsappMessage": "Hi, I'd like to know more about BIW",
+    "nav": [
+      { "label": "Product", "href": "#producto" },
+      { "label": "Modules", "href": "#modulos" },
+      { "label": "Roles", "href": "#roles" },
+      { "label": "Security", "href": "#seguridad" },
+      { "label": "FAQ", "href": "#faqs" }
+    ]
+  }
+}

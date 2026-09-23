@@ -1,0 +1,6 @@
+{
+  "order": 4,
+  "question": "Does our data mix with other companies' data?",
+  "answer": "No. Each company has its own subdomain (yourcompany.siteops.tech) and data isolation via Row Level Security, plus a unique email per company for sign-up.",
+  "locale": "en"
+}

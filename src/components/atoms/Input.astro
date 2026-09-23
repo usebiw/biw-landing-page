@@ -1,0 +1,54 @@
+---
+/**
+ * Input.astro — labeled text input with visible error state
+ * (signal-500 border + message) and always-on blue focus ring.
+ */
+type InputType = 'text' | 'email' | 'tel' | 'number' | 'password' | 'search' | 'url';
+
+interface Props {
+  label: string;
+  name: string;
+  type?: InputType;
+  required?: boolean;
+  error?: string;
+  placeholder?: string;
+  class?: string;
+}
+
+const {
+  label,
+  name,
+  type = 'text',
+  required = false,
+  error,
+  placeholder,
+  class: className = '',
+} = Astro.props;
+
+const inputId = `input-${name}`;
+const errorId = `${inputId}-error`;
+---
+
+<div class={['flex flex-col gap-1.5', className].filter(Boolean).join(' ')}>
+  <label for={inputId} class="font-sans text-xs font-semibold uppercase tracking-[0.1em] text-[var(--text-secondary)]">
+    {label}{required && <span class="text-signal-500"> *</span>}
+  </label>
+  <input
+    id={inputId}
+    name={name}
+    type={type}
+    placeholder={placeholder}
+    required={required}
+    aria-invalid={error ? 'true' : undefined}
+    aria-describedby={error ? errorId : undefined}
+    class:list={[
+      'rounded-lg border bg-[var(--surface-card)] px-3.5 py-2.5 font-sans text-sm text-[var(--text-primary)] placeholder:text-[var(--text-secondary)] transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-biw-400',
+      error ? 'border-signal-500' : 'border-[var(--border-hairline)] focus:border-biw-400',
+    ]}
+  />
+  {error && (
+    <p id={errorId} class="font-sans text-xs text-signal-500">
+      {error}
+    </p>
+  )}
+</div>

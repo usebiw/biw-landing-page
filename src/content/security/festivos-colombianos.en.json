@@ -1,0 +1,7 @@
+{
+  "order": 4,
+  "icon": "calendar",
+  "title": "Automatic Colombian holidays",
+  "description": "The schedule and its calculations automatically recognize Colombian public holidays, with no manual setup.",
+  "locale": "en"
+}

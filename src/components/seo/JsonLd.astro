@@ -1,0 +1,79 @@
+---
+/**
+ * JsonLd.astro — prints a single <script type="application/ld+json"> block.
+ * `type`: 'Organization' | 'SoftwareApplication' | 'FAQPage'.
+ * SoftwareApplication: applicationCategory "BusinessApplication", NEVER an
+ * invented offers.price — offers is omitted entirely (no price confirmed).
+ * FAQPage: mainEntity built from real faqs collection entries by the caller.
+ */
+interface OrganizationData {
+  name: string;
+  url: string;
+  logo?: string;
+}
+
+interface SoftwareApplicationData {
+  name: string;
+  description: string;
+  url: string;
+  applicationCategory?: string;
+  operatingSystem?: string;
+}
+
+interface FaqEntry {
+  question: string;
+  answer: string;
+}
+
+interface FAQPageData {
+  faqs: FaqEntry[];
+}
+
+type Props =
+  | { type: 'Organization'; data: OrganizationData }
+  | { type: 'SoftwareApplication'; data: SoftwareApplicationData }
+  | { type: 'FAQPage'; data: FAQPageData };
+
+const { type, data } = Astro.props;
+
+let json: Record<string, unknown>;
+
+if (type === 'Organization') {
+  const d = data as OrganizationData;
+  json = {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    name: d.name,
+    url: d.url,
+    ...(d.logo ? { logo: d.logo } : {}),
+  };
+} else if (type === 'SoftwareApplication') {
+  const d = data as SoftwareApplicationData;
+  json = {
+    '@context': 'https://schema.org',
+    '@type': 'SoftwareApplication',
+    name: d.name,
+    description: d.description,
+    url: d.url,
+    applicationCategory: d.applicationCategory ?? 'BusinessApplication',
+    operatingSystem: d.operatingSystem ?? 'Web',
+    // No offers block: no confirmed price exists yet — never invent one.
+  };
+} else {
+  const d = data as FAQPageData;
+  json = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: d.faqs.map((faq) => ({
+      '@type': 'Question',
+      name: faq.question,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: faq.answer,
+      },
+    })),
+  };
+}
+---
+
+<script type="application/ld+json" set:html={JSON.stringify(json)} is:inline />

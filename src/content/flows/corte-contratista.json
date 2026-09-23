@@ -1,0 +1,13 @@
+{
+  "order": 2,
+  "name": "Corte de contratista",
+  "description": "El avance ejecutado por un contratista se cierra en cortes periódicos con evidencia, antes de generar el pago.",
+  "steps": [
+    "El corte se crea en estado DRAFT con las cantidades ejecutadas",
+    "Pasa a IN_REVIEW con evidencias cargadas en S3",
+    "El director revisa y aprueba el corte (APPROVED)",
+    "El sistema bloquea cantidades que excedan lo contratado",
+    "El anticipo y la retegarantía se amortizan proporcionalmente al valor ejecutado"
+  ],
+  "locale": "es"
+}

@@ -1,0 +1,27 @@
+---
+/**
+ * GlassPanel.astro
+ * IMPORTANT: this panel MUST sit on top of a dark ground carrying the
+ * blue glow/sphere motif (e.g. a `.glow-sphere` element behind it, or a
+ * hero background already glowing). Without that glow, backdrop-blur
+ * has nothing to refract and reads as flat decoration — never place
+ * this panel over a plain flat background.
+ */
+interface Props {
+  strength?: 'light' | 'strong';
+  class?: string;
+}
+
+const { strength = 'light', class: className = '' } = Astro.props;
+
+const strengths: Record<string, string> = {
+  light: 'glass',
+  strong: 'glass-strong',
+};
+
+const classes = ['rounded-2xl', strengths[strength], className].filter(Boolean).join(' ');
+---
+
+<div class={classes}>
+  <slot />
+</div>

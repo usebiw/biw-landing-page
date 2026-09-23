@@ -1,0 +1,37 @@
+---
+/**
+ * FormField.astro
+ * Generic label + control + error wrapper sharing the same visual
+ * contract as Input/Textarea, for controls those atoms don't cover
+ * (e.g. a <select>). Slot = the control markup.
+ *
+ * Used inside the DemoCta.tsx React island as the field shell — Agente 3
+ * may reimplement this in TSX for controlled state, but must keep the
+ * same data-attributes/classes (data-field, .field-label, .field-error)
+ * so the rendered result looks identical.
+ */
+interface Props {
+  label: string;
+  name: string;
+  error?: string;
+  required?: boolean;
+  class?: string;
+}
+
+const { label, name, error, required = false, class: className = '' } = Astro.props;
+
+const fieldId = `field-${name}`;
+const errorId = `${fieldId}-error`;
+---
+
+<div data-field={name} class={['flex flex-col gap-1.5', className].filter(Boolean).join(' ')}>
+  <label for={fieldId} class="field-label font-sans text-xs font-semibold uppercase tracking-[0.1em] text-[var(--text-secondary)]">
+    {label}{required && <span class="text-signal-500"> *</span>}
+  </label>
+  <slot />
+  {error && (
+    <p id={errorId} class="field-error font-sans text-xs text-signal-500">
+      {error}
+    </p>
+  )}
+</div>

@@ -1,0 +1,182 @@
+---
+/**
+ * ApprovalFlows.astro — the three approval flows as tabs (with each
+ * flow's step count, so the length of the process is readable before
+ * opening it) over a vertical timeline: a glowing rail down the center,
+ * steps alternating sides on desktop, a single left rail on mobile.
+ *
+ * Without JS every flow renders stacked and the tab strip stays hidden
+ * (`[data-tabs]:not([data-ready])`), so no step is ever unreachable. The
+ * script adds roving-tabindex tabs with arrow-key support and re-binds
+ * on every `astro:page-load` (ClientRouter).
+ */
+import { getCollection } from 'astro:content';
+import { useTranslations, type Locale } from '../../lib/i18n';
+import Heading from '../atoms/Heading.astro';
+import SectionHeader from '../molecules/SectionHeader.astro';
+import Atmosphere from '../molecules/Atmosphere.astro';
+import StepItem from '../molecules/StepItem.astro';
+
+const locale = (Astro.currentLocale === 'en' ? 'en' : 'es') as Locale;
+const t = useTranslations(locale);
+const flows = (await getCollection('flows', (e) => e.data.locale === locale)).sort(
+  (a, b) => a.data.order - b.data.order,
+);
+---
+
+<section id="flujos" class="relative isolate overflow-hidden">
+  <Atmosphere variant="center" />
+
+  <div class="relative z-10 mx-auto max-w-6xl px-6 py-24 md:py-32">
+    <SectionHeader title={t('flows.heading')} intro={t('flows.intro')} align="center" />
+
+    <div data-tabs class="mt-14">
+      <div
+        role="tablist"
+        aria-label={t('flows.tabsLabel')}
+        class="flow-tablist glass-light glass-edge relative mx-auto flex w-full max-w-full gap-1.5 overflow-x-auto rounded-2xl p-1.5 [scrollbar-width:none] sm:w-fit"
+      >
+        {flows.map((flow, i) => (
+          <button
+            type="button"
+            role="tab"
+            id={`flow-tab-${flow.id}`}
+            aria-controls={`flow-panel-${flow.id}`}
+            aria-selected={i === 0 ? 'true' : 'false'}
+            tabindex={i === 0 ? 0 : -1}
+            class="flow-tab inline-flex shrink-0 items-center gap-2.5 whitespace-nowrap rounded-xl px-4 py-2.5 text-sm font-semibold tracking-tight text-[var(--text-secondary)] transition-[background-color,color,box-shadow] duration-300 hover:text-[var(--text-primary)]"
+          >
+            {flow.data.name}
+            <span class="flow-count rounded-md border border-[var(--border-hairline)] px-1.5 py-0.5 text-[0.6875rem] font-bold tabular-nums">
+              {flow.data.steps.length} {t('flows.steps')}
+            </span>
+          </button>
+        ))}
+      </div>
+
+      <div class="mt-12 flex flex-col gap-20">
+        {flows.map((flow, i) => (
+          <div
+            role="tabpanel"
+            id={`flow-panel-${flow.id}`}
+            aria-labelledby={`flow-tab-${flow.id}`}
+            data-inactive={i === 0 ? undefined : ''}
+            class="flow-panel"
+          >
+            <div class="mx-auto max-w-2xl text-center">
+              <Heading level={3} size="lg" class="text-[var(--text-primary)]">{flow.data.name}</Heading>
+              <p class="mt-3 text-sm leading-relaxed text-[var(--text-secondary)] md:text-base">
+                {flow.data.description}
+              </p>
+            </div>
+
+            <ol class="timeline relative mt-12 flex flex-col gap-6 md:gap-4">
+              {flow.data.steps.map((step, index) => (
+                <StepItem
+                  index={index + 1}
+                  label={step}
+                  stepLabel={t('flows.step')}
+                  side={index % 2 === 0 ? 'left' : 'right'}
+                />
+              ))}
+            </ol>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* The rail: a gradient line that fades out at both ends. */
+  .timeline::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 1.25rem;
+    width: 2px;
+    translate: -50% 0;
+    background: linear-gradient(
+      180deg,
+      transparent,
+      rgb(77 123 255 / 0.7) 12%,
+      rgb(20 80 255 / 0.5) 88%,
+      transparent
+    );
+    box-shadow: 0 0 14px rgb(20 80 255 / 0.45);
+  }
+
+  @media (min-width: 768px) {
+    .timeline::before {
+      left: 50%;
+    }
+  }
+
+  [data-tabs]:not([data-ready]) [role='tablist'] {
+    display: none;
+  }
+
+  [data-tabs][data-ready] .flow-panel[data-inactive] {
+    display: none;
+  }
+
+  [data-tabs][data-ready] .flow-panel {
+    animation: demo-fade 0.55s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  .flow-tab[aria-selected='true'] {
+    background: var(--color-biw-500);
+    color: #fff;
+    box-shadow:
+      0 10px 30px -10px rgb(20 80 255 / 0.95),
+      inset 0 1px 0 rgb(255 255 255 / 0.25);
+  }
+
+  .flow-tab[aria-selected='true'] .flow-count {
+    border-color: rgb(255 255 255 / 0.35);
+    color: #fff;
+  }
+</style>
+
+<script>
+  let controller: AbortController | null = null;
+
+  document.addEventListener('astro:page-load', () => {
+    controller?.abort();
+    controller = new AbortController();
+    const { signal } = controller;
+
+    document.querySelectorAll<HTMLElement>('[data-tabs]').forEach((root) => {
+      const tabs = Array.from(root.querySelectorAll<HTMLButtonElement>('[role="tab"]'));
+      const panels = Array.from(root.querySelectorAll<HTMLElement>('[role="tabpanel"]'));
+      if (!tabs.length) return;
+
+      function select(index: number, focus = false) {
+        tabs.forEach((tab, i) => {
+          const active = i === index;
+          tab.setAttribute('aria-selected', String(active));
+          tab.tabIndex = active ? 0 : -1;
+          panels[i]?.toggleAttribute('data-inactive', !active);
+        });
+        if (focus) tabs[index].focus();
+        tabs[index].scrollIntoView({ block: 'nearest', inline: 'nearest' });
+      }
+
+      tabs.forEach((tab, i) => {
+        tab.addEventListener('click', () => select(i), { signal });
+        tab.addEventListener(
+          'keydown',
+          (event) => {
+            if (event.key !== 'ArrowRight' && event.key !== 'ArrowLeft') return;
+            event.preventDefault();
+            select((i + (event.key === 'ArrowRight' ? 1 : -1) + tabs.length) % tabs.length, true);
+          },
+          { signal },
+        );
+      });
+
+      root.setAttribute('data-ready', '');
+    });
+  });
+</script>

@@ -1,0 +1,109 @@
+---
+/**
+ * ProjectShowcase.astro — "Proof, cast in place" style photography, as a
+ * swipeable carousel (2026-09-15: was a static grid). All images are
+ * stock photography from Unsplash (construction/site imagery), never
+ * real BIW client project photos — each is labeled illustrative in its
+ * alt text, never framed as a real customer case.
+ */
+import { Image } from 'astro:assets';
+import { useTranslations, type Locale } from '../../lib/i18n';
+import SectionHeader from '../molecules/SectionHeader.astro';
+import Atmosphere from '../molecules/Atmosphere.astro';
+import Badge from '../atoms/Badge.astro';
+import Carousel from '../molecules/Carousel.astro';
+
+const locale = (Astro.currentLocale === 'en' ? 'en' : 'es') as Locale;
+const t = useTranslations(locale);
+
+const srcs = [
+  'https://images.unsplash.com/photo-1541888946425-d81bb19240f5?q=80&w=1600&auto=format&fit=crop',
+  'https://images.unsplash.com/photo-1503387762-592deb58ef4e?q=80&w=1600&auto=format&fit=crop',
+  'https://images.unsplash.com/photo-1519389950473-47ba0277781c?q=80&w=1600&auto=format&fit=crop',
+  'https://images.unsplash.com/photo-1541976590-713941681591?q=80&w=1600&auto=format&fit=crop',
+];
+const copy = t('showcase.blocks');
+const blocks = srcs.map((src, i) => ({ src, alt: copy[i].alt, caption: copy[i].caption }));
+---
+
+<section class="relative isolate overflow-hidden">
+  <Atmosphere variant="center" grid={false} />
+  <div class="relative z-10 mx-auto max-w-7xl px-6 py-24 md:py-32">
+  <SectionHeader title={t('showcase.heading')} intro={t('showcase.intro')} align="center" />
+
+  <div class="mt-14">
+    <Carousel ariaLabel={t('showcase.carouselLabel')} prevLabel={t('carousel.prev')} nextLabel={t('carousel.next')}>
+      {blocks.map((block) => (
+        <figure
+          data-photo
+          class="glass-edge group relative aspect-[4/3] w-[20rem] shrink-0 overflow-hidden rounded-3xl border border-[var(--border-hairline)] shadow-[0_30px_80px_-30px_rgba(20,80,255,0.45)] sm:w-[26rem] md:aspect-[16/10] md:w-[34rem]"
+        >
+          <div class="photo-skeleton skeleton absolute inset-0" aria-hidden="true">
+            <div class="absolute inset-x-5 bottom-5 flex items-center justify-between gap-3">
+              <div class="h-5 w-1/2 rounded-md bg-[var(--skeleton-base)]"></div>
+              <div class="h-5 w-20 rounded-md bg-[var(--skeleton-base)]"></div>
+            </div>
+          </div>
+          <Image
+            src={block.src}
+            alt={block.alt}
+            width={1600}
+            height={1000}
+            loading="lazy"
+            decoding="async"
+            class="photo absolute inset-0 h-full w-full object-cover transition-[transform,opacity,filter] duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.04]"
+          />
+          <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent"></div>
+          <figcaption class="absolute inset-x-3 bottom-3 flex items-center justify-between gap-3 rounded-2xl border border-white/15 bg-black/25 px-4 py-3 backdrop-blur-xl backdrop-saturate-150">
+            <span class="font-display text-base font-bold text-white md:text-lg">{block.caption}</span>
+            <Badge tone="neutral" class="shrink-0 border-white/20 text-white/80">{t('showcase.illustrative')}</Badge>
+          </figcaption>
+        </figure>
+      ))}
+    </Carousel>
+  </div>
+  </div>
+</section>
+
+<style>
+  /* Until the remote photo has decoded, its slot shimmers instead of
+     sitting as an empty dark box; the photo then settles in from a blur. */
+  [data-photo] .photo {
+    opacity: 0;
+    filter: blur(16px);
+  }
+
+  [data-photo][data-loaded] .photo {
+    opacity: 1;
+    filter: none;
+  }
+
+  [data-photo][data-loaded] .photo-skeleton {
+    opacity: 0;
+    transition: opacity 0.5s ease;
+  }
+</style>
+
+<noscript>
+  <style>
+    [data-photo] .photo {
+      opacity: 1 !important;
+      filter: none !important;
+    }
+  </style>
+</noscript>
+
+<script>
+  document.addEventListener('astro:page-load', () => {
+    document.querySelectorAll<HTMLElement>('[data-photo]').forEach((figure) => {
+      const img = figure.querySelector('img');
+      if (!img) return;
+      const done = () => figure.setAttribute('data-loaded', '');
+      if (img.complete && img.naturalWidth > 0) done();
+      else {
+        img.addEventListener('load', done, { once: true });
+        img.addEventListener('error', done, { once: true });
+      }
+    });
+  });
+</script>

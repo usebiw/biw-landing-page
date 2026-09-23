@@ -1,0 +1,13 @@
+{
+  "order": 2,
+  "name": "Contractor progress cut",
+  "description": "A contractor's executed progress is closed out in periodic cuts with evidence, before payment is generated.",
+  "steps": [
+    "The cut is created in DRAFT status with the executed quantities",
+    "It moves to IN_REVIEW with evidence uploaded to S3",
+    "The director reviews and approves the cut (APPROVED)",
+    "The system blocks quantities that exceed what was contracted",
+    "The advance payment and retention are amortized in proportion to executed value"
+  ],
+  "locale": "en"
+}

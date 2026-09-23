@@ -1,0 +1,9 @@
+{
+  "order": 2,
+  "icon": "budget",
+  "status": "live",
+  "name": "Control Presupuestal",
+  "summary": "Presupuesto por capítulos e ítems, cortes de contratista y aprobación de pagos con reglas de bloqueo automático.",
+  "detail": "El presupuesto se organiza por capítulos e ítems vinculados al cronograma, con APU por contratista que hereda capítulos y AIU configurable. El comparativo presupuesto vs. ejecución es en tiempo real: alerta al 80% de ejecución de un capítulo y bloqueo al 110% sin aprobación explícita. Las órdenes de pago siguen el flujo Financiero → Director → Gerente cuando superan el umbral definido. Los cortes de contratista pasan por DRAFT → IN_REVIEW → APPROVED con evidencias en S3, y bloquean cantidades que excedan lo contratado: el residente crea una Solicitud de Cantidades que aprueba el director. El anticipo y la retegarantía son configurables, con amortización redistribuida dinámicamente en proporción al valor ejecutado.",
+  "locale": "es"
+}

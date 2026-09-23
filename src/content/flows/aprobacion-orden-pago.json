@@ -1,0 +1,12 @@
+{
+  "order": 1,
+  "name": "Aprobación de orden de pago",
+  "description": "Toda orden de pago que supera el umbral definido pasa por un flujo de aprobación en cascada antes de ejecutarse.",
+  "steps": [
+    "Área Financiera radica la orden de pago con su factura y soportes",
+    "Director de Proyecto revisa y aprueba",
+    "Gerencia General aprueba si la orden supera el umbral configurado",
+    "La orden queda registrada y habilitada para pago"
+  ],
+  "locale": "es"
+}

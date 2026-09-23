@@ -1,0 +1,93 @@
+---
+import { getEntry } from 'astro:content';
+import { useTranslations, type Locale } from '../../lib/i18n';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Seo from '../../components/seo/Seo.astro';
+import SiteHeader from '../../components/organisms/SiteHeader.astro';
+import SiteFooter from '../../components/organisms/SiteFooter.astro';
+import Heading from '../../components/atoms/Heading.astro';
+
+const locale = (Astro.currentLocale === 'en' ? 'en' : 'es') as Locale;
+const t = useTranslations(locale);
+const site = await getEntry('site', `site-${locale}`);
+const canonical = new URL(Astro.url.pathname, Astro.site).toString();
+
+// Placeholders — real BIW legal entity data, not yet supplied.
+const brand = '[Razón social BIW]';
+const nit = '[NIT BIW]';
+const city = locale === 'en' ? '[BIW city, Colombia]' : '[ciudad, Colombia]';
+const email = '[correo de contacto BIW]';
+
+const dateLocale = locale === 'en' ? 'en-US' : 'es-CO';
+const lastUpdated = new Date().toLocaleDateString(dateLocale, {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+
+function fill(template: string) {
+  return template
+    .replace('{{brand}}', brand)
+    .replace('{{nit}}', nit)
+    .replace('{{city}}', city)
+    .replace('{{email}}', email);
+}
+---
+
+<BaseLayout>
+  <Fragment slot="head">
+    <Seo
+      title={t('privacy.title')}
+      description={t('privacy.description')}
+      canonical={canonical}
+      ogImage={site!.data.ogImage}
+    />
+  </Fragment>
+
+  <SiteHeader />
+
+  <main>
+    <section class="mx-auto max-w-3xl px-6 py-20 md:py-28">
+      <Heading level={1} size="xl" class="text-[var(--text-primary)]">{t('privacy.heading')}</Heading>
+      <p class="mt-3 text-sm text-[var(--text-secondary)]">
+        {t('privacy.lastUpdated')}: {lastUpdated}
+      </p>
+
+      <div class="mt-10 flex flex-col gap-8 text-sm leading-relaxed text-[var(--text-primary)]/85 [&_h2]:mb-2 [&_h2]:mt-8 [&_h2]:font-display [&_h2]:text-lg [&_h2]:font-bold [&_h2]:text-[var(--text-primary)] [&_p]:max-w-[70ch]">
+        <p>{fill(t('privacy.intro'))}</p>
+
+        <div>
+          <h2>{t('privacy.controllerTitle')}</h2>
+          <p>{fill(t('privacy.controllerBody'))}</p>
+        </div>
+
+        <div>
+          <h2>{t('privacy.dataTitle')}</h2>
+          <p>{t('privacy.dataBody')}</p>
+        </div>
+
+        <div>
+          <h2>{t('privacy.purposeTitle')}</h2>
+          <p>{t('privacy.purposeBody')}</p>
+        </div>
+
+        <div>
+          <h2>{t('privacy.rightsTitle')}</h2>
+          <p>{fill(t('privacy.rightsBody'))}</p>
+        </div>
+
+        <div>
+          <h2>{t('privacy.termTitle')}</h2>
+          <p>{t('privacy.termBody')}</p>
+        </div>
+
+        <div>
+          <h2>{t('privacy.contactTitle')}</h2>
+          <p>{fill(t('privacy.contactBody'))}</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <SiteFooter />
+</BaseLayout>

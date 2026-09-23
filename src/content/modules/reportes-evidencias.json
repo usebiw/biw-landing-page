@@ -1,0 +1,9 @@
+{
+  "order": 4,
+  "icon": "reports",
+  "status": "live",
+  "name": "Reportes y Evidencias",
+  "summary": "Fotos y videos geolocalizados, informes automáticos y bitácora digital inmutable de cada obra.",
+  "detail": "Fotos y videos se capturan desde la cámara con geolocalización, los informes en PDF y Excel se generan de forma asíncrona, y la bitácora digital de obra es inmutable. La exportación se hace en un clic y todos los archivos se almacenan en S3 con distribución por CDN.",
+  "locale": "es"
+}

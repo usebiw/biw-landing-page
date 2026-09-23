@@ -1,0 +1,43 @@
+---
+/**
+ * ModuleRow.astro — expandable module row (Dribbble-style module list),
+ * built on native <details>/<summary> so it works with zero JS.
+ */
+import Icon, { type IconName } from '../atoms/Icon.astro';
+import StatusPill from '../atoms/StatusPill.astro';
+
+interface Props {
+  name: string;
+  summary: string;
+  detail: string;
+  icon: IconName;
+  status: 'ok' | 'info' | 'neutral';
+  statusLabel: string;
+  index: number;
+  class?: string;
+}
+
+const { name, summary, detail, icon, status, statusLabel, index, class: className = '' } = Astro.props;
+---
+
+<details class={['group py-5', className].filter(Boolean).join(' ')}>
+  <summary
+    class="-mx-3 flex cursor-pointer list-none items-center justify-between gap-6 rounded-lg px-3 py-1 transition-colors [&::-webkit-details-marker]:hidden hover:bg-[var(--surface-card)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-biw-400"
+  >
+    <div class="flex items-center gap-4">
+      <span class="w-5 font-sans text-xs font-semibold tabular-nums text-[var(--text-secondary)]">{String(index).padStart(2, '0')}</span>
+      <span class="inline-flex size-10 shrink-0 items-center justify-center rounded-xl border border-[var(--border-hairline)] bg-biw-500/10 transition-[box-shadow,border-color] duration-300 group-open:border-biw-400/50 group-open:shadow-[0_0_24px_rgba(20,80,255,0.45)]">
+        <Icon name={icon} class="size-5 text-biw-400" />
+      </span>
+      <span class="font-display text-lg font-bold tracking-tight text-[var(--text-primary)] md:text-xl">{name}</span>
+    </div>
+    <div class="flex items-center gap-4">
+      <StatusPill tone={status} class="hidden sm:inline-flex">{statusLabel}</StatusPill>
+      <Icon name="chevron-down" class="size-4 shrink-0 text-[var(--text-secondary)] transition-transform duration-200 group-open:rotate-180" />
+    </div>
+  </summary>
+  <div class="mt-4 flex flex-col gap-2 pl-[4.75rem]">
+    <p class="max-w-[70ch] font-sans text-sm text-[var(--text-secondary)]">{summary}</p>
+    <p class="max-w-[70ch] font-sans text-sm text-[var(--text-primary)]/80">{detail}</p>
+  </div>
+</details>

@@ -1,0 +1,12 @@
+{
+  "order": 1,
+  "roleKey": "gerencia-general",
+  "name": "Gerencia General",
+  "access": "Solo lectura y aprobaciones",
+  "responsibilities": [
+    "Dashboard ejecutivo con KPIs de todos los proyectos",
+    "Aprueba cambios de alcance y presupuesto",
+    "Recibe alertas críticas en tiempo real"
+  ],
+  "locale": "es"
+}

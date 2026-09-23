@@ -1,0 +1,12 @@
+{
+  "order": 5,
+  "roleKey": "contratistas-externos",
+  "name": "Contratistas / Externos",
+  "access": "Acceso restringido",
+  "responsibilities": [
+    "Ve solo sus actividades asignadas",
+    "Consulta el estado de sus contratos",
+    "Revisa el estado de sus pagos"
+  ],
+  "locale": "es"
+}

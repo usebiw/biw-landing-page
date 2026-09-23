@@ -1,0 +1,73 @@
+---
+/**
+ * RolesSection.astro — dark, glass carousel of the 5 roles (2026-09-15:
+ * moved off the fixed-light mist-50 panel per explicit user request — the
+ * whole site reads dark now, no more light island here). Still fully
+ * crawlable/accessible: native scroll-snap means every card is real DOM,
+ * indexable and readable without JS; the carousel controls are a pure
+ * enhancement, not the only way to reach a role.
+ *
+ * Architecture note: the interactive "see it per role" moment lives in
+ * ProductDemo.tsx (React island) right above this section — that island
+ * reuses these same roles (by stable `roleKey`) as tabs over one
+ * synthetic dashboard, so this section doesn't duplicate a second
+ * tabbed/interactive widget — it's the full-detail reference.
+ */
+import { getCollection } from 'astro:content';
+import { useTranslations, type Locale } from '../../lib/i18n';
+import Heading from '../atoms/Heading.astro';
+import SectionHeader from '../molecules/SectionHeader.astro';
+import Atmosphere from '../molecules/Atmosphere.astro';
+import Icon, { type IconName } from '../atoms/Icon.astro';
+import Carousel from '../molecules/Carousel.astro';
+
+const locale = (Astro.currentLocale === 'en' ? 'en' : 'es') as Locale;
+const t = useTranslations(locale);
+const roles = (await getCollection('roles', (e) => e.data.locale === locale)).sort(
+  (a, b) => a.data.order - b.data.order,
+);
+
+const roleIcon: Record<string, IconName> = {
+  'gerencia-general': 'chart',
+  'director-proyecto': 'shield',
+  'ingeniero-residente': 'building',
+  'area-financiera': 'wallet',
+  'contratistas-externos': 'users',
+};
+---
+
+<section id="roles" class="relative isolate overflow-hidden bg-[var(--surface-canvas)] py-24 md:py-32">
+  <Atmosphere variant="left" grid={false} />
+  <div class="glow-sphere pointer-events-none absolute -right-40 bottom-0 size-[28rem] opacity-40" aria-hidden="true"></div>
+
+  <div class="relative z-10 mx-auto max-w-6xl px-6">
+    <SectionHeader title={t('roles.heading')} intro={t('roles.intro')} align="center" />
+  </div>
+
+  <div class="relative z-10 mx-auto mt-14 max-w-6xl px-6">
+    <Carousel ariaLabel={t('roles.carouselLabel')} prevLabel={t('carousel.prev')} nextLabel={t('carousel.next')}>
+      {roles.map((role) => (
+        <article
+          data-spotlight
+          class="glass-strong glass-edge glass-interactive spotlight relative flex w-[19rem] shrink-0 flex-col rounded-3xl p-7 sm:w-[22rem] [&[data-active]]:shadow-[inset_0_1px_0_var(--glass-highlight),0_40px_100px_-24px_rgba(20,80,255,0.7)]"
+        >
+          <span class="inline-flex size-14 items-center justify-center rounded-2xl border border-biw-400/30 bg-biw-500/15 shadow-[0_0_30px_rgba(20,80,255,0.4)]">
+            <Icon name={roleIcon[role.data.roleKey] ?? 'users'} class="size-7 text-biw-400" />
+          </span>
+          <Heading level={3} size="lg" class="mt-6 text-[var(--text-primary)]">{role.data.name}</Heading>
+          <p class="mt-1 text-xs font-semibold uppercase tracking-[0.08em] text-biw-400">
+            {role.data.access}
+          </p>
+          <ul class="mt-5 flex flex-col gap-3 text-sm leading-relaxed text-[var(--text-primary)]/75">
+            {role.data.responsibilities.map((item) => (
+              <li class="flex gap-2.5">
+                <Icon name="check" class="mt-0.5 size-4 shrink-0 text-biw-400" />
+                <span>{item}</span>
+              </li>
+            ))}
+          </ul>
+        </article>
+      ))}
+    </Carousel>
+  </div>
+</section>

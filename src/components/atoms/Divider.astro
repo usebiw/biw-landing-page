@@ -1,0 +1,25 @@
+---
+/**
+ * Divider.astro
+ * `dot` = the "— • —" wordmark separator pattern (BIW •).
+ * `line` = plain horizontal rule.
+ */
+interface Props {
+  variant?: 'dot' | 'line';
+  class?: string;
+}
+
+const { variant = 'line', class: className = '' } = Astro.props;
+---
+
+{
+  variant === 'dot' ? (
+    <span class={['inline-flex items-center gap-2 text-[var(--text-secondary)]', className].filter(Boolean).join(' ')} aria-hidden="true">
+      <span class="h-px w-6 bg-[var(--border-hairline-strong)]"></span>
+      <span class="size-1.5 rounded-full bg-biw-500"></span>
+      <span class="h-px w-6 bg-[var(--border-hairline-strong)]"></span>
+    </span>
+  ) : (
+    <hr class={['border-0 h-px bg-[var(--border-hairline)]', className].filter(Boolean).join(' ')} />
+  )
+}

@@ -1,0 +1,9 @@
+{
+  "order": 1,
+  "icon": "progress",
+  "status": "live",
+  "name": "Progress Tracking",
+  "summary": "Daily site logs per work front, with progress computed automatically and compared against the schedule.",
+  "detail": "Every work front logs its daily progress with at least one evidence photo. Accumulated progress is computed by a database trigger and never regresses without director approval. An interactive Gantt chart compares actual progress against the plan and fires an automatic alert whenever delay exceeds 5%.",
+  "locale": "en"
+}

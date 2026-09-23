@@ -1,0 +1,7 @@
+{
+  "order": 1,
+  "icon": "building",
+  "title": "Subdomain multitenancy",
+  "description": "Each company operates on its own subdomain (<company>.siteops.tech), with a unique email per company and data isolation via Row Level Security (RLS).",
+  "locale": "en"
+}
