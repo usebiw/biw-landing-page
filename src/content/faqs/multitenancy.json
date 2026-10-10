@@ -1,6 +1,0 @@
-{
-  "order": 4,
-  "question": "¿Nuestros datos se mezclan con los de otras empresas?",
-  "answer": "No. Cada empresa tiene su propio subdominio (tuempresa.siteops.tech) y aislamiento de datos por Row Level Security, además de un correo único por compañía para el registro.",
-  "locale": "es"
-}

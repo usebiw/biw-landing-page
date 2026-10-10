@@ -1,9 +1,0 @@
-{
-  "order": 1,
-  "icon": "progress",
-  "status": "live",
-  "name": "Seguimiento de Avance",
-  "summary": "Registro diario de obra por frente, con avance calculado automáticamente y comparado contra el cronograma.",
-  "detail": "Cada frente de obra registra su avance diario con mínimo una foto de evidencia. El avance acumulado lo calcula un trigger de base de datos, nunca retrocede sin aprobación del director. Un Gantt interactivo compara el avance real contra el programado y genera una alerta automática cuando el retraso supera el 5%.",
-  "locale": "es"
-}

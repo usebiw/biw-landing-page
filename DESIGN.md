@@ -1,203 +1,173 @@
 ---
 name: BIW Landing
-description: Construction-ops control platform landing — inherited login identity, glass instrument panels on a near-black ground.
+description: Construction-ops control platform landing — "documento de obra": paper ground, ink type, hairline rules, the logo blue as the only accent.
 colors:
-  ink-950: "#04060B"
-  ink-900: "#070A12"
-  ink-800: "#0A0D14"
-  biw-400: "#4D7BFF"
-  biw-500: "#1450FF"
-  biw-600: "#0D3AD1"
-  mist-50: "#F4F6FA"
-  mist-100: "#E7EBF3"
-  slate-500: "#6B7789"
-  signal-500: "#FF5A1F"
+  paper: "#F5F5F2"
+  paper-2: "#ECECE7"
+  sheet: "#FFFFFF"
+  ink: "#0B0D10"
+  ink-2: "#474C54"
+  ink-3: "#767B84"
+  rule: "#D9D9D2"
+  accent: "#003CFF"
+  accent-ink: "#0030CC"
+  accent-soft: "#E5EBFF"
+  signal: "#C2410C"
+  signal-soft: "#FDEEE6"
 typography:
   display:
     fontFamily: "Archivo Variable, sans-serif"
-    fontSize: "clamp(3rem, 6vw, 6rem)"
-    fontWeight: 800
-    lineHeight: 0.98
-    letterSpacing: "-0.04em"
+    fontStretch: "112%"
+    fontSize: "clamp(2.5rem, 5vw, 3.75rem)"
+    fontWeight: 700
+    lineHeight: 1.04
+    letterSpacing: "-0.02em"
   headline:
     fontFamily: "Archivo Variable, sans-serif"
-    fontSize: "clamp(2.25rem, 4vw, 3rem)"
-    fontWeight: 800
-    lineHeight: 1.1
-    letterSpacing: "-0.04em"
+    fontStretch: "112%"
+    fontSize: "clamp(2rem, 3.5vw, 2.75rem)"
+    fontWeight: 700
+    lineHeight: 1.08
+    letterSpacing: "-0.02em"
   title:
     fontFamily: "Archivo Variable, sans-serif"
-    fontSize: "1.25rem"
+    fontStretch: "112%"
+    fontSize: "1.125rem"
     fontWeight: 700
     lineHeight: 1.3
-    letterSpacing: "-0.04em"
   body:
-    fontFamily: "Montserrat Variable, sans-serif"
-    fontSize: "1.125rem"
+    fontFamily: "Archivo Variable, sans-serif"
+    fontSize: "1rem"
     fontWeight: 400
     lineHeight: 1.6
-  label:
-    fontFamily: "Montserrat Variable, sans-serif"
-    fontSize: "0.75rem"
+  sheet-label:
+    fontFamily: "Archivo Variable, sans-serif"
+    fontSize: "0.6875rem"
     fontWeight: 600
-    lineHeight: 1.3
-    letterSpacing: "0.1em"
+    letterSpacing: "0.06em"
+    textTransform: "uppercase"
 rounded:
-  sm: "4px"
-  md: "8px"
-  lg: "16px"
-spacing:
-  sm: "12px"
-  md: "24px"
-  lg: "32px"
-  xl: "48px"
-  2xl: "96px"
+  none: "0"
+  control: "3px"
 components:
   button-primary:
-    backgroundColor: "{colors.biw-500}"
+    backgroundColor: "{colors.accent}"
     textColor: "#FFFFFF"
-    rounded: "{rounded.md}"
-    padding: "14px 28px"
-  button-primary-hover:
-    backgroundColor: "{colors.biw-600}"
-  button-ghost:
+    rounded: "{rounded.control}"
+    height: "48px (lg) / 40px (md)"
+  button-secondary:
     backgroundColor: "transparent"
-    textColor: "{colors.mist-50}"
-    rounded: "{rounded.md}"
-    padding: "14px 28px"
-  button-outline:
-    backgroundColor: "transparent"
-    textColor: "{colors.mist-50}"
-    rounded: "{rounded.md}"
-    padding: "14px 28px"
-  badge-blue:
-    backgroundColor: "{colors.biw-500}"
-    textColor: "{colors.biw-400}"
-    rounded: "{rounded.md}"
-    padding: "4px 10px"
-  status-pill-warning:
-    backgroundColor: "{colors.signal-500}"
-    textColor: "{colors.signal-500}"
-    rounded: "{rounded.md}"
-    padding: "4px 10px"
-  glass-panel:
-    backgroundColor: "rgba(255,255,255,0.06)"
-    rounded: "{rounded.lg}"
-    padding: "20px 24px"
+    border: "1px solid ink at 25%"
+    textColor: "{colors.ink}"
+    rounded: "{rounded.control}"
+  sheet:
+    backgroundColor: "{colors.sheet}"
+    border: "1px solid {colors.rule}"
+    shadow: "0 1px 0 rgb(11 13 16 / .04), 0 12px 24px -18px rgb(11 13 16 / .28)"
 ---
 
 # Design System: BIW Landing
 
 ## Overview
 
-**Creative North Star: "The Glass Instrument Panel"**
+**"Documento de obra."** The landing looks like the paperwork a construction company already trusts: budget sheets, actas de corte, the site log. Paper ground, ink type, hairline rules, one accent color. The buyer (owner, operations director, finance lead of a mid-size Colombian builder) should feel they are looking at work done by people who know how an obra runs, not at a generic SaaS template.
 
-BIW's landing is not a marketing skin painted over a product — it is the production login screen's own material (near-black ground, one electric-blue glow, mist-white panels) extended into a full site, with a construction-industry structural grammar (heavy display type, ticker rows, numbered process, stats band) laid on top of that inherited palette, never replacing it. Every glass surface exists because there is a blue glow behind it to refract; every orange pixel exists because it is reporting a real budget-gate reading. The site earns its "tecnológica" claim through live-feeling instrument readings (progress bars, dials, pills) rather than through generic SaaS iconography or stock gradients.
-
-Rejected explicitly during the build: a stock-photo hero with a floating headline (category default, refused per THESIS); the nixie-tube counter's orange-on-black literalism (challenger, declined — conflicts with BIW's blue brand truth, though its "quantities are the interface" discipline was kept); any eyebrow/kicker line over a heading (craft-floor ban, removed from Hero.astro during the build).
-
-**Key Characteristics:**
-- Near-black ground (`#04060B`–`#0A0D14`) alternating with mist-white panels (`#F4F6FA`) for form/data surfaces.
-- One accent color, blue (`#1450FF`), carried as a luminous sphere/glow motif behind every glass panel.
-- Signal orange (`#FF5A1F`) is load-bearing semantic only — the 80%/110% budget-gate reading, never decorative.
-- Asymmetric section composition (one large block + a secondary list/row) instead of repeated icon-card grids.
-- Self-authored single-stroke SVG icon set; no icon fonts, no emoji.
+This replaced (2026-10-10) an earlier dark, glassmorphic look — glow spheres, frosted cards, gradient headings, carousels — that the owner felt read as AI-generated. Those patterns are now banned on this surface (see Don'ts).
 
 ## Colors
 
-Two-color system by design: one blue accent carried through dark and light rhythm, one strictly semantic orange, everything else neutral ink/mist/slate.
+All colors come from the brand manual (`assets/brand/README.md` in the monorepo): paper `#F5F5F2`, ink `#0B0D10`, and the logo blue `#003CFF`, sampled from the official logo's dot.
 
-### Primary
-- **BIW Blue** (`#1450FF`, `biw-500`): the one accent. Used for the glow-sphere motif, primary buttons, focus rings, links, selection color, active progress-bar fill, scrollbar thumb. `biw-400` (`#4D7BFF`) is its lighter step for text-on-dark accents (badges, focus outline); `biw-600` (`#0D3AD1`) is its hover/pressed step.
+- **Paper** (`paper`, default theme) is the page ground; **paper-2** marks alternating sections (like a shaded band on a printout). **Sheet** (white) is reserved for documents lying on the paper: the budget sheet, the acta de corte, the contact form.
+- **Ink** for text, three steps: `ink` (primary), `ink-2` (body/secondary), `ink-3` (meta, column headers, "today" column).
+- **Rule** is the hairline that structures everything. `rule-strong` (= ink) is the heavy rule that opens each section.
+- **Accent** (logo blue) only for: the primary button, active nav underline, links, the "Con BIW" column header, chapter numbers in the platform index, small checkmarks, on-track progress bars. Never as a background wash, never as a glow.
+- **Signal** (burnt orange) is **semantic only**: the 80 % warning and 110 % lock on budget chapters, quantities over contract. Nothing decorative may use it.
+- Dark theme exists (toggle, persisted under `biw-theme`), flipping the same tokens: ink ground, paper text, white-alpha rules, accent `#3366FF`. Light/paper is the default; the OS preference does not switch it.
 
-### Neutral
-- **Ink Black** (`#04060B`–`#0A0D14`, `ink-950`/`ink-900`/`ink-800`): the dominant page ground. `ink-950` is the deepest base, `ink-900`/`ink-800` step up for layered surfaces (cards, gradient panels).
-- **Mist White** (`#F4F6FA`, `mist-50`): body text on dark, and the ground color for alternating light-rhythm panels/forms. `mist-100` (`#E7EBF3`) is its subtler step for light-panel borders.
-- **Slate** (`#6B7789`, `slate-500`): secondary/muted text — subcopy, captions, placeholder text.
-
-### Named Rules
-**The Semantic Orange Rule.** `signal-500` (`#FF5A1F`) renders only the product's real budget-execution thresholds (80% warning, 110% hard block). It never labels "beta," "próximamente," "datos de ejemplo," or any other generic status — those use blue (`tone="blue"`) or neutral. This was a real bug during the build (see comments in `StatusPill.astro`, `Hero.astro`, `AiRoadmap.astro`) and is now enforced in the component's own doc comment.
-
-**The Glow-Requires-Glass Rule.** Glass/blur surfaces (`.glass`, `.glass-strong`, `.glass-light`) never sit on a flat background. Each one is composed directly on top of a `.glow-sphere` element (or a hero ground that is already glowing) so the backdrop-blur has something to refract.
+Components use the semantic utilities generated from `@theme inline` in `src/styles/global.css` (`bg-paper`, `bg-sheet`, `text-ink-2`, `border-rule`, `text-accent-ink`, `bg-signal-soft`…). Never a literal hex on a surface that must follow the theme.
 
 ## Typography
 
-**Display Font:** Archivo Variable (with sans-serif fallback)
-**Body Font:** Montserrat Variable (with sans-serif fallback)
+One family: **Archivo Variable** with its width axis (`@fontsource-variable/archivo/wdth.css`).
 
-**Character:** A heavy, tightly-tracked display face (800/900 weight, -0.04em tracking) for headlines paired with a workmanlike, uppercase-tracked Montserrat for body copy and micro-labels — technical confidence over editorial warmth.
-
-### Hierarchy
-- **Display** (800, `clamp(3rem, 6vw, 6rem)` / up to 96px desktop, line-height 0.98): hero H1 only, `Heading size="display"`.
-- **Headline** (800, `clamp(2.25rem, 4vw, 3rem)`, line-height 1.1): section H2s, `Heading size="xl"`.
-- **Title** (700, 1.25rem, line-height 1.3): card/subsection H3s, `Heading size="md"`/`"lg"`.
-- **Body** (400, 1.125rem, line-height 1.6): subcopy and descriptions, capped `max-w-[60–62ch]`.
-- **Label** (600, 0.75rem, letter-spacing 0.1em, uppercase): KPI chips, badges, status pills, input labels, wordmark caption.
-
-### Named Rules
-**The Display-Ceiling Rule.** Display type never exceeds 6rem/96px (`lg:text-[6rem]`), reserved for the hero H1 alone; no other heading is sized to compete with it.
+- Headings: weight 700, `font-stretch: 112%` (semi-expanded), tracking `-0.02em`, `text-wrap: balance`. Sturdy, engineering-like; not the ultra-tight `-0.04em` display look.
+- Body: Archivo 400 at normal width, 16–18px, line-height 1.6, `text-wrap: pretty`.
+- Figures: `.figures` utility (tabular, lining numerals) on every table, total, percentage and code.
+- `.sheet-label` (11px, uppercase, 0.06em) is the **only** uppercase text, and lives only in document title blocks and signature boxes — where real plans and actas print it.
+- Percentages carry a non-breaking space ("80 %") so they never split.
 
 ## Layout
 
-Content sits in a `max-w-7xl` centered container with `px-6` gutters. The hero splits `lg:grid-cols-[55%_45%]` (copy/CTAs left, glass instrument right) — the only asymmetric ratio observed, and it recurs conceptually (not literally) in Pillars' `[1.3fr_1fr]` split. Section rhythm is generous vertical space: `py-24` to `md:py-32` between organisms. Two-tone rhythm alternates dark ink sections with occasional mist-white panels for form/data surfaces (per OWN-WORLD), rather than a single flat background throughout.
+- 12-column grid inside `max-w-7xl`, 24px gutters, 16px+ side padding on phones.
+- Every section opens with `SectionHead`: a 2px ink rule, then the sheet number and name in columns 1–3 ("03 Cortes de obra") and the heading + intro in columns 4–12. Always left-aligned. Section content aligns to the same columns (row labels in 1–3, content in 4–12), so the page reads like a drawing set.
+- Sections are numbered 01–08 in scroll order (the number is passed to `SectionHead` in each organism; keep it in step with `LandingTemplate.astro`).
+- Lists of comparable things are **tables or ruled lists**, never card grids: Hoy vs. Con BIW, the platform index (budget-style 1.1, 1.2… numbering), roles × what they do × what they see.
+
+## Motion
+
+Added 2026-10-10 after the owner found the flat version "hostil y seca". Motion is **purposeful and tied to the trade** — the documents work, the site gets built — never decorative atmosphere. All of it lives in `global.css` (Motion block) plus the reveal script in `BaseLayout.astro`, armed only under `html[data-js]` and fully disabled by `prefers-reduced-motion`.
+
+- `data-reveal` (+ `--i` for stagger): blocks settle in (fade + 16px rise) the first time they enter the viewport. Section heads draw their heavy rule left to right.
+- `data-bar` (`--w`): progress bars fill to their value. `data-count` (+ `data-suffix`, `data-delay`): a percentage counts up — only on figures that belong to a document.
+- `data-after`: a label that appears once its bar has arrived. `data-stamp` (+ `--delay`): a rubber stamp lands (`.stamp` utility) — "Bloqueado" on the budget sheet, "Aprobado" on the acta.
+- `data-pop`: numbered callouts pop onto the document in order. Hovering a note highlights its callout (CSS `:has()` in `CorteSection.astro`).
+- `data-draw` (paths with `pathLength="1"`) and `data-rise`: line drawings trace themselves and building floors fill bottom-up (`SiteElevation.astro`, module pictograms). `.sway`: the crane's load swings ±1.6° — the only infinite animation.
+- Hover: table rows tint, row markers lengthen, module names turn accent. No lifts, no glows.
+
+## Ambient motion (restored from the first version, 2026-10-10)
+
+The owner asked to keep the paper style but bring back the first version's animations. They return re-drawn for paper, as utilities in `global.css` (Ambient motion block), all off under reduced motion:
+
+- `drift-blob` (`--blob` color): soft blurred blobs drifting slowly — behind the hero sheet, in the Implementación and Contacto bands.
+- `plan-grid`: faint drawing grid behind the hero sheet. `orbit`: dashed survey circles rotating slowly behind it, each with a node.
+- `float-tag`: small paper tags bobbing beside the budget sheet (5 % delay alert, 110 % lock, named approvals). `live-dot`: pinging "Al día" dot in the sheet's title block.
+- `spotlight` + `data-spotlight`: cursor light on documents (script in `BaseLayout`). `lift`: documents rise 4px on hover.
+- `btn-sheen`: light sweep on primary buttons. Nav links grow their underline. The theme toggle reveals the new theme in a circle (View Transition).
+- `SurveyTape.astro` (replaced the module marquee, which read as a template): the modules laid along a surveyor's tape with chainages K0+000…, moved only by the reader's scroll.
+
+## Drawings (the imagery, until real photos exist)
+
+Three plan-style line drawings carry the page's imagery, all inline SVG on theme tokens:
+
+- `SiteElevation.astro` — full-bleed elevation right after the hero: delivered tower, tower in structure, foundations, tower crane, concrete mixer (drum turning), crews in hard hats, site office. Tower 2 is built by scroll (floors, formwork, crew, hook and the "Real %" label follow the reader's progress through the section).
+- `SCurve.astro` — control: planned vs. actual S-curve in section 01, shaded gap, "Hoy" marker and the >5 % alert stamp. Values are computed in the component so curve and labels agree.
+- `StructuralDetail.astro` — construction: footings, columns with rebar and ties, beams and a 0.40 m waffle slab, labeled with the acta's items 2.01–2.04 (section 03). Steel traces first, then concrete pours.
+
+## Color bands
+
+Rhythm comes from three scopes in `global.css`, applied to a whole section: default paper / `bg-paper-2` bands, `scope-ink` (dark band — Implementación) and `scope-blue` (logo-blue band — Contacto). `scope-paper` re-asserts paper tokens on a sheet inside a colored band (the contact form).
 
 ## Elevation & Depth
 
-Hybrid: mostly flat dark surfaces with tonal layering (`ink-950` → `ink-900` → `ink-800`, or `white/[.03]` to `white/[.1]` overlays) for card hierarchy, plus one deliberate lifted device — the glass panel — which always carries a blue-tinted shadow (`0 20px 60px -15px rgba(20,80,255,0.35)` for `.glass`, stronger for `.glass-strong`) and an inset highlight to sell the frosted-glass edge. Buttons carry a single soft blue shadow on the primary variant (`shadow-[0_20px_45px_-18px_rgba(20,80,255,0.65)]`); nothing else casts a shadow.
-
-### Shadow Vocabulary
-- **glass** (`inset 0 1px 0 rgba(255,255,255,0.12), 0 20px 60px -15px rgba(20,80,255,0.35)`): default glass panel, `backdrop-blur(20px)`.
-- **glass-strong** (`inset 0 1px 0 rgba(255,255,255,0.16), 0 24px 70px -18px rgba(20,80,255,0.45)`): the hero's featured instrument panel, `backdrop-blur(28px)`.
-- **glass-light** (`inset 0 1px 0 rgba(255,255,255,0.5), 0 20px 50px -20px rgba(20,80,255,0.18)`): light-panel variant for form/data surfaces on the mist-white rhythm.
-- **button-primary glow** (`0 20px 45px -18px rgba(20,80,255,0.65)`): primary CTA only.
-
-### Named Rules
-**The Blue-Tinted Shadow Rule.** Every shadow in the system carries the blue accent tint (`rgba(20,80,255,...)`), never a neutral black shadow — depth reads as glow, not as generic elevation.
+Flat. The only shadow is `.sheet`: one tight, low shadow so a document reads as paper on paper. No glow, no blur, no colored shadows, no hover lifts.
 
 ## Shapes
 
-Consistently rounded, no sharp corners and no hard-offset neobrutalist shadows anywhere in the build. `rounded-lg` (8px) is the default for buttons, badges, pills, inputs, and small cards (22 occurrences, the most common radius). `rounded-2xl` (16px) is reserved for larger containers — glass panels and pillar/section cards (8 occurrences). `rounded-full` appears only on true circular elements (status-dot, glow-sphere, scrollbar thumb). Borders are hairline and translucent (`border-white/10`, `border-white/15`) rather than solid or colored, except where a tone requires a colored border (badges, status pills use `{tone}-500/30` borders).
+Square. Controls (buttons, inputs) have a 3px radius; sheets and sections have none. Callout markers (numbered circles on the acta) are the only round shapes besides the logo dot.
 
 ## Components
 
-### Buttons
-- **Shape:** `rounded-lg` (8px), `px-5 py-2.5` (md) or `px-7 py-3.5` (lg).
-- **Primary:** solid `biw-500` background, white text, blue glow shadow; hover darkens to `biw-600`.
-- **Ghost:** transparent, `mist-50` text, hairline `border-white/15`, hover fills `white/[.08]`.
-- **Outline:** transparent, `mist-50` text, `border-biw-400`, hover tints `biw-500/10`. Hero always ships all three (Solicitar demo / Iniciar sesión / WhatsApp) as a fixed triad, not an arbitrary count.
-
-### Badges / Status Pills
-- **Badge:** uppercase tracked label (`rounded-lg`, `border`), tone = `blue` | `orange` | `neutral`. `orange` is reachable but reserved (see Named Rules).
-- **StatusPill:** same shape plus a leading `size-1.5` current-color dot, tone = `ok` | `info` | `neutral` | `warning` | `blocked`. `warning`/`blocked` are signal-orange and hard-reserved for the 80%/110% budget gate; every other status uses `ok` (blue), `info`, or `neutral`.
-
-### Cards / Containers
-- **Corner Style:** `rounded-2xl` for section-level cards, `rounded-lg` for nested elements.
-- **Background:** flat tonal layers (`bg-white/[.03]`) for secondary cards, or a `biw-600/20` → `ink-900` gradient for the featured/manifesto card in an asymmetric section.
-- **Shadow Strategy:** none on flat cards; blue-tinted glass shadow only on `GlassPanel`.
-- **Border:** hairline `border-white/10`.
-
-### Inputs / Fields
-- **Style:** `rounded-lg`, `bg-white/[.04]`, hairline `border-white/15`, label is uppercase-tracked `slate-500` micro-copy above the field, required marker is signal-orange asterisk.
-- **Focus:** `biw-400` border + always-visible 2px outline ring (never suppressed).
-- **Error:** border and message switch to `signal-500` — the one other legitimate use of signal orange besides the budget gate (form-validation error, not decorative).
-
-### Glass Panel (signature component)
-`GlassPanel` (`strength: 'light' | 'strong'`) is the system's signature device: a frosted, blue-shadowed surface that must sit on a `.glow-sphere` ground. It renders the hero's live product-demo instrument (progress bars, budget-gate reading) and recurs anywhere a "data surface floating on the dark ground" is needed. It has no meaning without the glow behind it — see Named Rules.
-
-### Icons
-Self-authored single-stroke (1.5px) SVG set (`Icon.astro`), 22 named glyphs, `currentColor` fill-none. No external icon library, no icon fonts, no emoji/unicode glyphs used as icons anywhere in the build.
+- **Buttons** (`Button.astro`): `primary` (solid accent, white text) and `secondary` (ink outline). Flat color change on hover; no sheen, no shadow.
+- **Sheets** (`BudgetSheet.astro`, `CorteSection.astro`): a title block row (BIW · document name · project · date, with "Valores de ejemplo" once in the block), a ruled table with tabular figures, totals under a heavy rule, footnotes in `ink-2`. Sample values must add up.
+- **Callouts**: numbered circles placed on the document, explained in a numbered list beside it — the drawing-annotation pattern.
+- **Inputs**: 44px, 1px `rule` border on `sheet`, 3px radius, accent border on focus; labels are sentence-case `text-sm font-medium` above the field.
+- **FAQ**: native `<details>`, ruled rows, plus/minus mark.
+- **Icons** (`Icon.astro`): sparse — CTA arrows, WhatsApp, lock, checks. Never an icon-in-a-rounded-square tile.
 
 ## Do's and Don'ts
 
 ### Do:
-- **Do** carry the blue glow-sphere behind every glass/blur surface (`.glass`, `.glass-strong`, `.glass-light`) — never place glass over a flat background.
-- **Do** reserve `signal-500` orange strictly for the 80%/110% budget-execution gate reading and form-validation errors — nothing else.
-- **Do** compose sections asymmetrically (one large block + a secondary list/row), per `Pillars.astro`, `RolesSection.astro`, `SecuritySection.astro`, `AiRoadmap.astro`, `ModulesList.astro`.
-- **Do** use the self-authored single-stroke SVG icon set (`Icon.astro`) for any new icon need.
-- **Do** label every synthetic product-demo data point visibly ("Datos de ejemplo") in a blue-tone badge — never orange, never unlabeled.
+- Show the product through the documents the buyer already uses (budget by chapter, acta de corte, signature route).
+- Write in the sector's words: residente, director de obra, interventoría, APU, AIU, corte, retegarantía, anticipo.
+- Address the reader as **usted**.
+- Keep every claim true to what BIW does today (see `PRODUCT.md`).
 
 ### Don't:
-- **Don't** place an eyebrow/kicker line above any heading, anywhere in the site — a craft-floor ban already enforced by removal from `Hero.astro` during the build; this is a defect-class ban carried by the incumbent system, not a decorative option to reintroduce.
-- **Don't** repeat the "grid of N identical icon+heading+text cards" as a full section scaffold — the established pattern is an asymmetric large-block-plus-list composition.
-- **Don't** use `signal-500` orange decoratively (badges for "beta," "próximamente," generic highlights) — it is load-bearing semantics for the budget-gate instrument only.
-- **Don't** introduce hard-offset/neobrutalist shadows, icon-font glyphs, or a system display face — none exist in this build and none fit the glass-instrument world.
+- Glass/backdrop-blur panels, glowing spheres, film grain.
+- Gradient text or gradient fills of any kind.
+- Centered "heading + gray paragraph" section openers, eyebrow pills above headings, uppercase tracked labels outside document title blocks.
+- Carousels. Glass, glows and gradient text stay out even though the first version's motion came back (see Ambient motion).
+- Grids of identical icon + heading + paragraph cards.
+- Stock photography. When real job-site photos exist, use them; until then, line drawings in the plan style (`SiteElevation`, pictograms) carry the imagery.
+- Floating "Datos de ejemplo" / "Beta" badges. Sample data is labeled once, inside the document's title block.

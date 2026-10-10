@@ -1,0 +1,7 @@
+{
+  "group": "archivo",
+  "order": 13,
+  "name": "Equipos y alquileres",
+  "summary": "Inventario, traslados entre obras y alertas de alquileres por vencer.",
+  "locale": "es"
+}

@@ -1,0 +1,7 @@
+{
+  "group": "dinero",
+  "order": 6,
+  "name": "Contratos y cortes",
+  "summary": "Contratos con AIU o IVA pleno, adiciones, actas de corte y liquidación.",
+  "locale": "es"
+}

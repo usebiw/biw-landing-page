@@ -1,0 +1,118 @@
+---
+/**
+ * BudgetSheet.astro — the hero's document: a chapter-by-chapter budget
+ * control sheet, drawn like the printout a director brings to the site
+ * meeting. Shows BIW's two budget gates on real-looking rows: warning at
+ * 80 % executed, lock at 110 %. Sample figures, labeled once in the title
+ * block (never as a floating badge).
+ */
+import { useTranslations, type Locale } from '../../lib/i18n';
+import { formatCop } from '../../lib/format';
+
+const locale = (Astro.currentLocale === 'en' ? 'en' : 'es') as Locale;
+const t = useTranslations(locale);
+const names = t('budgetSheet.chapters');
+
+const rows = [
+  { budget: 640_000_000, executed: 505_600_000 },
+  { budget: 1_920_000_000, executed: 1_574_400_000 },
+  { budget: 410_000_000, executed: 168_100_000 },
+  { budget: 365_000_000, executed: 401_500_000 },
+  { budget: 1_150_000_000, executed: 92_000_000 },
+].map((row, i) => {
+  const pct = Math.round((row.executed / row.budget) * 100);
+  const status = pct >= 110 ? 'block' : pct >= 80 ? 'warn' : 'ok';
+  return { ...row, name: names[i], code: String(i + 1).padStart(2, '0'), pct, status };
+});
+const totalBudget = rows.reduce((sum, r) => sum + r.budget, 0);
+const totalExecuted = rows.reduce((sum, r) => sum + r.executed, 0);
+const totalPct = Math.round((totalExecuted / totalBudget) * 100);
+
+// Bar scale runs to 120 % so the 110 % gate sits inside the track.
+const SCALE = 120;
+const at = (pct: number) => `${(Math.min(pct, SCALE) / SCALE) * 100}%`;
+---
+
+<figure class="sheet spotlight lift relative text-[0.8125rem]" data-reveal data-spotlight style="--i:2">
+  <figcaption class="grid grid-cols-2 border-b border-rule sm:grid-cols-[1.6fr_1fr_1fr]">
+    <div class="col-span-2 border-b border-rule px-5 py-4 sm:col-span-1 sm:border-r sm:border-b-0">
+      <p class="sheet-label flex items-center gap-2">BIW <span class="live-dot" aria-hidden="true"></span><span class="normal-case tracking-normal text-accent-ink">{t('hero.live')}</span></p>
+      <p class="mt-1 font-display text-[0.9375rem] font-bold [font-stretch:112%]">{t('budgetSheet.title')}</p>
+    </div>
+    <div class="border-r border-rule px-5 py-4">
+      <p class="sheet-label">{t('budgetSheet.project')}</p>
+      <p class="mt-1 text-ink">{t('budgetSheet.projectName')}</p>
+    </div>
+    <div class="px-5 py-4">
+      <p class="sheet-label">{t('budgetSheet.cutoff')}</p>
+      <p class="mt-1 text-ink">{t('budgetSheet.cutoffDate')}</p>
+      <p class="mt-0.5 text-xs text-ink-3">{t('sample.note')}</p>
+    </div>
+  </figcaption>
+
+  <table class="figures w-full border-collapse text-left">
+    <thead>
+      <tr class="border-b border-rule text-xs text-ink-3">
+        <th scope="col" class="py-2.5 pl-5 pr-2 font-medium">{t('budgetSheet.chapter')}</th>
+        <th scope="col" class="hidden px-2 py-2.5 text-right font-medium sm:table-cell">{t('budgetSheet.budget')}</th>
+        <th scope="col" class="px-2 py-2.5 text-right font-medium">{t('budgetSheet.executed')}</th>
+        <th scope="col" class="w-[26%] py-2.5 pl-3 pr-5 font-medium">{t('budgetSheet.pct')}</th>
+      </tr>
+    </thead>
+    <tbody>
+      {
+        rows.map((row, i) => (
+          <tr class:list={['border-b border-rule transition-colors duration-150 last:border-b-0 hover:bg-accent-soft/50', row.status === 'block' && 'bg-signal-soft']}>
+            <th scope="row" class="py-3 pl-5 pr-2 font-normal text-ink">
+              <span class="mr-1.5 text-ink-3">{row.code}</span>
+              {row.name}
+            </th>
+            <td class="hidden whitespace-nowrap px-2 py-3 text-right text-ink-2 sm:table-cell">{formatCop(row.budget, locale)}</td>
+            <td class="whitespace-nowrap px-2 py-3 text-right text-ink">{formatCop(row.executed, locale)}</td>
+            <td class="py-3 pl-3 pr-5">
+              <div class="flex items-center gap-3">
+                <span
+                  class:list={['figures w-11 shrink-0 whitespace-nowrap text-right', row.status === 'ok' ? 'text-ink' : 'font-semibold text-signal']}
+                  data-count={row.pct}
+                  data-suffix={'\u00a0%'}
+                  data-delay={350 + i * 120}
+                >
+                  {row.pct}&nbsp;%
+                </span>
+                <span class="relative h-1.5 flex-1 bg-rule" aria-hidden="true">
+                  <span
+                    class:list={['absolute inset-y-0 left-0', row.status === 'ok' ? 'bg-accent' : 'bg-signal']}
+                    data-bar
+                    style={`width:${at(row.pct)};--w:${at(row.pct)};--i:${i}`}
+                  />
+                  <span class="absolute -inset-y-1 w-px bg-ink/40" style={`left:${at(80)}`} />
+                  <span class="absolute -inset-y-1 w-px bg-ink" style={`left:${at(110)}`} />
+                </span>
+              </div>
+              {row.status === 'warn' && (
+                <p class="mt-1 text-xs font-semibold text-signal" data-after style={`--i:${i}`}>
+                  {t('budgetSheet.statusWarn')}
+                </p>
+              )}
+              {row.status === 'block' && (
+                <p class="mt-1.5">
+                  <span class="stamp text-signal" data-stamp style="--delay:1.9s">{t('budgetSheet.statusBlock')}</span>
+                </p>
+              )}
+            </td>
+          </tr>
+        ))
+      }
+    </tbody>
+    <tfoot>
+      <tr class="border-t-2 border-rule-strong font-semibold text-ink">
+        <th scope="row" class="py-3 pl-5 pr-2 text-left">Total</th>
+        <td class="hidden whitespace-nowrap px-2 py-3 text-right sm:table-cell">{formatCop(totalBudget, locale)}</td>
+        <td class="whitespace-nowrap px-2 py-3 text-right">{formatCop(totalExecuted, locale)}</td>
+        <td class="py-3 pl-3 pr-5"><span class="inline-block w-11 whitespace-nowrap text-right" data-count={totalPct} data-suffix={'\u00a0%'} data-delay="900">{totalPct}&nbsp;%</span></td>
+      </tr>
+    </tfoot>
+  </table>
+
+  <p class="border-t border-rule px-5 py-3 text-xs text-ink-2">{t('budgetSheet.footnote')}</p>
+</figure>

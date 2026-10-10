@@ -1,274 +1,158 @@
 ---
 /**
- * Hero.astro — FIRST VIEWPORT, exact to the direction contract.
- * Full-bleed canvas (theme-reactive) over a drifting blue mesh + dot grid
- * (Atmosphere). Left ~55%: display headline with its accent phrase in the
- * electric-blue gradient, subcopy, 2 CTAs (Contáctanos / WhatsApp — no
- * login button, this landing has no auth entry point), 3 KpiChips. No
- * eyebrow above the H1 — craft-floor bans that pattern outright.
- * Right ~45%: the page's one authored motion moment — orbit rings behind
- * a heavy glass instrument panel whose progress bars fill in on load,
- * with three glass chips floating off its edges, each naming a real
- * product mechanism (5% delay alert, 110% block, approvals on record).
- * All panel data is SYNTHETIC and labeled. Signal orange is reserved for
- * the 80%/110% budget-gate readings alone.
+ * Hero.astro — plain statement of what BIW does, two CTAs, one line of
+ * local specifics, and the budget-control sheet as the product proof.
+ * Fills the first screen. Text settles in and the sheet's bars fill
+ * (global.css motion); the site elevation follows as its own band.
  */
 import { getEntry } from 'astro:content';
 import { useTranslations, type Locale } from '../../lib/i18n';
-import Heading from '../atoms/Heading.astro';
-import Button from '../atoms/Button.astro';
-import Divider from '../atoms/Divider.astro';
-import Badge from '../atoms/Badge.astro';
-import Icon from '../atoms/Icon.astro';
-import StatusPill from '../atoms/StatusPill.astro';
-import KpiChip from '../molecules/KpiChip.astro';
-import Atmosphere from '../molecules/Atmosphere.astro';
 import { getWhatsappHref } from '../../lib/whatsapp';
+import Button from '../atoms/Button.astro';
+import Icon from '../atoms/Icon.astro';
+import BudgetSheet from './BudgetSheet.astro';
 
 const locale = (Astro.currentLocale === 'en' ? 'en' : 'es') as Locale;
-const t = useTranslations(locale);
-const site = await getEntry('site', `site-${locale}`);
 const hero = await getEntry('hero', `hero-${locale}`);
-const { headline, headlineAccent, subcopy, ctaPrimary, ctaWhatsapp, chips } = hero!.data;
-
-const [before, after] = headline.split(headlineAccent);
+const site = await getEntry('site', `site-${locale}`);
 const whatsappHref = getWhatsappHref(site!.data.whatsappNumber, site!.data.whatsappMessage);
-
-// Synthetic demo data — hardcoded here as an illustrative mockup, not real
-// project data. Labeled "Datos de ejemplo"/"Sample data" visibly below.
-const chapters = [
-  { name: t('hero.chapterFoundation'), planned: 100, real: 100 },
-  { name: t('hero.chapterStructure'), planned: 92, real: 80 },
-  { name: t('hero.chapterMasonry'), planned: 60, real: 45 },
-];
+const { headline, subcopy, ctaPrimary, ctaWhatsapp, localNote } = hero!.data;
+const t = useTranslations(locale);
 ---
 
-<section id="top" class="relative isolate overflow-hidden bg-[var(--surface-canvas)] pb-28 pt-16 md:pt-24">
-  <Atmosphere variant="hero" />
+<section id="top" class="hero spotlight relative isolate flex min-h-[calc(100svh-4rem)] flex-col justify-center overflow-hidden" data-spotlight data-reveal>
+  <!-- Full-section backdrop: moving plan grid, orbits, drifting blobs,
+       crop marks and a dimension line drawn across the sheet. -->
+  <div class="pointer-events-none absolute inset-0 -z-10" aria-hidden="true">
+    <div class="hero-grid absolute inset-0"></div>
+    <div class="drift-blob -left-40 top-[8%] size-[34rem] [--blob:rgb(0_60_255/0.10)]"></div>
+    <div class="drift-blob right-[4%] -top-32 size-[38rem] [animation-delay:-8s]"></div>
+    <div class="drift-blob bottom-[-18rem] left-[38%] size-[40rem] [--blob:rgb(51_102_255/0.10)] [animation-delay:-16s]"></div>
 
-  <div class="relative z-10 mx-auto grid max-w-7xl gap-20 px-6 lg:grid-cols-[55%_45%] lg:items-center lg:gap-8">
-    <div class="max-w-2xl">
-      <Heading level={1} size="display" class="text-[var(--text-primary)]">
-        {before}<span class="text-gradient-accent">{headlineAccent}</span>{after}
-      </Heading>
+    <div class="orbit left-[72%] size-[86rem] max-lg:left-1/2 max-sm:size-[44rem] [animation-duration:90s]">
+      <span class="absolute -top-1 left-1/2 size-2 rounded-full bg-accent"></span>
+    </div>
+    <div class="orbit left-[72%] size-[60rem] border-solid opacity-80 [animation-direction:reverse] [animation-duration:60s] max-lg:left-1/2 max-sm:size-[32rem]">
+      <span class="absolute -bottom-1 left-1/2 size-1.5 rounded-full bg-ink-3"></span>
+      <span class="absolute left-[-4px] top-1/2 size-2 rounded-full bg-accent/60"></span>
+    </div>
+    <div class="orbit left-[72%] size-[38rem] opacity-70 [animation-duration:40s] max-lg:left-1/2 max-sm:size-[22rem]">
+      <span class="absolute -right-1 top-1/2 size-1.5 rounded-full bg-accent"></span>
+    </div>
 
-      <p class="mt-7 max-w-[58ch] text-lg leading-relaxed text-[var(--text-secondary)]">
-        {subcopy}
-      </p>
+    <!-- crop marks -->
+    <span class="hero-mark left-6 top-6 border-l border-t"></span>
+    <span class="hero-mark right-6 top-6 border-r border-t"></span>
+    <span class="hero-mark bottom-6 left-6 border-b border-l"></span>
+    <span class="hero-mark bottom-6 right-6 border-b border-r"></span>
 
-      <div class="mt-10 flex flex-wrap items-center gap-3">
-        <Button variant="primary" size="lg" href="#demo">
+    <!-- dimension line across the section -->
+    <div class="absolute inset-x-6 bottom-12 hidden items-center gap-3 text-[0.6875rem] text-ink-3 md:flex">
+      <span class="figures">K0+000</span>
+      <span class="hero-dim relative h-px flex-1 bg-ink-3/60">
+        <span class="absolute -top-1.5 left-0 h-3 w-px bg-ink-3"></span>
+        <span class="absolute -top-1.5 left-1/4 h-2 w-px bg-ink-3"></span>
+        <span class="absolute -top-1.5 left-1/2 h-3 w-px bg-ink-3"></span>
+        <span class="absolute -top-1.5 left-3/4 h-2 w-px bg-ink-3"></span>
+        <span class="absolute -top-1.5 right-0 h-3 w-px bg-ink-3"></span>
+      </span>
+      <span class="figures">K1+200</span>
+    </div>
+  </div>
+
+  <div class="mx-auto grid w-full max-w-7xl gap-14 px-6 py-14 md:py-20 lg:grid-cols-12 lg:gap-10">
+    <div class="lg:col-span-6 lg:pt-6">
+      <h1 data-reveal class="max-w-[17ch] text-[2.5rem] leading-[1.02] text-ink sm:text-[3.25rem] lg:text-[3.75rem] xl:text-[4.25rem]">
+        {headline}
+      </h1>
+      <p data-reveal style="--i:1" class="mt-7 max-w-[54ch] text-lg leading-relaxed text-ink-2">{subcopy}</p>
+
+      <div data-reveal style="--i:2" class="mt-9 flex flex-wrap gap-3">
+        <Button variant="primary" size="lg" href="#contacto">
           {ctaPrimary}
-          <Icon name="arrow-right" class="size-4 transition-transform duration-300 group-hover:translate-x-1" />
+          <Icon name="arrow-right" class="size-4 transition-transform duration-150 group-hover:translate-x-0.5" />
         </Button>
-        <Button variant="glass" size="lg" href={whatsappHref}>
-          <Icon name="whatsapp" class="size-4 text-biw-400" />
+        <Button variant="secondary" size="lg" href={whatsappHref}>
+          <Icon name="whatsapp" class="size-4" />
           {ctaWhatsapp}
         </Button>
       </div>
 
-      <div class="mt-12 flex flex-wrap items-center gap-3 text-sm font-semibold uppercase tracking-[0.08em] text-[var(--text-primary)]/80">
-        {chips.map((chip, i) => (
-          <>
-            {i > 0 && <Divider variant="dot" />}
-            <KpiChip label={chip} />
-          </>
-        ))}
-      </div>
+      <p data-reveal style="--i:3" class="mt-10 max-w-[54ch] border-l-2 border-accent pl-4 text-sm leading-relaxed text-ink-2">{localNote}</p>
     </div>
 
-    <div class="hero-stage relative mx-auto w-full max-w-xl lg:max-w-none">
-      <div class="orbit orbit-lg" aria-hidden="true"><span class="orbit-node"></span></div>
-      <div class="orbit orbit-sm" aria-hidden="true"><span class="orbit-node"></span></div>
-      <div class="glow-sphere left-1/2 top-1/2 size-[30rem] -translate-x-1/2 -translate-y-1/2 opacity-70" aria-hidden="true"></div>
+    <div class="relative min-w-0 lg:col-span-6">
+      <BudgetSheet />
 
-      <div
-        data-spotlight
-        class="glass-strong glass-edge spotlight relative z-10 w-full rounded-3xl p-5 md:p-7"
-      >
-        <div class="mb-5 flex items-center justify-between gap-3">
-          <p class="flex items-center gap-2.5 font-display text-sm font-bold text-[var(--text-primary)]">
-            <span class="live-dot" aria-hidden="true"></span>
-            {t('hero.panelTitle')}
-          </p>
-          <Badge tone="blue">{t('hero.sampleData')}</Badge>
-        </div>
-
-        <ul class="flex flex-col gap-4">
-          {chapters.map((chapter, i) => (
-            <li class="flex flex-col gap-2">
-              <div class="flex items-center justify-between text-xs text-[var(--text-primary)]/70">
-                <span class="font-semibold text-[var(--text-primary)]">{chapter.name}</span>
-                <span class="tabular-nums">{t('hero.realVsPlanned')(chapter.real, chapter.planned)}</span>
-              </div>
-              <div class="relative h-2.5 overflow-hidden rounded-full bg-[var(--border-hairline-strong)]">
-                <div
-                  class="bar-fill absolute inset-y-0 left-0 rounded-full bg-[var(--text-primary)]/20"
-                  style={`width:${chapter.planned}%;--delay:${i * 120}ms`}
-                >
-                </div>
-                <div
-                  class="bar-fill bar-real absolute inset-y-0 left-0 rounded-full"
-                  style={`width:${chapter.real}%;--delay:${i * 120 + 90}ms`}
-                >
-                </div>
-              </div>
-            </li>
-          ))}
-        </ul>
-
-        <div class="mt-6 flex items-center justify-between gap-3 rounded-xl border border-[var(--border-hairline)] bg-[var(--surface-card)] px-4 py-3.5">
-          <div>
-            <p class="text-xs uppercase tracking-[0.08em] text-[var(--text-primary)]/60">{t('hero.chapterLabel')}</p>
-            <p class="font-display text-xl font-bold tabular-nums text-[var(--text-primary)]">{t('hero.chapterExecuted')}</p>
-          </div>
-          <StatusPill tone="warning">{t('hero.nearThreshold')}</StatusPill>
-        </div>
+      <div class="pointer-events-none absolute -left-6 -top-5 z-10 hidden sm:block md:-left-10" aria-hidden="true">
+        <span class="float-tag"><Icon name="bell" class="size-3.5 text-accent" />{t('hero.chipDelay')}</span>
       </div>
-
-      <div class="float-chip glass-light glass-edge absolute -left-4 -top-6 z-20 hidden rounded-full px-4 py-2 sm:flex md:-left-10">
-        <Icon name="bell" class="size-4 text-biw-400" />
-        <span>{t('hero.chipDelay')}</span>
+      <div class="pointer-events-none absolute -bottom-5 right-3 z-10 hidden sm:block md:-right-6" aria-hidden="true">
+        <span class="float-tag [animation-delay:-3s]"><span class="size-1.5 rounded-full bg-signal"></span>{t('hero.chipBlock')}</span>
       </div>
-      <div class="float-chip glass-light glass-edge absolute -bottom-7 right-2 z-20 hidden rounded-full px-4 py-2 [animation-delay:-3s] sm:flex md:-right-6">
-        <span class="size-1.5 rounded-full bg-signal-500 shadow-[0_0_10px_rgb(255_90_31/0.9)]" aria-hidden="true"></span>
-        <span>{t('hero.chipBlock')}</span>
-      </div>
-      <div class="float-chip glass-light glass-edge absolute -top-6 right-4 z-20 hidden rounded-full px-4 py-2 [animation-delay:-5s] xl:flex">
-        <Icon name="check" class="size-4 text-biw-400" />
-        <span>{t('hero.chipApprovals')}</span>
+      <div class="pointer-events-none absolute -top-5 right-6 z-10 hidden xl:block" aria-hidden="true">
+        <span class="float-tag [animation-delay:-5s]"><Icon name="check" class="size-3.5 text-accent" />{t('hero.chipApprovals')}</span>
       </div>
     </div>
   </div>
 </section>
 
 <style>
-  .orbit {
+  /* Plan grid over the whole hero: minor 24px, major 120px, panning
+     slowly; fades toward the edges so it never fights the text. */
+  .hero-grid {
+    background-image:
+      linear-gradient(var(--rule) 1px, transparent 1px),
+      linear-gradient(90deg, var(--rule) 1px, transparent 1px),
+      linear-gradient(color-mix(in srgb, var(--rule) 45%, transparent) 1px, transparent 1px),
+      linear-gradient(90deg, color-mix(in srgb, var(--rule) 45%, transparent) 1px, transparent 1px);
+    background-size:
+      120px 120px,
+      120px 120px,
+      24px 24px,
+      24px 24px;
+    -webkit-mask-image: radial-gradient(ellipse 85% 80% at 60% 45%, #000 35%, transparent 100%);
+    mask-image: radial-gradient(ellipse 85% 80% at 60% 45%, #000 35%, transparent 100%);
+    animation: grid-pan 60s linear infinite;
+  }
+
+  @keyframes grid-pan {
+    to {
+      background-position:
+        120px 120px,
+        120px 120px,
+        120px 120px,
+        120px 120px;
+    }
+  }
+
+  .hero-mark {
     position: absolute;
-    left: 50%;
-    top: 50%;
-    border-radius: 9999px;
-    border: 1px solid var(--border-hairline);
-    translate: -50% -50%;
-    pointer-events: none;
-    animation: orbit-spin 60s linear infinite;
+    width: 28px;
+    height: 28px;
+    border-color: var(--ink-3);
   }
 
-  .orbit-lg {
-    width: 44rem;
-    height: 44rem;
-    border-style: dashed;
-    border-color: var(--border-hairline-strong);
-    opacity: 0.55;
-  }
-
-  .orbit-sm {
-    width: 31rem;
-    height: 31rem;
-    animation-duration: 38s;
-    animation-direction: reverse;
-  }
-
-  .orbit-node {
-    position: absolute;
-    top: -4px;
-    left: 50%;
-    width: 8px;
-    height: 8px;
-    border-radius: 9999px;
-    background: var(--color-biw-400);
-    box-shadow:
-      0 0 14px 2px rgb(77 123 255 / 0.9),
-      0 0 40px rgb(20 80 255 / 0.6);
-  }
-
-  .live-dot {
-    position: relative;
-    width: 8px;
-    height: 8px;
-    border-radius: 9999px;
-    background: var(--color-biw-400);
-  }
-
-  .live-dot::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    background: inherit;
-    animation: live-ping 2.2s cubic-bezier(0, 0, 0.2, 1) infinite;
-  }
-
-  .bar-real {
-    background: linear-gradient(90deg, var(--color-biw-600), var(--color-biw-500) 60%, var(--color-biw-400));
-    box-shadow: 0 0 18px rgb(20 80 255 / 0.65);
-  }
-
-  .bar-fill {
+  /* The dimension line is drawn across the section on load. */
+  :global(html[data-js]) .hero-dim {
+    transform: scaleX(0);
     transform-origin: left;
-    animation: bar-grow 1.4s cubic-bezier(0.16, 1, 0.3, 1) both;
-    animation-delay: var(--delay, 0ms);
+    transition: transform 1.6s var(--ease-out) 0.4s;
   }
 
-  .float-chip {
-    align-items: center;
-    gap: 0.5rem;
-    font-size: 0.75rem;
-    font-weight: 600;
-    color: var(--text-primary);
-    white-space: nowrap;
-    animation: chip-float 7s ease-in-out infinite;
+  :global(html[data-js]) .hero.is-in .hero-dim {
+    transform: scaleX(1);
   }
 
-  @keyframes orbit-spin {
-    to {
-      rotate: 360deg;
-    }
-  }
-
-  @keyframes bar-grow {
-    from {
-      transform: scaleX(0.12);
-    }
-    to {
-      transform: scaleX(1);
-    }
-  }
-
-  @keyframes chip-float {
-    0%,
-    100% {
-      transform: translateY(0);
-    }
-    50% {
-      transform: translateY(-10px);
-    }
-  }
-
-  @keyframes live-ping {
-    75%,
-    100% {
-      transform: scale(2.6);
-      opacity: 0;
-    }
-  }
-
-  @media (max-width: 640px) {
-    .orbit-lg {
-      width: 30rem;
-      height: 30rem;
-    }
-
-    .orbit-sm {
-      width: 22rem;
-      height: 22rem;
-    }
+  /* The hero itself is a reveal host only to arm its children; it never
+     fades or moves as a block. */
+  :global(html[data-js]) .hero[data-reveal] {
+    opacity: 1;
+    transform: none;
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .orbit,
-    .float-chip,
-    .live-dot::after {
+    .hero-grid {
       animation: none;
     }
   }

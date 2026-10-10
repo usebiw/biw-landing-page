@@ -1,0 +1,6 @@
+{
+  "order": 3,
+  "question": "¿Sirve para contratos con AIU y para contratos con IVA pleno?",
+  "answer": "Sí. Cada contrato se define de una de las dos formas, y los cortes, las actas al cliente y los informes usan esa misma regla. Nadie tiene que recalcular el AIU a mano.",
+  "locale": "es"
+}

@@ -1,6 +1,6 @@
 {
   "order": 5,
-  "question": "¿Qué pasa si no hay internet en la obra?",
-  "answer": "Hoy BIW es una plataforma web: se necesita conexión a internet para registrar avance, subir evidencias y consultar información. No ofrecemos modo offline en esta etapa; recomendamos registrar el avance del día cuando el frente tenga cobertura, por ejemplo desde la oficina de obra.",
+  "question": "¿Qué pasa si no hay señal en la obra?",
+  "answer": "BIW funciona en el navegador y necesita conexión para registrar avance y subir fotos. Hoy no tiene modo sin conexión. Lo habitual es registrar el día desde la oficina de obra o cuando el frente tenga cobertura.",
   "locale": "es"
 }

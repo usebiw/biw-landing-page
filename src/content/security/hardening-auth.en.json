@@ -1,7 +1,0 @@
-{
-  "order": 3,
-  "icon": "shield",
-  "title": "Authentication hardening",
-  "description": "Refresh-token reuse detection, account lockout by email on suspicious activity, and correctly configured proxy headers. An OWASP security audit is underway ahead of launch.",
-  "locale": "en"
-}

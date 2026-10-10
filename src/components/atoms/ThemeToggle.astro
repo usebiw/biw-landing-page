@@ -1,6 +1,6 @@
 ---
 /**
- * ThemeToggle.astro — light/dark switch. The actual theme is applied by a
+ * ThemeToggle.astro — paper/dark switch. The actual theme is applied by a
  * blocking inline script in BaseLayout (before paint, no flash); this
  * component only renders the button and wires the click handler. May be
  * rendered more than once per page (desktop + mobile nav), so it's
@@ -23,14 +23,14 @@ const { labelLight, labelDark, class: className = '' } = Astro.props;
   data-label-dark={labelDark}
   aria-label={labelDark}
   class={[
-    'inline-flex size-10 shrink-0 items-center justify-center rounded-lg border border-[var(--border-hairline)] text-[var(--text-primary)] transition-colors hover:bg-[var(--surface-card-strong)]',
+    'inline-flex size-9 shrink-0 items-center justify-center rounded-[3px] text-ink-2 transition-colors hover:bg-paper-2 hover:text-ink',
     className,
   ]
     .filter(Boolean)
     .join(' ')}
 >
   <svg
-    class="size-[18px] [html[data-theme=light]_&]:hidden"
+    class="hidden size-[18px] [html[data-theme=dark]_&]:block"
     viewBox="0 0 24 24"
     fill="none"
     stroke="currentColor"
@@ -42,7 +42,7 @@ const { labelLight, labelDark, class: className = '' } = Astro.props;
     <path d="M12 4v2M12 18v2M4 12h2M18 12h2M6.3 6.3l1.4 1.4M16.3 16.3l1.4 1.4M6.3 17.7l1.4-1.4M16.3 7.7l1.4-1.4M12 8a4 4 0 100 8 4 4 0 000-8z" />
   </svg>
   <svg
-    class="hidden size-[18px] [html[data-theme=light]_&]:block"
+    class="size-[18px] [html[data-theme=dark]_&]:hidden"
     viewBox="0 0 24 24"
     fill="none"
     stroke="currentColor"
@@ -58,12 +58,12 @@ const { labelLight, labelDark, class: className = '' } = Astro.props;
 <script>
   // Runs once per session (ClientRouter): the click handler is delegated
   // on document so it keeps working on swapped-in pages, and labels are
-  // re-synced on every `astro:page-load`.
+  // re-synced on every `astro:page-load`. Paper (light) is the default.
   const KEY = 'biw-theme';
   type Theme = 'light' | 'dark';
 
   function current(): Theme {
-    return document.documentElement.dataset.theme === 'light' ? 'light' : 'dark';
+    return document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light';
   }
 
   function apply(theme: Theme) {
@@ -78,7 +78,9 @@ const { labelLight, labelDark, class: className = '' } = Astro.props;
     });
   }
 
-  function switchTheme(origin: HTMLElement) {
+  document.addEventListener('click', (event) => {
+    const btn = (event.target as Element | null)?.closest<HTMLElement>('[data-theme-toggle]');
+    if (!btn) return;
     const next: Theme = current() === 'light' ? 'dark' : 'light';
     try {
       localStorage.setItem(KEY, next);
@@ -94,7 +96,7 @@ const { labelLight, labelDark, class: className = '' } = Astro.props;
     }
 
     // Circular reveal of the new theme, growing out of the toggle itself.
-    const rect = origin.getBoundingClientRect();
+    const rect = btn.getBoundingClientRect();
     const x = rect.left + rect.width / 2;
     const y = rect.top + rect.height / 2;
     const radius = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y));
@@ -110,11 +112,6 @@ const { labelLight, labelDark, class: className = '' } = Astro.props;
       })
       .catch(() => {});
     transition.finished.finally(() => delete root.dataset.vt);
-  }
-
-  document.addEventListener('click', (event) => {
-    const btn = (event.target as Element | null)?.closest<HTMLElement>('[data-theme-toggle]');
-    if (btn) switchTheme(btn);
   });
 
   document.addEventListener('astro:page-load', () => apply(current()));

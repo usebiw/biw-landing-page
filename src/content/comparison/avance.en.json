@@ -1,0 +1,7 @@
+{
+  "order": 1,
+  "area": "Site progress",
+  "today": "Every site engineer sends a spreadsheet on Friday and someone at the office merges them by hand.",
+  "withBiw": "The site engineer logs the day's progress per activity, with a photo. The running total calculates itself against the schedule; if the delay passes 5 %, the project director hears about it.",
+  "locale": "en"
+}

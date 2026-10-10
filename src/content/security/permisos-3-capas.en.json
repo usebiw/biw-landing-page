@@ -1,7 +1,0 @@
-{
-  "order": 2,
-  "icon": "layers",
-  "title": "Three-layer permissions",
-  "description": "Access control is enforced in the backend (require_permission), in the default seeded roles, and in the UI (interface gating), with navigation and tabs shown according to role.",
-  "locale": "en"
-}

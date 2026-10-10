@@ -1,0 +1,8 @@
+{
+  "roleKey": "gerencia",
+  "order": 1,
+  "name": "Management",
+  "does": "Approves scope and budget changes, and payment orders above the threshold.",
+  "sees": "Every project: progress, spend and margin.",
+  "locale": "en"
+}

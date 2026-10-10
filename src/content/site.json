@@ -3,36 +3,66 @@
     "locale": "es",
     "brandName": "BIW",
     "brandFull": "Building Integrated Workflow",
-    "tagline": "Control y seguimiento de obras, en un solo lugar",
-    "metaTitle": "BIW — Control y seguimiento de obras",
-    "metaDescription": "Software para controlar avance, presupuesto y contratistas de tus obras en tiempo real, desde gerencia hasta el residente.",
+    "tagline": "Control de obra para constructoras, del frente de trabajo a la gerencia.",
+    "metaTitle": "BIW — Control de obra para constructoras",
+    "metaDescription": "Avance diario con evidencia, presupuesto por capítulos, cortes de contratista y nómina de obra en un solo sistema, con cada aprobación registrada.",
     "ogImage": "/og-biw.png",
     "whatsappNumber": "573000000000",
-    "whatsappMessage": "Hola, quiero saber más sobre BIW",
+    "whatsappMessage": "Hola, quiero conocer BIW para mis obras",
     "nav": [
-      { "label": "Producto", "href": "#producto" },
-      { "label": "Módulos", "href": "#modulos" },
-      { "label": "Roles", "href": "#roles" },
-      { "label": "Seguridad", "href": "#seguridad" },
-      { "label": "Preguntas frecuentes", "href": "#faqs" }
+      {
+        "label": "Plataforma",
+        "href": "#plataforma"
+      },
+      {
+        "label": "Cortes de obra",
+        "href": "#cortes"
+      },
+      {
+        "label": "Para quién",
+        "href": "#roles"
+      },
+      {
+        "label": "Implementación",
+        "href": "#implementacion"
+      },
+      {
+        "label": "Preguntas",
+        "href": "#faqs"
+      }
     ]
   },
   "site-en": {
     "locale": "en",
     "brandName": "BIW",
     "brandFull": "Building Integrated Workflow",
-    "tagline": "Construction project control and tracking, in one place",
-    "metaTitle": "BIW — Construction project control",
-    "metaDescription": "Software to control progress, budget, and contractors on your job sites in real time, from management to the site engineer.",
+    "tagline": "Job-site control for construction companies, from the work front to management.",
+    "metaTitle": "BIW — Job-site control for builders",
+    "metaDescription": "Daily progress with evidence, chapter budgets, subcontractor progress billing and site payroll in one system, with every approval on record.",
     "ogImage": "/og-biw.png",
     "whatsappNumber": "573000000000",
-    "whatsappMessage": "Hi, I'd like to know more about BIW",
+    "whatsappMessage": "Hi, I'd like to learn about BIW for my job sites",
     "nav": [
-      { "label": "Product", "href": "#producto" },
-      { "label": "Modules", "href": "#modulos" },
-      { "label": "Roles", "href": "#roles" },
-      { "label": "Security", "href": "#seguridad" },
-      { "label": "FAQ", "href": "#faqs" }
+      {
+        "label": "Platform",
+        "href": "#plataforma"
+      },
+      {
+        "label": "Progress billing",
+        "href": "#cortes"
+      },
+      {
+        "label": "Who it's for",
+        "href": "#roles"
+      },
+      {
+        "label": "Onboarding",
+        "href": "#implementacion"
+      },
+      {
+        "label": "FAQ",
+        "href": "#faqs"
+      }
     ]
   }
 }

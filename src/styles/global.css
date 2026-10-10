@@ -1,128 +1,94 @@
 @import 'tailwindcss';
-@import '@fontsource-variable/archivo';
-@import '@fontsource-variable/montserrat';
+@import '@fontsource-variable/archivo/wdth.css';
 
 /*
- * BIW design tokens — inherited from the production login screen.
- * Electric-blue accent/glow (#1450FF) is constant across themes; the
- * ground and text tokens below are the ones that flip between dark (the
- * original committed world, default) and light via [data-theme="light"]
- * on <html>. Signal orange (#FF5A1F) is SEMANTIC ONLY (budget 80%/110%
- * gates) — never decorative, in either theme.
+ * BIW design tokens — "documento de obra".
+ *
+ * The landing reads like the paperwork a construction company already
+ * trusts (budget sheets, actas de corte, bitácora): paper ground, ink
+ * text, hairline rules, one accent. Colors come from the brand manual
+ * (assets/brand/README.md): paper #F5F5F2, ink #0B0D10, and the logo
+ * blue #003CFF (sampled from the official logo). Signal orange is
+ * SEMANTIC ONLY (budget 80 % / 110 % gates, exceeded quantities).
+ * Motion is purposeful: documents "work" (bars fill, stamps land, the
+ * site elevation draws itself) and content settles in on scroll.
+ *
+ * Light ("paper") is the default; [data-theme="dark"] on <html> flips the
+ * runtime tokens below. Components use the semantic utilities generated
+ * by `@theme inline` (bg-paper, text-ink, border-rule, …) so the toggle
+ * repaints everything without per-component dark variants.
  */
 @theme {
-  --color-ink-950: #04060b;
-  --color-ink-900: #070a12;
-  --color-ink-800: #0a0d14;
-
-  --color-biw-400: #4d7bff;
-  --color-biw-500: #1450ff;
-  --color-biw-600: #0d3ad1;
-
-  --color-mist-50: #f4f6fa;
-  --color-mist-100: #e7ebf3;
-
-  --color-slate-500: #6b7789;
+  --color-biw-400: #3366ff;
+  --color-biw-500: #003cff;
+  --color-biw-600: #0030cc;
 
   --color-signal-500: #ff5a1f;
+  --color-signal-600: #c2410c;
 
-  --font-display: 'Archivo Variable', sans-serif;
-  --font-sans: 'Montserrat Variable', sans-serif;
+  --font-display: 'Archivo Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-sans: 'Archivo Variable', ui-sans-serif, system-ui, sans-serif;
 }
 
-/* ---------------------------------------------------------------------
-   Theme tokens — dark is the default/original world; [data-theme="light"]
-   overrides. Every "canvas" surface in the page is built from these vars
-   (not literal ink-950/white classes) so the runtime toggle actually
-   repaints the whole site, not just a hardcoded subset of it.
---------------------------------------------------------------------- */
+@theme inline {
+  --color-paper: var(--paper);
+  --color-paper-2: var(--paper-2);
+  --color-sheet: var(--sheet);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-ink-3: var(--ink-3);
+  --color-rule: var(--rule);
+  --color-rule-strong: var(--rule-strong);
+  --color-accent: var(--accent);
+  --color-accent-ink: var(--accent-ink);
+  --color-accent-soft: var(--accent-soft);
+  --color-signal: var(--signal);
+  --color-signal-soft: var(--signal-soft);
+}
 
 :root,
-html:not([data-theme='light']) {
-  color-scheme: dark;
-
-  --surface-canvas: var(--color-ink-950);
-  --surface-raised: var(--color-ink-800);
-  --surface-card: rgb(255 255 255 / 0.03);
-  --surface-card-strong: rgb(255 255 255 / 0.06);
-
-  --text-primary: var(--color-mist-50);
-  --text-secondary: #7f8b9e;
-  --text-accent: var(--color-biw-400);
-
-  --border-hairline: rgb(255 255 255 / 0.1);
-  --border-hairline-strong: rgb(255 255 255 / 0.16);
-
-  --glass-bg: rgb(255 255 255 / 0.07);
-  --glass-bg-strong: rgb(255 255 255 / 0.11);
-  --glass-border: rgb(255 255 255 / 0.12);
-  --glass-border-strong: rgb(255 255 255 / 0.18);
-  --glass-highlight: rgb(255 255 255 / 0.14);
-  --glass-fallback-solid: var(--color-ink-800);
-
-  --scrollbar-track: var(--color-ink-900);
-  --theme-color-meta: #04060b;
-
-  /* Headings: mist → electric blue (user-requested gradient headings). */
-  --grad-heading: linear-gradient(100deg, #f4f6fa 0%, #c9d6ff 38%, #4d7bff 100%);
-  --grad-accent: linear-gradient(100deg, #4d7bff 0%, #1450ff 55%, #7aa0ff 100%);
-
-  /* Atmosphere: drifting blue mesh, dot grid, film grain. */
-  --mesh-a: rgb(20 80 255 / 0.32);
-  --mesh-b: rgb(77 123 255 / 0.2);
-  --mesh-c: rgb(13 58 209 / 0.26);
-  --grid-dot: rgb(255 255 255 / 0.07);
-  --noise-opacity: 0.05;
-
-  /* Glass edge light (gradient hairline) + cursor spotlight. */
-  --edge-hi: rgb(160 186 255 / 0.55);
-  --edge-lo: rgb(255 255 255 / 0.04);
-  --spotlight: rgb(77 123 255 / 0.16);
-
-  --skeleton-base: rgb(255 255 255 / 0.05);
-  --skeleton-shine: rgb(160 186 255 / 0.14);
-}
-
-html[data-theme='light'] {
+html:not([data-theme='dark']) {
   color-scheme: light;
 
-  --surface-canvas: #f7f9fc;
-  --surface-raised: #eaeff7;
-  --surface-card: rgb(4 6 11 / 0.035);
-  --surface-card-strong: rgb(4 6 11 / 0.06);
+  --paper: #f5f5f2;
+  --paper-2: #ecece7;
+  --sheet: #ffffff;
+  --ink: #0b0d10;
+  --ink-2: #474c54;
+  --ink-3: #767b84;
+  --rule: #d9d9d2;
+  --rule-strong: #0b0d10;
+  --accent: #003cff;
+  --accent-ink: #0030cc;
+  --accent-soft: #e5ebff;
+  --signal: #c2410c;
+  --signal-soft: #fdeee6;
 
-  --text-primary: var(--color-ink-800);
-  --text-secondary: #4b5565;
-  --text-accent: var(--color-biw-600);
+  --theme-color-meta: #f5f5f2;
+  --skeleton-base: rgb(11 13 16 / 0.06);
+  --skeleton-shine: rgb(11 13 16 / 0.05);
+}
 
-  --border-hairline: rgb(4 6 11 / 0.09);
-  --border-hairline-strong: rgb(4 6 11 / 0.16);
+html[data-theme='dark'] {
+  color-scheme: dark;
 
-  --glass-bg: rgb(255 255 255 / 0.55);
-  --glass-bg-strong: rgb(255 255 255 / 0.72);
-  --glass-border: rgb(4 6 11 / 0.1);
-  --glass-border-strong: rgb(4 6 11 / 0.18);
-  --glass-highlight: rgb(255 255 255 / 0.85);
-  --glass-fallback-solid: #fff;
+  --paper: #0b0d10;
+  --paper-2: #111419;
+  --sheet: #15181e;
+  --ink: #f5f5f2;
+  --ink-2: #b0b4bb;
+  --ink-3: #82878f;
+  --rule: rgb(245 245 242 / 0.13);
+  --rule-strong: #f5f5f2;
+  --accent: #3366ff;
+  --accent-ink: #7d9bff;
+  --accent-soft: rgb(51 102 255 / 0.16);
+  --signal: #ff7a45;
+  --signal-soft: rgb(255 90 31 / 0.14);
 
-  --scrollbar-track: var(--color-mist-100);
-  --theme-color-meta: #f7f9fc;
-
-  --grad-heading: linear-gradient(100deg, #0a0d14 0%, #1b2a5c 45%, #0d3ad1 100%);
-  --grad-accent: linear-gradient(100deg, #0d3ad1 0%, #1450ff 55%, #4d7bff 100%);
-
-  --mesh-a: rgb(20 80 255 / 0.16);
-  --mesh-b: rgb(77 123 255 / 0.14);
-  --mesh-c: rgb(120 160 255 / 0.18);
-  --grid-dot: rgb(4 6 11 / 0.08);
-  --noise-opacity: 0.035;
-
-  --edge-hi: rgb(255 255 255 / 0.95);
-  --edge-lo: rgb(4 6 11 / 0.06);
-  --spotlight: rgb(20 80 255 / 0.1);
-
-  --skeleton-base: rgb(4 6 11 / 0.05);
-  --skeleton-shine: rgb(20 80 255 / 0.08);
+  --theme-color-meta: #0b0d10;
+  --skeleton-base: rgb(245 245 242 / 0.06);
+  --skeleton-shine: rgb(245 245 242 / 0.05);
 }
 
 /* ---------------------------------------------------------------------
@@ -130,215 +96,302 @@ html[data-theme='light'] {
 --------------------------------------------------------------------- */
 
 html {
-  scrollbar-color: var(--color-biw-500) var(--scrollbar-track);
+  scroll-behavior: smooth;
+  scroll-padding-top: 5rem;
 }
 
 body {
-  background-color: var(--surface-canvas);
-  color: var(--text-primary);
+  background-color: var(--paper);
+  color: var(--ink);
   font-family: var(--font-sans);
+  font-size: 1rem;
+  line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
-  transition:
-    background-color 0.25s ease,
-    color 0.25s ease;
 }
 
 h1,
 h2,
 h3,
-h4,
-h5,
-h6 {
+h4 {
   font-family: var(--font-display);
-  letter-spacing: -0.04em;
+  font-stretch: 112%;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.08;
+  text-wrap: balance;
 }
 
-/* ---------------------------------------------------------------------
-   Selection, scrollbar, focus — the browser surfaces the palette owns
---------------------------------------------------------------------- */
+p {
+  text-wrap: pretty;
+}
 
 ::selection {
-  background: var(--color-biw-500);
+  background: var(--accent);
   color: #fff;
 }
 
-::-webkit-scrollbar {
-  width: 12px;
-  height: 12px;
-}
-
-::-webkit-scrollbar-track {
-  background: var(--scrollbar-track);
-}
-
-::-webkit-scrollbar-thumb {
-  background-color: var(--color-biw-600);
-  border-radius: 9999px;
-  border: 3px solid var(--scrollbar-track);
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background-color: var(--color-biw-500);
-}
-
 :focus-visible {
-  outline: 2px solid var(--color-biw-400);
+  outline: 2px solid var(--accent);
   outline-offset: 2px;
-  border-radius: 4px;
+}
+
+/* Figures in tables, totals and percentages line up like a printed sheet. */
+@utility figures {
+  font-variant-numeric: tabular-nums lining-nums;
+  font-feature-settings:
+    'tnum' 1,
+    'lnum' 1;
+}
+
+/* Small caps-style label used in document title blocks (the only place
+   uppercase lives — real plans and actas print their headers this way). */
+@utility sheet-label {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+/* A printed document lying on the paper ground: white sheet, hairline
+   border, one short, tight shadow (paper on paper, not a floating card). */
+@utility sheet {
+  background-color: var(--sheet);
+  border: 1px solid var(--rule);
+  box-shadow:
+    0 1px 0 rgb(11 13 16 / 0.04),
+    0 12px 24px -18px rgb(11 13 16 / 0.28);
 }
 
 /* ---------------------------------------------------------------------
-   Glass utilities — REQUIRE a ground with a blue glow behind them (the
-   `glow-sphere` element). Without the glow motif, the backdrop-blur reads
-   as flat, decorative frosting. Tokens flip with the theme; the blur
-   itself is intentionally heavy (BIW's signature material, not a subtle
-   accent) — three depths for how much of the surface it commands.
+   Section scopes — re-tint one band of the page without touching the
+   theme: `scope-ink` (dark band), `scope-blue` (logo-blue band) and
+   `scope-paper` (a sheet that must stay paper inside a colored band).
 --------------------------------------------------------------------- */
 
-@utility glass {
-  background-color: var(--glass-bg);
-  border: 1px solid var(--glass-border);
-  backdrop-filter: blur(36px) saturate(175%);
-  -webkit-backdrop-filter: blur(36px) saturate(175%);
-  box-shadow:
-    inset 0 1px 0 var(--glass-highlight),
-    0 24px 70px -16px rgb(20 80 255 / 0.38);
+.scope-ink {
+  --paper: #0b0d10;
+  --paper-2: #111419;
+  --sheet: #15181e;
+  --ink: #f5f5f2;
+  --ink-2: #b0b4bb;
+  --ink-3: #82878f;
+  --rule: rgb(245 245 242 / 0.14);
+  --rule-strong: #f5f5f2;
+  --accent: #3366ff;
+  --accent-ink: #8ea8ff;
+  --accent-soft: rgb(51 102 255 / 0.18);
+  background-color: var(--paper);
+  color: var(--ink);
 }
 
-@utility glass-strong {
-  background-color: var(--glass-bg-strong);
-  border: 1px solid var(--glass-border-strong);
-  backdrop-filter: blur(52px) saturate(190%);
-  -webkit-backdrop-filter: blur(52px) saturate(190%);
-  box-shadow:
-    inset 0 1px 0 var(--glass-highlight),
-    0 30px 90px -18px rgb(20 80 255 / 0.48);
+.scope-blue {
+  --paper: #003cff;
+  --paper-2: #0034dd;
+  --ink: #ffffff;
+  --ink-2: rgb(255 255 255 / 0.84);
+  --ink-3: rgb(255 255 255 / 0.66);
+  --rule: rgb(255 255 255 / 0.28);
+  --rule-strong: #ffffff;
+  --accent: #ffffff;
+  --accent-ink: #ffffff;
+  --accent-soft: rgb(255 255 255 / 0.14);
+  background-color: var(--paper);
+  color: var(--ink);
 }
 
-@utility glass-light {
-  background-color: var(--surface-card);
-  border: 1px solid var(--border-hairline);
-  backdrop-filter: blur(30px) saturate(160%);
-  -webkit-backdrop-filter: blur(30px) saturate(160%);
-  box-shadow:
-    inset 0 1px 0 var(--glass-highlight),
-    0 20px 50px -20px rgb(20 80 255 / 0.22);
+.scope-paper {
+  --paper: #f5f5f2;
+  --paper-2: #ecece7;
+  --sheet: #ffffff;
+  --ink: #0b0d10;
+  --ink-2: #474c54;
+  --ink-3: #767b84;
+  --rule: #d9d9d2;
+  --rule-strong: #0b0d10;
+  --accent: #003cff;
+  --accent-ink: #0030cc;
+  --accent-soft: #e5ebff;
+  --signal: #c2410c;
+  --signal-soft: #fdeee6;
+  color: var(--ink);
 }
 
-@utility glass-interactive {
+html[data-theme='dark'] .scope-paper {
+  --paper: #0b0d10;
+  --paper-2: #111419;
+  --sheet: #15181e;
+  --ink: #f5f5f2;
+  --ink-2: #b0b4bb;
+  --ink-3: #82878f;
+  --rule: rgb(245 245 242 / 0.13);
+  --rule-strong: #f5f5f2;
+  --accent: #3366ff;
+  --accent-ink: #7d9bff;
+  --accent-soft: rgb(51 102 255 / 0.16);
+  --signal: #ff7a45;
+  --signal-soft: rgb(255 90 31 / 0.14);
+}
+
+/* ---------------------------------------------------------------------
+   Motion — content settles in as it enters the viewport, and the sample
+   documents "work" (bars fill, figures count, stamps land). Driven by the
+   reveal script in BaseLayout: it adds `.is-in` to `[data-reveal]`.
+   Only armed under html[data-js] so nothing hides without JavaScript;
+   reduced motion shows everything at rest.
+--------------------------------------------------------------------- */
+
+:root {
+  --ease-out: cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+html[data-js] [data-reveal] {
+  opacity: 0;
+  transform: translateY(16px);
   transition:
-    transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
-    box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1),
-    border-color 0.25s ease;
+    opacity 0.7s var(--ease-out),
+    transform 0.7s var(--ease-out);
+  transition-delay: calc(var(--i, 0) * 80ms);
+}
 
-  &:hover {
-    transform: translateY(-4px);
-    border-color: var(--glass-border-strong);
-    box-shadow:
-      inset 0 1px 0 var(--glass-highlight),
-      0 34px 90px -20px rgb(20 80 255 / 0.55);
+html[data-js] [data-reveal].is-in {
+  opacity: 1;
+  transform: none;
+}
+
+/* Progress bars grow to their value once their sheet is in view. */
+html[data-js] [data-bar] {
+  width: 0 !important;
+  transition: width 1.1s var(--ease-out);
+  transition-delay: calc(0.35s + var(--i, 0) * 120ms);
+}
+
+html[data-js] .is-in [data-bar] {
+  width: var(--w) !important;
+}
+
+/* Labels that appear after the bar has arrived. */
+html[data-js] [data-after] {
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  transition-delay: calc(1.2s + var(--i, 0) * 120ms);
+}
+
+html[data-js] .is-in [data-after] {
+  opacity: 1;
+}
+
+/* A rubber stamp landing on the document. */
+@utility stamp {
+  display: inline-block;
+  border: 1.5px solid currentColor;
+  border-radius: 3px;
+  padding: 0.125rem 0.4rem;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transform: rotate(-4deg);
+}
+
+html[data-js] [data-stamp] {
+  opacity: 0;
+  transform: rotate(-4deg) scale(1.6);
+}
+
+html[data-js] .is-in [data-stamp] {
+  animation: stamp-in 0.45s var(--ease-out) forwards;
+  animation-delay: var(--delay, 1.6s);
+}
+
+@keyframes stamp-in {
+  0% {
+    opacity: 0;
+    transform: rotate(-4deg) scale(1.6);
+  }
+  70% {
+    opacity: 1;
+    transform: rotate(-4deg) scale(0.94);
+  }
+  100% {
+    opacity: 1;
+    transform: rotate(-4deg) scale(1);
   }
 }
 
-/* Light catching the top edge of a glass pane: a 1px gradient hairline
-   drawn with a masked pseudo-element, brighter at the top-left where the
-   glow sits. The host must be positioned (`relative`/`absolute`) — the
-   utility deliberately doesn't set position so it never fights those. */
-@utility glass-edge {
-  isolation: isolate;
+/* Numbered callouts pop onto the drawing one after another. */
+html[data-js] [data-pop] {
+  opacity: 0;
+  transform: scale(0.4);
+  transition:
+    opacity 0.3s ease,
+    transform 0.45s cubic-bezier(0.3, 1.6, 0.5, 1);
+  transition-delay: calc(0.6s + var(--i, 0) * 180ms);
+}
 
-  &::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    padding: 1px;
-    background: linear-gradient(145deg, var(--edge-hi), var(--edge-lo) 40%, var(--edge-lo) 70%, rgb(77 123 255 / 0.35));
-    -webkit-mask:
-      linear-gradient(#000 0 0) content-box,
-      linear-gradient(#000 0 0);
-    -webkit-mask-composite: xor;
-    mask-composite: exclude;
-    pointer-events: none;
-    z-index: 1;
+html[data-js] .is-in [data-pop] {
+  opacity: 1;
+  transform: none;
+}
+
+/* Line drawing: strokes trace themselves (paths carry pathLength="1"). */
+html[data-js] [data-draw] {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+}
+
+html[data-js] .is-in [data-draw] {
+  transition: stroke-dashoffset 1.4s var(--ease-out);
+  transition-delay: var(--d, 0s);
+  stroke-dashoffset: 0;
+}
+
+/* Floors of a building filling in from the ground up. */
+html[data-js] [data-rise] {
+  transform: scaleY(0);
+  transform-box: fill-box;
+  transform-origin: bottom;
+}
+
+html[data-js] .is-in [data-rise] {
+  transition: transform 0.5s var(--ease-out);
+  transition-delay: var(--d, 0s);
+  transform: scaleY(1);
+}
+
+/* The crane's load, gently swinging. Runs forever, but barely moves. */
+@keyframes sway {
+  0%,
+  100% {
+    transform: rotate(-1.6deg);
+  }
+  50% {
+    transform: rotate(1.6deg);
   }
 }
 
-/* Cursor-following blue light inside a glass pane. `--mx/--my` are set by
-   the spotlight script (BaseLayout) on `[data-spotlight]` hosts; without
-   JS the light simply rests off-canvas. */
-@utility spotlight {
-  background-image: radial-gradient(
-    520px circle at var(--mx, -999px) var(--my, -999px),
-    var(--spotlight),
-    transparent 42%
-  );
-}
-
-/* Negative display tracking pulls the last glyph's ink past the text box,
-   and background-clip:text only paints inside the box — the inline-end
-   padding (cancelled by an equal negative margin) keeps that ink lit. */
-@utility text-gradient {
-  padding-inline-end: 0.08em;
-  margin-inline-end: -0.08em;
-  -webkit-box-decoration-break: clone;
-  box-decoration-break: clone;
-  background-image: var(--grad-heading);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  -webkit-text-fill-color: transparent;
-}
-
-@utility text-gradient-accent {
-  padding-inline-end: 0.08em;
-  margin-inline-end: -0.08em;
-  -webkit-box-decoration-break: clone;
-  box-decoration-break: clone;
-  background-image: var(--grad-accent);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  -webkit-text-fill-color: transparent;
+.sway {
+  transform-box: view-box;
+  animation: sway 5s ease-in-out infinite;
 }
 
 /* ---------------------------------------------------------------------
-   Atmosphere — slow drifting blue mesh, dot grid, film grain. The glass
-   panels refract this; it is the "something behind the glass".
+   Ambient motion — brought back from the first version, re-drawn for
+   paper: soft drifting blue blobs, plan grid, orbits, floating tags,
+   cursor light, hover lift, button sheen.
 --------------------------------------------------------------------- */
 
-@utility atmosphere {
-  position: absolute;
-  inset: 0;
-  overflow: hidden;
-  pointer-events: none;
-  z-index: 0;
-}
-
-@utility mesh-blob {
+/* Soft blue blobs drifting behind a section. Host: relative isolate. */
+@utility drift-blob {
   position: absolute;
   border-radius: 9999px;
-  filter: blur(90px);
+  pointer-events: none;
+  z-index: -1;
+  filter: blur(80px);
+  background: var(--blob, rgb(0 60 255 / 0.12));
+  animation: blob-drift 32s ease-in-out infinite;
   will-change: transform;
-  animation: blob-drift 38s ease-in-out infinite;
-}
-
-@utility dot-grid {
-  position: absolute;
-  inset: 0;
-  background-image: radial-gradient(var(--grid-dot) 1px, transparent 1px);
-  background-size: 28px 28px;
-  -webkit-mask-image: radial-gradient(ellipse 75% 70% at 50% 40%, #000 25%, transparent 100%);
-  mask-image: radial-gradient(ellipse 75% 70% at 50% 40%, #000 25%, transparent 100%);
-}
-
-@utility grain {
-  position: absolute;
-  inset: 0;
-  opacity: var(--noise-opacity);
-  mix-blend-mode: overlay;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
 @keyframes blob-drift {
@@ -347,98 +400,148 @@ h6 {
     transform: translate3d(0, 0, 0) scale(1);
   }
   33% {
-    transform: translate3d(50px, -40px, 0) scale(1.06);
+    transform: translate3d(50px, -40px, 0) scale(1.08);
   }
   66% {
-    transform: translate3d(-35px, 45px, 0) scale(0.95);
+    transform: translate3d(-40px, 35px, 0) scale(0.94);
   }
 }
 
-/* ---------------------------------------------------------------------
-   Skeleton — shimmer placeholder for content that is genuinely still on
-   its way (remote photos, the next locale during a route change).
---------------------------------------------------------------------- */
-
-@utility skeleton {
-  background-color: var(--skeleton-base);
-  background-image: linear-gradient(
-    100deg,
-    transparent 20%,
-    var(--skeleton-shine) 45%,
-    transparent 70%
-  );
-  background-size: 220% 100%;
-  background-repeat: no-repeat;
-  animation: skeleton-shimmer 1.4s ease-in-out infinite;
-}
-
-@keyframes skeleton-shimmer {
-  from {
-    background-position: 160% 0;
-  }
-  to {
-    background-position: -60% 0;
-  }
-}
-
-@supports not (backdrop-filter: blur(1px)) {
-  .glass,
-  .glass-strong,
-  .glass-light {
-    background-color: var(--glass-fallback-solid);
-  }
-}
-
-/* ---------------------------------------------------------------------
-   Glow / luminous sphere motif — the blue accent behind glass panels
---------------------------------------------------------------------- */
-
-@utility glow-sphere {
+/* Faint plan grid, fading out at the edges. */
+@utility plan-grid {
   position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: -1;
+  background-image:
+    linear-gradient(var(--rule) 1px, transparent 1px),
+    linear-gradient(90deg, var(--rule) 1px, transparent 1px);
+  background-size: 48px 48px;
+  opacity: 0.55;
+  -webkit-mask-image: radial-gradient(ellipse 70% 65% at 60% 40%, #000 20%, transparent 100%);
+  mask-image: radial-gradient(ellipse 70% 65% at 60% 40%, #000 20%, transparent 100%);
+}
+
+/* Slowly rotating dashed survey circles with a blue node. */
+@utility orbit {
+  position: absolute;
+  left: 50%;
+  top: 50%;
   border-radius: 9999px;
-  background: radial-gradient(
-    circle at 35% 30%,
-    rgb(77 123 255 / 0.9),
-    rgb(20 80 255 / 0.55) 45%,
-    rgb(20 80 255 / 0) 72%
-  );
-  filter: blur(56px);
+  border: 1px dashed var(--rule);
+  translate: -50% -50%;
   pointer-events: none;
+  z-index: -1;
+  animation: orbit-spin 60s linear infinite;
 }
 
-@utility text-balance-display {
-  text-wrap: balance;
+@keyframes orbit-spin {
+  to {
+    rotate: 360deg;
+  }
 }
 
-/* Translucent canvas surfaces (sticky header, mobile menu panel) — mixed
-   from the theme's own canvas token so they repaint with the toggle. */
-@utility surface-translucent {
-  background-color: color-mix(in srgb, var(--surface-canvas) 70%, transparent);
+/* Small paper tag floating up and down beside a document. */
+@utility float-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  white-space: nowrap;
+  border: 1px solid var(--rule);
+  background: var(--sheet);
+  padding: 0.4rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--ink);
+  box-shadow: 0 10px 24px -16px rgb(11 13 16 / 0.35);
+  animation: tag-float 7s ease-in-out infinite;
 }
 
-@utility surface-translucent-strong {
-  background-color: color-mix(in srgb, var(--surface-canvas) 95%, transparent);
+@keyframes tag-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
 }
 
-/* ---------------------------------------------------------------------
-   Route loading — while the next page (other locale, privacy page) is
-   fetched by the ClientRouter, the current page frosts over and a
-   skeleton of the incoming layout shimmers on top. `data-navigating` is
-   set on <html> by RouteLoader.astro; no spinner anywhere.
---------------------------------------------------------------------- */
+/* Live dot with a ping ring. */
+@utility live-dot {
+  position: relative;
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 9999px;
+  background: var(--accent);
 
-main,
-footer {
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: inherit;
+    animation: live-ping 2.2s cubic-bezier(0, 0, 0.2, 1) infinite;
+  }
+}
+
+@keyframes live-ping {
+  75%,
+  100% {
+    transform: scale(2.8);
+    opacity: 0;
+  }
+}
+
+/* Cursor-following light on a document. `--mx/--my` are set by the
+   spotlight script (BaseLayout) on `[data-spotlight]` hosts. */
+@utility spotlight {
+  background-image: radial-gradient(420px circle at var(--mx, -999px) var(--my, -999px), var(--accent-soft), transparent 45%);
+}
+
+/* Hover lift for documents and panels. */
+@utility lift {
   transition:
-    filter 0.45s cubic-bezier(0.16, 1, 0.3, 1),
-    opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+    transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow:
+      0 1px 0 rgb(11 13 16 / 0.04),
+      0 26px 40px -24px rgb(11 13 16 / 0.35);
+  }
 }
 
-html[data-navigating] main,
-html[data-navigating] footer {
-  filter: blur(14px) saturate(120%);
-  opacity: 0.25;
-  pointer-events: none;
+/* A revealed block that also lifts: hover must respond at once, not with
+   the reveal's stagger delay. */
+html[data-js] [data-reveal].is-in.lift {
+  transition:
+    transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 0.7s var(--ease-out);
+  transition-delay: 0s;
+}
+
+/* Light sweeping across a solid button on hover. */
+@utility btn-sheen {
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(110deg, transparent 30%, rgb(255 255 255 / 0.3) 50%, transparent 70%);
+    translate: -120% 0;
+    transition: translate 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    pointer-events: none;
+  }
+
+  &:hover::before {
+    translate: 120% 0;
+  }
 }
 
 /* Theme switch — circular reveal from the toggle button via the View
@@ -454,8 +557,6 @@ html[data-vt='theme']::view-transition-new(root) {
   z-index: 2;
 }
 
-/* The new-theme snapshot must be the finished palette, not a frame of
-   the 0.25s color transitions mid-way. */
 html[data-vt='theme'] *,
 html[data-vt='theme'] *::before,
 html[data-vt='theme'] *::after {
@@ -463,39 +564,86 @@ html[data-vt='theme'] *::after {
 }
 
 /* ---------------------------------------------------------------------
-   Motion — one authored moment, disabled entirely under reduced motion
+   Skeleton — placeholder for the incoming page during a route change.
 --------------------------------------------------------------------- */
 
+@utility skeleton {
+  background-color: var(--skeleton-base);
+  background-image: linear-gradient(100deg, transparent 20%, var(--skeleton-shine) 45%, transparent 70%);
+  background-size: 220% 100%;
+  background-repeat: no-repeat;
+  animation: skeleton-shimmer 1.4s ease-in-out infinite;
+}
+
+@keyframes skeleton-shimmer {
+  from {
+    background-position: 160% 0;
+  }
+  to {
+    background-position: -60% 0;
+  }
+}
+
+/* ---------------------------------------------------------------------
+   Route loading — while the next page (other locale, privacy page) is
+   fetched by the ClientRouter, the current page fades back and a
+   skeleton of the incoming layout sits on top. `data-navigating` is set
+   on <html> by RouteLoader.astro.
+--------------------------------------------------------------------- */
+
+main,
+footer {
+  transition: opacity 0.3s ease;
+}
+
+html[data-navigating] main,
+html[data-navigating] footer {
+  opacity: 0.15;
+  pointer-events: none;
+}
+
 @media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  html[data-js] [data-reveal],
+  html[data-js] [data-after],
+  html[data-js] [data-stamp],
+  html[data-js] [data-pop] {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  html[data-js] [data-bar] {
+    width: var(--w) !important;
+  }
+
+  html[data-js] [data-draw] {
+    stroke-dashoffset: 0 !important;
+  }
+
+  html[data-js] [data-rise] {
+    transform: none !important;
+  }
+
+  .sway,
+  .drift-blob,
+  .orbit,
+  .float-tag,
+  .live-dot::after {
+    animation: none !important;
+  }
+
+  .lift:hover {
+    transform: none;
+  }
+
   *,
   *::before,
   *::after {
     animation-duration: 0.001ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.001ms !important;
-    scroll-behavior: auto !important;
-  }
-
-  .mesh-blob {
-    animation: none !important;
-  }
-}
-
-/* Island content swap (ProductDemo tab change, form states): content
-   settles in from a slight blur rather than popping. */
-.demo-fade {
-  animation: demo-fade 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
-}
-
-@keyframes demo-fade {
-  from {
-    opacity: 0.2;
-    filter: blur(6px);
-    transform: translateY(4px);
-  }
-  to {
-    opacity: 1;
-    filter: blur(0);
-    transform: none;
   }
 }

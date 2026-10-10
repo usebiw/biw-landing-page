@@ -1,0 +1,76 @@
+---
+/**
+ * ModulesIndex.astro — the platform laid out like a budget's chapter
+ * index: four chapters (Obra, Dinero, Gente, Archivo), items numbered
+ * 1.1, 1.2… Ruled columns, no icons, no cards.
+ */
+import { getCollection } from 'astro:content';
+import { useTranslations, type Locale } from '../../lib/i18n';
+import SectionHead from '../molecules/SectionHead.astro';
+
+const locale = (Astro.currentLocale === 'en' ? 'en' : 'es') as Locale;
+const t = useTranslations(locale);
+const modules = (await getCollection('modules', (e) => e.data.locale === locale)).sort((a, b) => a.data.order - b.data.order);
+
+const groupOrder = ['obra', 'dinero', 'gente', 'archivo'] as const;
+
+// Line pictograms per chapter, drawn like plan symbols (traced in on reveal).
+const pictograms: Record<(typeof groupOrder)[number], string[]> = {
+  // tower crane
+  obra: ['M14 42 V8 M18 42 V8', 'M14 8 L18 12 M14 16 L18 20 M14 24 L18 28 M14 32 L18 36', 'M6 8 H44 M18 4 L44 8 M18 4 L6 8', 'M36 8 V20 M32 20 H40 V26 H32 Z', 'M4 42 H44'],
+  // banknotes + coin
+  dinero: ['M6 14 H38 V32 H6 Z', 'M10 18 H34 V28 H10 Z', 'M22 23 m-3 0 a3 3 0 1 0 6 0 a3 3 0 1 0 -6 0', 'M12 36 H42 V20'],
+  // hard hat
+  gente: ['M8 32 a16 16 0 0 1 32 0', 'M4 32 H44 V36 H4 Z', 'M20 17 V26 M28 17 V26', 'M18 17 a6 3 0 0 1 12 0'],
+  // folder with drawing
+  archivo: ['M4 12 H18 L22 16 H44 V40 H4 Z', 'M4 20 H44', 'M12 34 L20 26 L26 31 L32 25 L38 34'],
+};
+const groups = groupOrder.map((key, gi) => ({
+  key,
+  code: gi + 1,
+  label: t(`modules.groups.${key}`),
+  items: modules.filter((m) => m.data.group === key),
+}));
+---
+
+<section id="plataforma" class="bg-paper-2" aria-labelledby="plataforma-title">
+  <div class="mx-auto max-w-7xl px-6 py-16 md:py-24">
+    <SectionHead id="plataforma-title" number="02" label={t('modules.label')} title={t('modules.heading')} intro={t('modules.intro')} />
+
+    <div class="mt-14 grid border-t border-rule sm:grid-cols-2 lg:grid-cols-4">
+      {
+        groups.map((group, gi) => (
+          <div
+            data-reveal
+            style={`--i:${gi}`}
+            class:list={[
+              'border-b border-rule py-8 sm:px-6 lg:border-b-0',
+              gi % 2 === 0 ? 'sm:pl-0' : 'sm:border-l',
+              gi > 0 && 'lg:border-l',
+              gi === 2 && 'lg:pl-6',
+            ]}
+          >
+            <svg viewBox="0 0 48 48" class="mb-5 size-12 text-accent" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              {pictograms[group.key].map((d, pi) => <path d={d} pathLength="1" data-draw style={`--d:${0.2 + gi * 0.1 + pi * 0.12}s`} />)}
+            </svg>
+            <h3 class="flex items-baseline gap-3 text-xl text-ink">
+              <span class="figures text-sm font-semibold text-accent-ink">{group.code}</span>
+              {group.label}
+            </h3>
+            <ol class="mt-6 flex flex-col gap-6">
+              {group.items.map((item, ii) => (
+                <li class="group grid grid-cols-[2.25rem_1fr] transition-transform duration-300 hover:translate-x-1">
+                  <span class="figures pt-px text-sm text-ink-3">{`${group.code}.${ii + 1}`}</span>
+                  <div>
+                    <p class="font-semibold text-ink transition-colors duration-150 group-hover:text-accent-ink">{item.data.name}</p>
+                    <p class="mt-1 text-sm leading-relaxed text-ink-2">{item.data.summary}</p>
+                  </div>
+                </li>
+              ))}
+            </ol>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>

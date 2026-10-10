@@ -1,0 +1,318 @@
+---
+/**
+ * CorteSection.astro — a subcontractor progress bill (acta de corte)
+ * rendered as the document the site team already signs, with numbered
+ * callouts like a drawing's annotations. Each callout maps to a check
+ * BIW really runs: cumulative vs. contracted, quantities over the
+ * contract held until a quantity request is approved, AIU taken from the
+ * contract (src/core/indirect_costs.py in the backend), advance
+ * repayment + retention, and the DRAFT → IN_REVIEW → APPROVED route.
+ * All figures are sample values and add up.
+ */
+import { useTranslations, type Locale } from '../../lib/i18n';
+import { formatCop, formatQty } from '../../lib/format';
+import SectionHead from '../molecules/SectionHead.astro';
+import StructuralDetail from './StructuralDetail.astro';
+
+const locale = (Astro.currentLocale === 'en' ? 'en' : 'es') as Locale;
+const t = useTranslations(locale);
+const names = t('corte.items');
+const notes = t('corte.notes');
+const m3 = 'm³';
+
+const items = [
+  { code: '2.01', unit: m3, contracted: 120, previous: 64.5, cut: 18.2, price: 1_150_000 },
+  { code: '2.02', unit: 'kg', contracted: 38_000, previous: 21_400, cut: 6_850, price: 6_200 },
+  { code: '2.03', unit: 'm²', contracted: 1_800, previous: 720, cut: 410, price: 186_000 },
+  { code: '2.04', unit: m3, contracted: 85, previous: 79, cut: 9, price: 1_150_000 },
+].map((item, i) => {
+  const cumulative = item.previous + item.cut;
+  const over = cumulative > item.contracted;
+  return { ...item, name: names[i], cumulative, over, value: Math.round(item.cut * item.price) };
+});
+
+const subtotal = items.filter((i) => !i.over).reduce((sum, i) => sum + i.value, 0);
+const admin = Math.round(subtotal * 0.08);
+const unforeseen = Math.round(subtotal * 0.02);
+const profit = Math.round(subtotal * 0.05);
+const vatProfit = Math.round(profit * 0.19);
+const gross = subtotal + admin + unforeseen + profit + vatProfit;
+const advance = Math.round(gross * 0.3);
+const retention = Math.round(gross * 0.05);
+const net = gross - advance - retention;
+
+const callout =
+  'figures inline-flex size-5 shrink-0 items-center justify-center rounded-full border border-ink bg-sheet text-[0.625rem] font-bold leading-none text-ink';
+---
+
+<section id="cortes" class="mx-auto max-w-7xl px-6 py-16 md:py-24" aria-labelledby="cortes-title">
+  <SectionHead id="cortes-title" number="03" label={t('corte.label')} title={t('corte.heading')} intro={t('corte.intro')} />
+
+  <div class="mt-14">
+    <StructuralDetail />
+  </div>
+
+  <div class="corte mt-10 grid gap-12 lg:grid-cols-12 lg:gap-10">
+    <figure class="sheet spotlight min-w-0 text-[0.8125rem] lg:col-span-8" data-reveal data-spotlight>
+      <figcaption class="grid grid-cols-2 border-b border-rule sm:grid-cols-[1.4fr_1fr_1fr_1fr]">
+        <div class="col-span-2 border-b border-rule px-5 py-4 sm:col-span-1 sm:border-r sm:border-b-0">
+          <p class="sheet-label">BIW</p>
+          <p class="mt-1 font-display text-[0.9375rem] font-bold [font-stretch:112%]">{t('corte.docTitle')}</p>
+          <p class="mt-0.5 text-xs text-ink-3">{t('sample.note')}</p>
+        </div>
+        <div class="border-r border-rule px-5 py-4">
+          <p class="sheet-label">{t('corte.contractor')}</p>
+          <p class="mt-1 text-ink">{t('corte.contractorName')}</p>
+        </div>
+        <div class="border-rule px-5 py-4 sm:border-r">
+          <p class="sheet-label">{t('corte.contract')}</p>
+          <p class="figures mt-1 text-ink">CTR-0012</p>
+        </div>
+        <div class="col-span-2 border-t border-rule px-5 py-4 sm:col-span-1 sm:border-t-0">
+          <p class="sheet-label">{t('corte.period')}</p>
+          <p class="mt-1 text-ink">{t('corte.periodValue')}</p>
+        </div>
+      </figcaption>
+
+      <div class="overflow-x-auto">
+        <table class="figures w-full min-w-[640px] border-collapse text-left">
+          <thead>
+            <tr class="border-b border-rule text-xs text-ink-3">
+              <th scope="col" class="py-2.5 pl-5 pr-2 font-medium">{t('corte.item')}</th>
+              <th scope="col" class="px-2 py-2.5 font-medium">{t('corte.description')}</th>
+              <th scope="col" class="px-2 py-2.5 font-medium">{t('corte.unit')}</th>
+              <th scope="col" class="px-2 py-2.5 text-right font-medium">
+                <span class="inline-flex items-center gap-1.5">
+                  <span class={callout} data-callout="1" data-pop style="--i:0" aria-hidden="true">1</span>
+                  {t('corte.contracted')}
+                </span>
+              </th>
+              <th scope="col" class="px-2 py-2.5 text-right font-medium">{t('corte.previous')}</th>
+              <th scope="col" class="px-2 py-2.5 text-right font-medium">{t('corte.thisCut')}</th>
+              <th scope="col" class="px-2 py-2.5 text-right font-medium">{t('corte.cumulative')}</th>
+              <th scope="col" class="py-2.5 pl-2 pr-5 text-right font-medium">{t('corte.value')}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {
+              items.map((item) => (
+                <tr class:list={['border-b border-rule', item.over && 'bg-signal-soft']}>
+                  <td class="py-3 pl-5 pr-2 text-ink-3">{item.code}</td>
+                  <th scope="row" class="px-2 py-3 font-normal text-ink">
+                    {item.name}
+                    {item.over && (
+                      <span class="mt-1 flex items-center gap-1.5 text-xs font-semibold text-signal">
+                        <span class={callout} data-callout="2" data-pop style="--i:1" aria-hidden="true">2</span>
+                        {t('corte.over')} {formatQty(item.cumulative - item.contracted, locale)} {item.unit}
+                      </span>
+                    )}
+                  </th>
+                  <td class="px-2 py-3 text-ink-2">{item.unit}</td>
+                  <td class="px-2 py-3 text-right text-ink-2">{formatQty(item.contracted, locale)}</td>
+                  <td class="px-2 py-3 text-right text-ink-2">{formatQty(item.previous, locale)}</td>
+                  <td class="px-2 py-3 text-right text-ink">{formatQty(item.cut, locale)}</td>
+                  <td class:list={['px-2 py-3 text-right', item.over ? 'font-semibold text-signal' : 'text-ink']}>
+                    {formatQty(item.cumulative, locale)}
+                  </td>
+                  <td class="whitespace-nowrap py-3 pl-2 pr-5 text-right">
+                    {item.over ? (
+                      <span class="font-semibold text-signal">{t('corte.held')}</span>
+                    ) : (
+                      <span class="text-ink">{formatCop(item.value, locale)}</span>
+                    )}
+                  </td>
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <div class="grid border-b border-rule sm:grid-cols-2">
+        <div class="hidden sm:block" aria-hidden="true"></div>
+        <dl class="figures px-5 py-4 sm:border-l sm:border-rule">
+          <div class="flex justify-between gap-4 py-1 text-ink">
+            <dt>{t('corte.subtotal')}</dt>
+            <dd>{formatCop(subtotal, locale)}</dd>
+          </div>
+          <div class="relative mt-1 border-t border-dashed border-rule pl-7 pt-2 sm:pl-0">
+            <span class={`${callout} absolute left-0 top-2 sm:-left-8`} data-callout="3" data-pop style="--i:2" aria-hidden="true">3</span>
+            {[
+              [t('corte.admin'), admin],
+              [t('corte.unforeseen'), unforeseen],
+              [t('corte.profit'), profit],
+              [t('corte.vatProfit'), vatProfit],
+            ].map(([label, value]) => (
+              <div class="flex justify-between gap-4 py-0.5 text-ink-2">
+                <dt>{label}</dt>
+                <dd>{formatCop(value as number, locale)}</dd>
+              </div>
+            ))}
+          </div>
+          <div class="mt-2 flex justify-between gap-4 border-t border-rule py-1.5 font-semibold text-ink">
+            <dt>{t('corte.gross')}</dt>
+            <dd>{formatCop(gross, locale)}</dd>
+          </div>
+          <div class="relative border-t border-dashed border-rule pl-7 pt-2 sm:pl-0">
+            <span class={`${callout} absolute left-0 top-2 sm:-left-8`} data-callout="4" data-pop style="--i:3" aria-hidden="true">4</span>
+            <div class="flex justify-between gap-4 py-0.5 text-ink-2">
+              <dt>{t('corte.advance')}</dt>
+              <dd>− {formatCop(advance, locale)}</dd>
+            </div>
+            <div class="flex justify-between gap-4 py-0.5 text-ink-2">
+              <dt>{t('corte.retention')}</dt>
+              <dd>− {formatCop(retention, locale)}</dd>
+            </div>
+          </div>
+          <div class="mt-2 flex justify-between gap-4 border-t-2 border-rule-strong pt-2 text-[0.9375rem] font-bold text-ink">
+            <dt>{t('corte.net')}</dt>
+            <dd>{formatCop(net, locale)}</dd>
+          </div>
+        </dl>
+      </div>
+
+      <div class="px-5 py-4">
+        <p class="flex items-center gap-2 text-xs text-ink-3">
+          <span class={callout} data-callout="5" data-pop style="--i:4" aria-hidden="true">5</span>
+          {t('corte.signatures')}
+        </p>
+        <ol class="mt-3 grid grid-cols-3 border border-rule">
+          {[
+            { label: t('corte.sigDraft'), role: t('corte.sigDraftRole'), done: true },
+            { label: t('corte.sigReview'), role: t('corte.sigReviewRole'), done: true },
+            { label: t('corte.sigApprove'), role: t('corte.sigApproveRole'), done: false },
+          ].map((sig, i) => (
+            <li class:list={['relative px-3 py-3', i > 0 && 'border-l border-rule']}>
+              <p class="sheet-label">{sig.label}</p>
+              {sig.done ? (
+                <p class="mt-4 border-t border-ink pt-1.5 text-xs text-ink">{sig.role}</p>
+              ) : (
+                <>
+                  <span class="stamp absolute right-3 top-2.5 text-accent-ink" data-stamp style="--delay:2.2s">
+                    {t('corte.stampApproved')}
+                  </span>
+                  <p class="sig-pending mt-4 border-t border-dashed border-ink-3 pt-1.5 text-xs text-ink-3">
+                    <span class="sig-before">{sig.role}</span>
+                    <span class="sig-after">{t('corte.sigApproverRole')}</span>
+                  </p>
+                </>
+              )}
+            </li>
+          ))}
+        </ol>
+      </div>
+    </figure>
+
+    <ol class="flex flex-col gap-2 lg:col-span-4 lg:pt-2">
+      {
+        notes.map((note, i) => (
+          <li class="note -mx-3 grid cursor-default grid-cols-[1.75rem_1fr] gap-x-3 px-3 py-3 transition-colors duration-150" data-note={i + 1} data-reveal style={`--i:${i}`}>
+            <span class={`${callout} note-mark mt-0.5 size-6 text-[0.6875rem]`} aria-hidden="true">{i + 1}</span>
+            <div>
+              <p class="font-semibold text-ink">{note.title}</p>
+              <p class="mt-1 text-sm leading-relaxed text-ink-2">{note.body}</p>
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</section>
+
+<style>
+  /* Hovering a note lights up its callout on the document, and vice versa. */
+  [data-callout] {
+    transition:
+      background-color 0.15s ease,
+      color 0.15s ease,
+      box-shadow 0.15s ease;
+  }
+  .note:hover {
+    background-color: var(--accent-soft);
+  }
+  .note:hover .note-mark {
+    background-color: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+  }
+  .corte:has([data-note='1']:hover) [data-callout='1'] {
+    background-color: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+    box-shadow: 0 0 0 4px var(--accent-soft);
+  }
+  .corte:has([data-note='2']:hover) [data-callout='2'] {
+    background-color: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+    box-shadow: 0 0 0 4px var(--accent-soft);
+  }
+  .corte:has([data-note='3']:hover) [data-callout='3'] {
+    background-color: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+    box-shadow: 0 0 0 4px var(--accent-soft);
+  }
+  .corte:has([data-note='4']:hover) [data-callout='4'] {
+    background-color: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+    box-shadow: 0 0 0 4px var(--accent-soft);
+  }
+  .corte:has([data-note='5']:hover) [data-callout='5'] {
+    background-color: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+    box-shadow: 0 0 0 4px var(--accent-soft);
+  }
+
+  /* "Pendiente" turns into the approving role as the stamp lands. */
+  .sig-after {
+    display: none;
+  }
+  :global(html[data-js]) .sig-pending {
+    position: relative;
+  }
+  :global(html[data-js]) .sig-after {
+    display: inline;
+    position: absolute;
+    left: 0;
+    top: 0.375rem;
+    opacity: 0;
+  }
+  :global(html[data-js]) :global(.is-in) .sig-before {
+    animation: sig-out 0.3s ease forwards 2.2s;
+  }
+  :global(html[data-js]) :global(.is-in) .sig-after {
+    animation: sig-in 0.3s ease forwards 2.35s;
+  }
+  :global(html[data-js]) :global(.is-in) .sig-pending {
+    animation: sig-line 0.3s ease forwards 2.2s;
+  }
+  @keyframes sig-out {
+    to {
+      opacity: 0;
+    }
+  }
+  @keyframes sig-in {
+    to {
+      opacity: 1;
+      color: var(--ink);
+    }
+  }
+  @keyframes sig-line {
+    to {
+      border-top-style: solid;
+      border-color: var(--ink);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    :global(html[data-js]) .sig-before {
+      opacity: 0;
+    }
+    :global(html[data-js]) .sig-after {
+      opacity: 1;
+      color: var(--ink);
+    }
+  }
+</style>

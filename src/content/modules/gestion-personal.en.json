@@ -1,9 +1,0 @@
-{
-  "order": 3,
-  "icon": "crew",
-  "status": "live",
-  "name": "Workforce Management",
-  "summary": "Workers and crews organized by work front, with daily labor cost calculated automatically.",
-  "detail": "Workers and crews are organized by work front (they are not system users), and daily labor cost is calculated automatically. Contractors and subcontractors are managed with control over additions to what was originally contracted.",
-  "locale": "en"
-}

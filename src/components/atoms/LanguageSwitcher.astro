@@ -3,8 +3,8 @@
  * LanguageSwitcher.astro — ES/EN links to the same page in the other
  * locale (Astro's i18n routing: /es/... <-> /en/...). Plain links, so it
  * works without JS; with the ClientRouter they swap in place behind
- * RouteLoader's frosted skeleton and keep the scroll depth
- * (`data-locale-switch`). Prefetched on hover so the wait stays short.
+ * RouteLoader and keep the scroll depth (`data-locale-switch`).
+ * Prefetched on hover so the wait stays short.
  */
 import { locales, localeMeta, getLocalizedPath, type Locale } from '../../lib/i18n';
 
@@ -18,32 +18,24 @@ const { currentLocale, ariaLabel, class: className = '' } = Astro.props;
 const pathname = Astro.url.pathname;
 ---
 
-<div
-  role="group"
-  aria-label={ariaLabel}
-  class={[
-    'relative inline-flex items-center gap-0.5 rounded-full border border-[var(--border-hairline)] bg-[var(--surface-card)] p-1',
-    className,
-  ]
-    .filter(Boolean)
-    .join(' ')}
->
-  {locales.map((locale) => (
-    <a
-      href={getLocalizedPath(pathname, locale)}
-      hreflang={localeMeta[locale].htmlLang}
-      lang={localeMeta[locale].htmlLang}
-      data-locale-switch
-      data-astro-prefetch="hover"
-      aria-current={locale === currentLocale ? 'true' : undefined}
-      class:list={[
-        'relative rounded-full px-2.5 py-1 font-sans text-xs font-semibold uppercase tracking-[0.08em] transition-colors duration-200',
-        locale === currentLocale
-          ? 'bg-biw-500 text-white shadow-[0_6px_18px_-6px_rgba(20,80,255,0.9)]'
-          : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]',
-      ]}
-    >
-      {localeMeta[locale].label}
-    </a>
+<div role="group" aria-label={ariaLabel} class={['inline-flex items-center text-xs font-semibold', className].filter(Boolean).join(' ')}>
+  {locales.map((locale, i) => (
+    <>
+      {i > 0 && <span class="px-1.5 text-ink-3" aria-hidden="true">/</span>}
+      <a
+        href={getLocalizedPath(pathname, locale)}
+        hreflang={localeMeta[locale].htmlLang}
+        lang={localeMeta[locale].htmlLang}
+        data-locale-switch
+        data-astro-prefetch="hover"
+        aria-current={locale === currentLocale ? 'true' : undefined}
+        class:list={[
+          'py-1 transition-colors duration-150',
+          locale === currentLocale ? 'text-ink underline decoration-accent decoration-2 underline-offset-4' : 'text-ink-3 hover:text-ink',
+        ]}
+      >
+        {localeMeta[locale].label}
+      </a>
+    </>
   ))}
 </div>

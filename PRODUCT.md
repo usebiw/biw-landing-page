@@ -22,7 +22,7 @@ BIW (Building Integrated Workflow) is a platform for real-time control and track
 
 ## Positioning
 
-Purpose-built for construction project control specifically — not a generic PM tool. Its mechanism: schedule progress is computed by a database trigger from daily site records (accumulated progress never regresses without director approval), with an automatic alert whenever schedule delay exceeds 5%; budget execution is tracked chapter-by-item with automatic 80%-execution alerts and a hard block at 110% without explicit approval; contractor "cortes" (progress-billing cuts) follow a DRAFT → IN_REVIEW → APPROVED flow with dynamic advance-payment amortization redistributed proportionally across pending cuts. Three-layer permissions (backend enforcement + seeded roles + UI gating) and per-company multitenancy by subdomain (`<slug>.siteops.tech`).
+Purpose-built for construction project control specifically — not a generic PM tool. Its mechanism: schedule progress is computed by a database trigger from daily site records (accumulated progress never regresses without director approval), with an automatic alert whenever schedule delay exceeds 5%; budget execution is tracked chapter-by-item with automatic 80%-execution alerts and a hard block at 110% without explicit approval; contractor "cortes" (progress-billing cuts) follow a DRAFT → IN_REVIEW → APPROVED flow with dynamic advance-payment amortization redistributed proportionally across pending cuts. Three-layer permissions (backend enforcement + seeded roles + UI gating) and per-company multitenancy by subdomain (`<slug>.usebiw.com`).
 
 ## Operating Context
 
@@ -38,31 +38,31 @@ AWS/microservices architecture is the stage-2 (post-MVP) destination; the curren
 
 - No contact-submission backend exists yet; the form must validate client-side and post to a configurable endpoint (`PUBLIC_DEMO_ENDPOINT` env var), left undecided/placeholder.
 - No WhatsApp Business number supplied yet — placeholder in `site.json.whatsappNumber`.
-- No production domain confirmed yet for canonical/sitemap; placeholder `https://biw.siteops.tech` used, to be replaced.
+- No production domain confirmed yet for the landing's canonical/sitemap; placeholder `https://biw.siteops.tech` still in `astro.config.mjs`. The product moved to `usebiw.com` on 2026-09-06 (tenants at `<slug>.usebiw.com`), so the landing will live under that domain — set `site` once the exact host is decided.
 - Real customer logos, testimonials, and usage metrics do not exist yet — explicitly excluded, not to be fabricated.
 - **No login button/link anywhere on the landing** (2026-09-14 decision) — this site has no customer-facing auth entry point; visitors act via the contact form or WhatsApp only.
-- The primary CTA is **"Contáctanos"/"Contact us"**, not "Solicitar demo"/"Request a demo" (renamed 2026-09-14) — the form itself still gathers demo-relevant fields (company, role, active job sites), but the label and section framing are general contact, not a demo-specific ask.
+- The primary CTA is **"Contáctenos"/"Contact us"**, not "Solicitar demo"/"Request a demo" (renamed 2026-09-14; usted form since 2026-10-10) — the form itself still gathers demo-relevant fields (company, role, active job sites), but the label and section framing are general contact, not a demo-specific ask.
+- **Voice is usted** (2026-10-10): the buyer is a company owner or director at a construction firm; the landing speaks to them formally and in the sector's own vocabulary.
 - **Bilingual (es/en), URL-routed** (2026-09-14): Astro i18n with `prefixDefaultLocale: true` — every page lives at `/es/...` and `/en/...`, `/` redirects to `/es/`. Content collections carry a `locale` field; UI chrome strings live in `src/lib/i18n.ts`. Adding a third locale means: a new value in `astro.config.mjs` i18n.locales, a new page folder under `src/pages/<locale>/`, a `<locale>` variant of every content JSON file, and a new column in the `src/lib/i18n.ts` dictionary.
-- **Light and dark themes, user-toggleable** (2026-09-14) — dark is the default (BIW's original committed identity from the login screen); the toggle persists to `localStorage` and repaints the whole site via CSS custom properties (`src/styles/global.css`), not per-component light/dark variants. One section stays visually fixed regardless of theme by deliberate design, not oversight: the `Pillars` "Control de obra" manifesto block (always dark, as a fixed accent). `RolesSection` is dark and theme-reactive — its former fixed-light panel was removed on 2026-09-15 by explicit user request ("quiero todo dark").
+- **Paper (light) theme by default, dark optional** (2026-10-10): the toggle persists to `localStorage` and repaints the whole site via semantic CSS tokens (`src/styles/global.css`). Replaces the earlier dark-by-default identity.
 
 ## Brand Commitments
 
-- Name: **BIW** (Building Integrated Workflow), the public-facing brand for this landing. `siteops.tech` is the technical/product subdomain root (seen in the existing login screen), not the marketing brand.
-- Existing login screen (reference image) establishes a visual identity already in production: deep near-black ground, electric-blue accent and glow (a luminous blue sphere motif), a clean light panel for the auth form, uppercase tracked micro-labels, and the wordmark "BIW" with a blue dot accent under "BUILDING INTEGRATED WORKFLOW". This identity is binding for the landing's dark ground and blue accent — not just inspiration. The login's light auth panel is NOT replicated as a light section on the landing (removed 2026-09-15); light appears only via the user-toggled light theme.
-- Structural/energy reference (user-pinned): a Dribbble construction-company landing ("Built to Outlast" style) — heavy display type, self-perform ticker/list, proof project blocks, stats band, step-by-step process, bold closing CTA, large wordmark footer. This shapes section rhythm and typographic weight, not the color palette (BIW's own palette wins).
-- Requested visual treatment: glassmorphism, atomic design, clean code, "muy llamativa, tecnológica" (bold, tech-forward).
+- Name: **BIW** (Building Integrated Workflow). The logo is the official raster "BiW" with the blue dot on the i (`public/brand/`, same files as the web app). Brand colors from the manual: paper `#F5F5F2`, ink `#0B0D10`, logo blue `#003CFF`.
+- **Direction: "documento de obra"** (2026-10-10, owner's request after feeling the previous version looked AI-generated). The landing must read as made by professionals of the sector: paper ground, ink type, hairline rules, the product shown through the documents a builder already uses (budget by chapter, acta de corte with signatures). Full system in `DESIGN.md`.
+- Explicitly rejected: glassmorphism, glow spheres, gradient headings, carousels, tickers, card grids, stock photos, dev jargon (RLS, multitenancy, seeds) on the buyer-facing surface.
 
 ## Evidence on Hand
 
-None. No real customer logos, testimonials, usage numbers, case studies, or press exist for BIW yet. The two reference images (login screen, Dribbble-style construction landing) are visual/structural references only, not content to reuse verbatim. All product-demo visuals in the landing must be synthetic mockups explicitly labeled as illustrative ("datos de ejemplo"), and all site photography must be stock imagery, not real BIW project photos. A list of what to replace with real assets ships at the end of the build.
+None. No real customer logos, testimonials, usage numbers, case studies, or press exist for BIW yet. The two reference images (login screen, Dribbble-style construction landing) are visual/structural references only, not content to reuse verbatim. All product visuals are sample documents labeled once in their title block ("Valores de ejemplo"), with figures that add up. There is no photography: stock images were removed on purpose, and real job-site photos (or a team section) go in only when the company supplies them.
 
 ## Product Principles
 
 1. Sell the mechanism, not a mood: every section should demonstrate BIW's actual behavior (trigger-computed progress, 80%/110% budget gates, DRAFT→IN_REVIEW→APPROVED cuts) rather than generic SaaS claims.
 2. Never claim what isn't shipping: no offline, no geofencing, no AWS/microservices-as-current, no invented customers/metrics; AI features labeled roadmap only.
-3. One committed visual world across dark and light rhythm, inherited from the existing BIW login identity — the landing must feel like the same product as the login screen, not a disconnected marketing skin.
+3. Look like the sector, not like a template: the documents, vocabulary and rigor of a construction company (see DESIGN.md).
 4. Every module/role/flow claim traces back to the Notion spec excerpt provided; gaps are flagged, not filled with invention.
-5. Built for a buyer evaluating construction-ops software: fast comprehension, credible technical depth, clear path to demo or login.
+5. Built for a buyer evaluating construction-ops software: fast comprehension, credible operational depth, clear path to contact.
 
 ## Accessibility & Inclusion
 

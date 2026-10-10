@@ -1,7 +1,0 @@
-{
-  "order": 4,
-  "icon": "calendar",
-  "title": "Festivos colombianos automáticos",
-  "description": "El cronograma y el cálculo de cronograma reconocen automáticamente los festivos de Colombia, sin configuración manual.",
-  "locale": "es"
-}

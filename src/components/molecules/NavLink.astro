@@ -2,7 +2,7 @@
 /**
  * NavLink.astro — header/nav anchor with visible focus ring and an active
  * state (`data-active`, set by SiteHeader's scroll-spy, or `active` prop):
- * brighter text plus a short glowing blue underline.
+ * ink text with a 2px blue underline, like a marked section on a plan.
  */
 interface Props {
   href: string;
@@ -19,7 +19,7 @@ const { href, label, active = false, class: className = '' } = Astro.props;
   aria-current={active ? 'page' : undefined}
   data-active={active ? '' : undefined}
   class:list={[
-    'nav-link relative rounded-lg px-2.5 py-1.5 font-sans text-sm font-medium text-[var(--text-secondary)] transition-colors duration-200 hover:text-[var(--text-primary)] data-[active]:text-[var(--text-primary)]',
+    'nav-link relative px-1 py-1.5 font-sans text-sm text-ink-2 transition-colors duration-150 hover:text-ink data-[active]:text-ink',
     className,
   ]}
 >
@@ -30,16 +30,18 @@ const { href, label, active = false, class: className = '' } = Astro.props;
   .nav-link::after {
     content: '';
     position: absolute;
-    left: 50%;
-    bottom: 0.1rem;
-    width: 1.25rem;
+    left: 0.25rem;
+    right: 0.25rem;
+    bottom: 0;
     height: 2px;
-    border-radius: 9999px;
-    background: linear-gradient(90deg, var(--color-biw-600), var(--color-biw-400));
-    box-shadow: 0 0 10px rgb(77 123 255 / 0.9);
-    translate: -50% 0;
+    background: var(--accent);
     scale: 0 1;
+    transform-origin: left;
     transition: scale 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .nav-link:hover::after {
+    scale: 0.4 1;
   }
 
   .nav-link[data-active]::after {

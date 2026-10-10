@@ -1,0 +1,6 @@
+{
+  "order": 4,
+  "title": "Acceso protegido",
+  "description": "Verificación en dos pasos, bloqueo ante intentos repetidos y copias de seguridad automáticas de la información.",
+  "locale": "es"
+}

@@ -1,9 +1,0 @@
-{
-  "order": 2,
-  "icon": "budget",
-  "status": "live",
-  "name": "Budget Control",
-  "summary": "Budget by chapters and line items, contractor progress-billing cuts, and payment approval with automatic block rules.",
-  "detail": "The budget is organized into chapters and line items tied to the schedule, with a per-contractor unit-price breakdown that inherits chapters and a configurable overhead-and-profit rate. Budget-vs-execution tracking runs in real time: an alert at 80% chapter execution and a hard block at 110% without explicit approval. Payment orders follow the Finance → Director → Manager flow once they cross the configured threshold. Contractor progress-billing cuts move through DRAFT → IN_REVIEW → APPROVED with evidence stored in S3, and block quantities that exceed what was contracted — the site engineer files a formal Quantity Request that the director approves. Advance payments and retention are configurable, with amortization redistributed dynamically in proportion to executed value.",
-  "locale": "en"
-}

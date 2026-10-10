@@ -1,0 +1,7 @@
+{
+  "group": "gente",
+  "order": 9,
+  "name": "Crew and attendance",
+  "summary": "One record per worker across the company; clock-in and clock-out on each site.",
+  "locale": "en"
+}

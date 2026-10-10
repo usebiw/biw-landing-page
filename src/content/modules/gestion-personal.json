@@ -1,9 +1,0 @@
-{
-  "order": 3,
-  "icon": "crew",
-  "status": "live",
-  "name": "Gestión de Personal",
-  "summary": "Trabajadores y cuadrillas por frente de obra, con costo diario de mano de obra calculado automáticamente.",
-  "detail": "Los trabajadores y cuadrillas se organizan por frente de obra (no son usuarios del sistema) y el costo diario de mano de obra se calcula de forma automática. Los contratistas y subcontratistas se gestionan con control de adiciones sobre lo contratado.",
-  "locale": "es"
-}

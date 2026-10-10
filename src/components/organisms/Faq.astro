@@ -1,26 +1,23 @@
 ---
 /**
- * Faq.astro — one FaqItem per faqs entry.
+ * Faq.astro — one FaqItem per faqs entry, ruled list under the section head.
  */
 import { getCollection } from 'astro:content';
 import { useTranslations, type Locale } from '../../lib/i18n';
-import SectionHeader from '../molecules/SectionHeader.astro';
+import SectionHead from '../molecules/SectionHead.astro';
 import FaqItem from '../molecules/FaqItem.astro';
 
 const locale = (Astro.currentLocale === 'en' ? 'en' : 'es') as Locale;
 const t = useTranslations(locale);
-const faqs = (await getCollection('faqs', (e) => e.data.locale === locale)).sort(
-  (a, b) => a.data.order - b.data.order,
-);
+const faqs = (await getCollection('faqs', (e) => e.data.locale === locale)).sort((a, b) => a.data.order - b.data.order);
 ---
 
-<section id="faqs" class="relative mx-auto max-w-3xl px-6 py-24 md:py-32">
-  <div class="glow-sphere left-1/2 top-1/2 size-[30rem] -translate-x-1/2 opacity-25" aria-hidden="true"></div>
-  <SectionHeader title={t('faqs.heading')} align="center" />
+<section id="faqs" class="mx-auto max-w-7xl px-6 py-16 md:py-24" aria-labelledby="faqs-title">
+  <SectionHead id="faqs-title" number="07" label={t('faqs.label')} title={t('faqs.heading')} />
 
-  <div class="glass-light glass-edge relative mt-12 flex flex-col divide-y divide-[var(--border-hairline)] rounded-3xl px-5 md:px-8">
-    {faqs.map((faq) => (
-      <FaqItem question={faq.data.question} answer={faq.data.answer} id={faq.id} />
-    ))}
+  <div class="mt-10 md:grid md:grid-cols-12 md:gap-8">
+    <div class="border-b border-rule md:col-span-9 md:col-start-4">
+      {faqs.map((faq, i) => <div data-reveal style={`--i:${i % 3}`}><FaqItem question={faq.data.question} answer={faq.data.answer} id={faq.id} /></div>)}
+    </div>
   </div>
 </section>

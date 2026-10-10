@@ -27,9 +27,6 @@ export default defineConfig({
   redirects: {
     '/': '/es',
   },
-  image: {
-    remotePatterns: [{ protocol: 'https', hostname: 'images.unsplash.com' }],
-  },
   vite: {
     plugins: [tailwindcss()],
   },

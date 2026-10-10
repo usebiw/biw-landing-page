@@ -1,0 +1,8 @@
+{
+  "roleKey": "director",
+  "order": 2,
+  "name": "Project director",
+  "does": "Approves progress bills, payment orders, overtime and payroll for their projects.",
+  "sees": "The projects they run.",
+  "locale": "en"
+}

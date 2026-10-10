@@ -1,0 +1,8 @@
+{
+  "roleKey": "financiero",
+  "order": 4,
+  "name": "Finance",
+  "does": "Runs the budget, invoices, payment orders, payments and costs.",
+  "sees": "Every project, to pay and to cost it.",
+  "locale": "en"
+}

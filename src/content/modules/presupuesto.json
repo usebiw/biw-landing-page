@@ -1,0 +1,7 @@
+{
+  "group": "dinero",
+  "order": 5,
+  "name": "Presupuesto y APU",
+  "summary": "Capítulos, ítems y análisis de precios unitarios, con alertas al 80 % y bloqueo al 110 %.",
+  "locale": "es"
+}

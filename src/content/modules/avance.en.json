@@ -1,0 +1,7 @@
+{
+  "group": "obra",
+  "order": 1,
+  "name": "Progress and schedule",
+  "summary": "Daily log per activity and work front, actual-vs-planned Gantt and delay alerts.",
+  "locale": "en"
+}

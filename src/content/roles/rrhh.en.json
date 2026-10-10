@@ -1,0 +1,8 @@
+{
+  "roleKey": "rrhh",
+  "order": 5,
+  "name": "Human resources",
+  "does": "Keeps each worker's record, their contracts, and office and site payroll.",
+  "sees": "Everyone on the company's staff.",
+  "locale": "en"
+}

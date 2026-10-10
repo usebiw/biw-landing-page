@@ -1,0 +1,6 @@
+{
+  "order": 4,
+  "title": "Protected access",
+  "description": "Two-step verification, lockout after repeated attempts, and automatic backups of your information.",
+  "locale": "en"
+}

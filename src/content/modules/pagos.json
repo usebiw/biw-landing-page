@@ -1,0 +1,7 @@
+{
+  "group": "dinero",
+  "order": 8,
+  "name": "Compras y órdenes de pago",
+  "summary": "Órdenes de compra, facturas y pagos con su ruta de aprobación.",
+  "locale": "es"
+}

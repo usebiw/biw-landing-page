@@ -1,0 +1,7 @@
+{
+  "group": "dinero",
+  "order": 6,
+  "name": "Contracts and progress billing",
+  "summary": "Contracts with AIU or full VAT, change orders, progress bills and close-out.",
+  "locale": "en"
+}

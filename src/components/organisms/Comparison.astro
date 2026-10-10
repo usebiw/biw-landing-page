@@ -1,0 +1,56 @@
+---
+/**
+ * Comparison.astro — "Hoy" vs. "Con BIW", one row per job the company
+ * already does (progress, budget, billing, approvals, payroll, drawings).
+ * A ruled table, not cards: the reader scans across like a checklist.
+ */
+import { getCollection } from 'astro:content';
+import { useTranslations, type Locale } from '../../lib/i18n';
+import SectionHead from '../molecules/SectionHead.astro';
+import SCurve from './SCurve.astro';
+
+const locale = (Astro.currentLocale === 'en' ? 'en' : 'es') as Locale;
+const t = useTranslations(locale);
+const rows = (await getCollection('comparison', (e) => e.data.locale === locale)).sort((a, b) => a.data.order - b.data.order);
+---
+
+<section id="hoy" class="mx-auto max-w-7xl px-6 py-16 md:py-24" aria-labelledby="hoy-title">
+  <SectionHead id="hoy-title" number="01" label={t('comparison.label')} title={t('comparison.heading')} intro={t('comparison.intro')} />
+
+  <div class="mt-14">
+    <div class="hidden grid-cols-12 gap-8 border-b border-rule pb-3 text-xs font-semibold md:grid">
+      <p class="col-span-4 col-start-4 text-ink-3">{t('comparison.today')}</p>
+      <p class="col-span-5 text-accent-ink">{t('comparison.withBiw')}</p>
+    </div>
+    <dl>
+      {
+        rows.map((row, i) => (
+          <div class="group grid gap-3 border-b border-rule py-7 transition-colors duration-200 hover:bg-sheet/60 md:grid-cols-12 md:gap-8" data-reveal style={`--i:${i % 3}`}>
+            <dt class="flex items-start gap-3 font-display text-lg font-bold leading-snug text-ink [font-stretch:112%] md:col-span-3">
+              <span class="mt-2.5 h-0.5 w-4 shrink-0 bg-accent transition-[width] duration-300 group-hover:w-7" aria-hidden="true"></span>
+              {row.data.area}
+            </dt>
+            <dd class="text-ink-3 md:col-span-4">
+              <span class="mb-1 block text-xs font-semibold md:hidden">{t('comparison.today')}</span>
+              {row.data.today}
+            </dd>
+            <dd class="text-ink md:col-span-5">
+              <span class="mb-1 block text-xs font-semibold text-accent-ink md:hidden">{t('comparison.withBiw')}</span>
+              {row.data.withBiw}
+            </dd>
+          </div>
+        ))
+      }
+    </dl>
+  </div>
+
+  <div class="mt-16 md:grid md:grid-cols-12 md:gap-8">
+    <div class="md:col-span-3">
+      <p class="font-display text-lg font-bold text-ink [font-stretch:112%]" data-reveal>{t('comparison.curveTitle')}</p>
+      <p class="mt-2 text-sm leading-relaxed text-ink-2" data-reveal style="--i:1">{t('comparison.curveBody')}</p>
+    </div>
+    <div class="mt-6 min-w-0 md:col-span-9 md:mt-0">
+      <SCurve />
+    </div>
+  </div>
+</section>

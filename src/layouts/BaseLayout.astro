@@ -29,26 +29,23 @@ const loadingLabel = useTranslations(lang === 'en' ? 'en' : 'es')('loading.page'
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#04060b" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="theme-color" content="#f5f5f2" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/brand/app-icon-32.png" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/brand/app-icon-192.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/brand/app-icon-180.png" />
     <script is:inline>
       // Blocking, pre-paint theme init — avoids a flash of the wrong
-      // theme. Default (no stored/system preference) is dark, BIW's
-      // original committed world; a stored choice or the OS "light"
-      // preference overrides it.
+      // theme. Paper (light) is the default; only an explicit choice
+      // stored by the toggle switches to dark.
       (function () {
         try {
-          const stored = localStorage.getItem('biw-theme');
-          const theme =
-            stored === 'light' || stored === 'dark'
-              ? stored
-              : window.matchMedia('(prefers-color-scheme: light)').matches
-                ? 'light'
-                : 'dark';
-          document.documentElement.dataset.theme = theme;
+          document.documentElement.dataset.theme = localStorage.getItem('biw-theme') === 'dark' ? 'dark' : 'light';
         } catch {
-          document.documentElement.dataset.theme = 'dark';
+          document.documentElement.dataset.theme = 'light';
         }
+        // Arms the scroll-reveal styles (global.css). Without JS nothing
+        // is ever hidden.
+        document.documentElement.dataset.js = '';
       })();
     </script>
     <ClientRouter fallback="animate" />
@@ -61,8 +58,64 @@ const loadingLabel = useTranslations(lang === 'en' ? 'en' : 'es')('loading.page'
 </html>
 
 <script>
-  // Cursor spotlight for `[data-spotlight]` glass panes — one delegated
-  // listener for the whole session (survives ClientRouter swaps).
+  // Scroll reveal: `[data-reveal]` gets `.is-in` the first time it enters
+  // the viewport (CSS in global.css does the rest). `[data-count]` inside
+  // a revealed block counts up to its value. Re-binds on every
+  // `astro:page-load` (ClientRouter) and tears down the previous run.
+  let observer: IntersectionObserver | null = null;
+
+  function countUp(el: HTMLElement) {
+    const target = Number(el.dataset.count);
+    const suffix = el.dataset.suffix ?? '';
+    if (!Number.isFinite(target)) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      el.textContent = `${target}${suffix}`;
+      return;
+    }
+    const delay = Number(el.dataset.delay ?? 350);
+    const duration = 1100;
+    el.textContent = `0${suffix}`;
+    setTimeout(() => {
+      const start = performance.now();
+      const tick = (now: number) => {
+        const t = Math.min(1, (now - start) / duration);
+        const eased = 1 - Math.pow(1 - t, 3);
+        el.textContent = `${Math.round(target * eased)}${suffix}`;
+        if (t < 1) requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+    }, delay);
+  }
+
+  function reveal(el: Element) {
+    el.classList.add('is-in');
+    el.querySelectorAll<HTMLElement>('[data-count]').forEach(countUp);
+  }
+
+  document.addEventListener('astro:page-load', () => {
+    observer?.disconnect();
+    const targets = document.querySelectorAll('[data-reveal]:not(.is-in)');
+    if (!('IntersectionObserver' in window)) {
+      targets.forEach(reveal);
+      return;
+    }
+    observer = new IntersectionObserver(
+      (entries, obs) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          reveal(entry.target);
+          obs.unobserve(entry.target);
+        });
+      },
+      { rootMargin: '0px 0px -12% 0px', threshold: 0.08 },
+    );
+    targets.forEach((el) => observer!.observe(el));
+  });
+</script>
+
+<script>
+  // Cursor light for `[data-spotlight]` documents — one delegated listener
+  // for the whole session (survives ClientRouter swaps).
   if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
     let frame = 0;
     document.addEventListener(
