@@ -1,0 +1,6 @@
+{
+  "order": 3,
+  "question": "Does it handle both AIU contracts and full-VAT contracts?",
+  "answer": "Yes. Each contract is set up one way or the other, and progress bills, owner billing and reports all follow that same rule. Nobody has to recalculate AIU by hand.",
+  "locale": "en"
+}

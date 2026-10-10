@@ -1,0 +1,8 @@
+{
+  "roleKey": "rrhh",
+  "order": 5,
+  "name": "Recursos humanos",
+  "does": "Mantiene la ficha de cada trabajador, sus contratos y las nóminas de planta y de obra.",
+  "sees": "Todo el personal de la empresa.",
+  "locale": "es"
+}

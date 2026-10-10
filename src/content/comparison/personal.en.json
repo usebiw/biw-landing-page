@@ -1,0 +1,7 @@
+{
+  "order": 5,
+  "area": "Crew and payroll",
+  "today": "Attendance lives on a paper sheet and site payroll on a different spreadsheet.",
+  "withBiw": "Clock-in and clock-out with the time, overtime that's paid only once the director approves it, and site payroll calculated from that attendance.",
+  "locale": "en"
+}

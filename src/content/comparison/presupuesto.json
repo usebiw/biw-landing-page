@@ -1,0 +1,7 @@
+{
+  "order": 2,
+  "area": "Presupuesto",
+  "today": "El sobrecosto de un capítulo aparece cuando ya se gastó.",
+  "withBiw": "Cada capítulo avisa al 80 % de ejecución y se bloquea al 110 % hasta que alguien con autoridad lo apruebe.",
+  "locale": "es"
+}

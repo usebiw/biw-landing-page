@@ -1,0 +1,8 @@
+{
+  "roleKey": "contratista",
+  "order": 6,
+  "name": "Contratista",
+  "does": "Consulta sus contratos, sus cortes y el estado de sus pagos.",
+  "sees": "Solo lo suyo. Nunca lo de otro contratista.",
+  "locale": "es"
+}

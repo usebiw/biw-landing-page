@@ -1,7 +1,0 @@
-{
-  "order": 3,
-  "icon": "shield",
-  "title": "Hardening de autenticación",
-  "description": "Detección de reuso de refresh token, bloqueo de cuenta por email ante actividad sospechosa y proxy-headers configurados correctamente. Auditoría de seguridad OWASP en curso antes del lanzamiento.",
-  "locale": "es"
-}

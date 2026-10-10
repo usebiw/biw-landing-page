@@ -1,20 +1,18 @@
 {
   "hero-es": {
     "locale": "es",
-    "headline": "Control y gestión de obras, en un solo lugar.",
-    "headlineAccent": "un solo lugar",
-    "subcopy": "Avance de obra, presupuesto y contratistas bajo control, con datos que se calculan solos y aprobaciones que quedan registradas.",
-    "ctaPrimary": "Contáctanos",
+    "headline": "Lo que pasa en la obra, la gerencia lo sabe el mismo día.",
+    "subcopy": "BIW es el sistema de control de obra para constructoras: avance diario con fotos, presupuesto por capítulos, cortes de contratista y nómina de obra, con cada aprobación registrada a nombre de quien la dio.",
+    "ctaPrimary": "Contáctenos",
     "ctaWhatsapp": "Escribir por WhatsApp",
-    "chips": ["Obras en tiempo real", "Mayor eficiencia", "Decisiones inteligentes"]
+    "localNote": "Hecho para la operación colombiana: contratos con AIU o IVA pleno, anticipo y retegarantía, prestaciones de ley y festivos."
   },
   "hero-en": {
     "locale": "en",
-    "headline": "Construction project control and management, in one place.",
-    "headlineAccent": "in one place",
-    "subcopy": "Progress, budget, and contractors under control, with data that calculates itself and approvals that stay on record.",
+    "headline": "What happens on site, management knows the same day.",
+    "subcopy": "BIW is the job-site control system for construction companies: daily progress with photos, chapter-by-chapter budgets, subcontractor progress billing and site payroll, with every approval recorded under the name of whoever gave it.",
     "ctaPrimary": "Contact us",
     "ctaWhatsapp": "Chat on WhatsApp",
-    "chips": ["Real-time job sites", "Greater efficiency", "Smarter decisions"]
+    "localNote": "Built for Colombian operations: AIU or full-VAT contracts, advance payments and retention, statutory benefits and public holidays."
   }
 }

@@ -1,8 +1,7 @@
 ---
 /**
- * SiteFooter.astro — glowing top hairline, brand + two link columns
- * (navigate / get in touch), legal row with a back-to-top control, and
- * the giant BIW wordmark drawn as a faint outline lit from below.
+ * SiteFooter.astro — heavy ink rule, brand + two link columns
+ * (navigate / get in touch) and legal row with a back-to-top control.
  */
 import { getEntry } from 'astro:content';
 import { useTranslations, getLocalizedPath, type Locale } from '../../lib/i18n';
@@ -18,81 +17,43 @@ const year = new Date().getFullYear();
 const privacyHref = getLocalizedPath('/privacidad', locale);
 const whatsappHref = getWhatsappHref(site!.data.whatsappNumber, site!.data.whatsappMessage);
 
-const linkClass =
-  'inline-flex items-center gap-2 text-sm text-[var(--text-primary)]/75 transition-colors duration-200 hover:text-[var(--text-primary)]';
-const headingClass = 'text-xs font-semibold uppercase tracking-[0.14em] text-[var(--text-secondary)]';
+const linkClass = 'text-sm text-ink-2 transition-colors duration-150 hover:text-ink';
+const headingClass = 'text-sm font-semibold text-ink';
 ---
 
-<footer class="site-footer relative isolate overflow-hidden bg-[var(--surface-canvas)] pt-20">
-  <div class="glow-sphere -bottom-64 left-1/2 size-[40rem] -translate-x-1/2 opacity-30" aria-hidden="true"></div>
-
-  <div class="relative mx-auto max-w-7xl px-6">
-    <div class="grid gap-12 border-b border-[var(--border-hairline)] pb-14 md:grid-cols-[1.4fr_1fr_1fr]">
-      <div>
+<footer class="border-t-2 border-rule-strong bg-paper">
+  <div class="mx-auto max-w-7xl px-6">
+    <div class="grid gap-12 py-14 md:grid-cols-12 md:gap-8">
+      <div class="md:col-span-5">
         <Logo />
-        <p class="mt-5 max-w-sm text-sm leading-relaxed text-[var(--text-secondary)]">
-          {t('footer.tagline')}
-        </p>
+        <p class="mt-5 max-w-sm text-sm leading-relaxed text-ink-2">{t('footer.tagline')}</p>
       </div>
 
-      <nav aria-label={t('footer.siteLinks')}>
+      <nav aria-label={t('footer.siteLinks')} class="md:col-span-3 md:col-start-7">
         <p class={headingClass}>{t('footer.navigate')}</p>
-        <ul class="mt-5 flex flex-col gap-3">
+        <ul class="mt-4 flex flex-col gap-2.5">
           {nav.map((item) => (
             <li><a href={item.href} class={linkClass}>{item.label}</a></li>
           ))}
         </ul>
       </nav>
 
-      <div>
+      <div class="md:col-span-3">
         <p class={headingClass}>{t('footer.connect')}</p>
-        <ul class="mt-5 flex flex-col gap-3">
-          <li>
-            <a href="#demo" class={linkClass}><Icon name="arrow-right" class="size-4 text-biw-400" />{t('header.cta')}</a>
-          </li>
-          <li>
-            <a href={whatsappHref} class={linkClass}><Icon name="whatsapp" class="size-4 text-biw-400" />WhatsApp</a>
-          </li>
-          <li>
-            <a href={privacyHref} class={linkClass}><Icon name="lock" class="size-4 text-biw-400" />{t('footer.privacyLink')}</a>
-          </li>
+        <ul class="mt-4 flex flex-col gap-2.5">
+          <li><a href="#contacto" class={linkClass}>{t('header.cta')}</a></li>
+          <li><a href={whatsappHref} class={linkClass}>WhatsApp</a></li>
+          <li><a href={privacyHref} class={linkClass}>{t('footer.privacyLink')}</a></li>
         </ul>
       </div>
     </div>
 
-    <div class="flex flex-col items-start gap-4 py-8 text-xs text-[var(--text-secondary)] sm:flex-row sm:items-center sm:justify-between">
+    <div class="flex flex-col gap-3 border-t border-rule py-6 text-xs text-ink-3 sm:flex-row sm:items-center sm:justify-between">
       <p>© {year} BIW — Building Integrated Workflow. {t('footer.rights')}</p>
-      <a
-        href="#top"
-        class="inline-flex items-center gap-2 rounded-full border border-[var(--glass-border)] bg-[var(--glass-bg)] px-4 py-2 font-semibold text-[var(--text-primary)] backdrop-blur-xl transition-[border-color,box-shadow] duration-300 hover:border-biw-400/70 hover:shadow-[0_10px_30px_-10px_rgba(20,80,255,0.7)]"
-      >
-        <Icon name="chevron-down" class="size-3.5 rotate-180 text-biw-400" />
+      <a href="#top" class="inline-flex items-center gap-1.5 text-ink-2 hover:text-ink">
+        <Icon name="chevron-down" class="size-3.5 rotate-180" />
         {t('footer.backToTop')}
       </a>
     </div>
-
-    <p class="wordmark select-none pb-4 text-center font-display text-[24vw] font-extrabold leading-[0.78] tracking-tight md:text-[17vw]" aria-hidden="true">
-      BIW
-    </p>
   </div>
 </footer>
-
-<style>
-  .site-footer::before {
-    content: '';
-    position: absolute;
-    inset-inline: 0;
-    top: 0;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, rgb(77 123 255 / 0.7), transparent);
-    box-shadow: 0 0 24px rgb(20 80 255 / 0.6);
-  }
-
-  .wordmark {
-    color: transparent;
-    -webkit-text-stroke: 1px var(--border-hairline-strong);
-    background: linear-gradient(0deg, rgb(20 80 255 / 0.28), transparent 70%);
-    -webkit-background-clip: text;
-    background-clip: text;
-  }
-</style>

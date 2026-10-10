@@ -1,0 +1,131 @@
+---
+/**
+ * SCurve.astro — the control drawing: a project's S-curve, planned vs.
+ * actual cumulative progress, as a printed sheet. The planned curve is a
+ * normalized logistic over 12 months; actual runs to "today" (month 7)
+ * slightly behind. The gap is shaded, and the first month where the delay
+ * passes 5 % gets BIW's yellow alert flag. Curves trace themselves on
+ * reveal (`data-draw`), the rest follows (`data-after`, `data-stamp`).
+ * Sample figures, computed here so the drawing and its labels agree.
+ */
+import { useTranslations, type Locale } from '../../lib/i18n';
+
+const locale = (Astro.currentLocale === 'en' ? 'en' : 'es') as Locale;
+const t = useTranslations(locale);
+
+const X0 = 90;
+const X1 = 1160;
+const Y_TOP = 40; // 100 %
+const Y_BOT = 360; // 0 %
+const MONTHS = 12;
+const TODAY = 7;
+
+const logistic = (m: number) => 1 / (1 + Math.exp(-0.7 * (m - 6)));
+const planned = (m: number) => (logistic(m) - logistic(0)) / (logistic(MONTHS) - logistic(0));
+const actual = (m: number) => planned(m * 0.935);
+
+const x = (m: number) => X0 + ((X1 - X0) * m) / MONTHS;
+const y = (v: number) => Y_BOT - (Y_BOT - Y_TOP) * v;
+
+const steps = (to: number, f: (m: number) => number) =>
+  Array.from({ length: to * 4 + 1 }, (_, i) => i / 4).map((m) => `${x(m).toFixed(1)} ${y(f(m)).toFixed(1)}`);
+
+const plannedPath = `M${steps(MONTHS, planned).join(' L')}`;
+const actualPath = `M${steps(TODAY, actual).join(' L')}`;
+const gapPath = `M${steps(TODAY, planned).join(' L')} L${steps(TODAY, actual).reverse().join(' L')} Z`;
+
+const plannedToday = Math.round(planned(TODAY) * 100);
+const actualToday = Math.round(actual(TODAY) * 100);
+const alertMonth = Array.from({ length: TODAY }, (_, i) => i + 1).find((m) => planned(m) - actual(m) > 0.05) ?? TODAY;
+const alertDelay = Math.round((planned(alertMonth) - actual(alertMonth)) * 100);
+---
+
+<figure class="sheet spotlight lift text-[0.8125rem]" data-reveal data-spotlight>
+  <figcaption class="grid grid-cols-2 border-b border-rule sm:grid-cols-[1.6fr_1fr_1fr]">
+    <div class="col-span-2 border-b border-rule px-5 py-4 sm:col-span-1 sm:border-r sm:border-b-0">
+      <p class="sheet-label">BIW</p>
+      <p class="mt-1 font-display text-[0.9375rem] font-bold [font-stretch:112%]">{t('scurve.title')}</p>
+    </div>
+    <div class="border-r border-rule px-5 py-4">
+      <p class="sheet-label">{t('budgetSheet.project')}</p>
+      <p class="mt-1 text-ink">{t('scurve.project')}</p>
+    </div>
+    <div class="px-5 py-4">
+      <p class="sheet-label">{t('scurve.today')}</p>
+      <p class="figures mt-1 text-ink">{t('scurve.month')} {TODAY} / {MONTHS}</p>
+      <p class="mt-0.5 text-xs text-ink-3">{t('sample.note')}</p>
+    </div>
+  </figcaption>
+
+  <div class="overflow-x-auto px-2 pb-2 pt-4">
+    <svg viewBox="0 0 1200 420" class="block h-auto w-full min-w-[620px]" role="img" aria-label={t('scurve.aria')}>
+      <!-- grid -->
+      {
+        [0, 0.25, 0.5, 0.75, 1].map((v) => (
+          <g>
+            <path d={`M${X0} ${y(v)} H${X1}`} stroke="var(--rule)" stroke-width="1" />
+            <text x={X0 - 14} y={y(v) + 4} text-anchor="end" font-size="13" fill="var(--ink-3)" class="figures">
+              {Math.round(v * 100)}&nbsp;%
+            </text>
+          </g>
+        ))
+      }
+      {
+        Array.from({ length: MONTHS }, (_, i) => i + 1).map((m) => (
+          <g>
+            <path d={`M${x(m)} ${Y_BOT} v6`} stroke="var(--ink-3)" stroke-width="1" />
+            <text x={x(m)} y={Y_BOT + 24} text-anchor="middle" font-size="13" fill="var(--ink-3)" class="figures">
+              {m}
+            </text>
+          </g>
+        ))
+      }
+      <text x={X1} y={Y_BOT + 48} text-anchor="end" font-size="12" fill="var(--ink-3)">{t('scurve.months')}</text>
+      <path d={`M${X0} ${Y_TOP - 10} V${Y_BOT} H${X1}`} stroke="var(--ink)" stroke-width="1.5" fill="none" />
+
+      <!-- gap between planned and actual -->
+      <path d={gapPath} fill="var(--signal-soft)" data-after style="--i:2" />
+
+      <!-- curves -->
+      <path d={plannedPath} pathLength="1" data-draw style="--d:0.3s" stroke="var(--ink-2)" stroke-width="2" fill="none" stroke-linecap="round" />
+      <path d={actualPath} pathLength="1" data-draw style="--d:0.9s" stroke="var(--accent)" stroke-width="3.5" fill="none" stroke-linecap="round" />
+
+      <!-- today -->
+      <g data-after style="--i:3">
+        <path d={`M${x(TODAY)} ${Y_TOP - 10} V${Y_BOT}`} stroke="var(--ink)" stroke-width="1" stroke-dasharray="5 4" />
+        <text x={x(TODAY) + 8} y={Y_TOP} font-size="13" font-weight="700" fill="var(--ink)">{t('scurve.todayMark')}</text>
+        <circle cx={x(TODAY)} cy={y(planned(TODAY))} r="5" fill="var(--sheet)" stroke="var(--ink-2)" stroke-width="2" />
+        <circle cx={x(TODAY)} cy={y(actual(TODAY))} r="6" fill="var(--accent)" />
+        <text x={x(TODAY) + 14} y={y(planned(TODAY)) - 6} font-size="14" fill="var(--ink-2)" class="figures">
+          {t('elevation.plannedLabel')} {plannedToday}&nbsp;%
+        </text>
+        <text x={x(TODAY) + 14} y={y(actual(TODAY)) + 20} font-size="14" font-weight="700" fill="var(--accent-ink)" class="figures">
+          {t('elevation.realLabel')} {actualToday}&nbsp;%
+        </text>
+      </g>
+
+      <!-- first alert -->
+      <g data-after style="--i:5">
+        <path d={`M${x(alertMonth)} ${y(actual(alertMonth))} V${y(actual(alertMonth)) + 46}`} stroke="var(--signal)" stroke-width="1.5" />
+        <circle cx={x(alertMonth)} cy={y(actual(alertMonth))} r="5" fill="var(--signal)" />
+      </g>
+      <foreignObject x={x(alertMonth) - 16} y={y(actual(alertMonth)) + 40} width="420" height="70">
+        <span class="stamp m-3 whitespace-nowrap bg-sheet text-signal" data-stamp style="--delay:2.4s">
+          {t('scurve.alert')(alertMonth, alertDelay)}
+        </span>
+      </foreignObject>
+
+      <!-- legend -->
+      <g data-after style="--i:4" font-size="13">
+        <path d={`M${X0 + 20} ${Y_TOP + 8} h28`} stroke="var(--ink-2)" stroke-width="2" />
+        <text x={X0 + 56} y={Y_TOP + 12} fill="var(--ink-2)">{t('elevation.plannedLabel')}</text>
+        <path d={`M${X0 + 20} ${Y_TOP + 32} h28`} stroke="var(--accent)" stroke-width="3.5" />
+        <text x={X0 + 56} y={Y_TOP + 36} fill="var(--ink-2)">{t('elevation.realLabel')}</text>
+        <rect x={X0 + 20} y={Y_TOP + 48} width="28" height="12" fill="var(--signal-soft)" />
+        <text x={X0 + 56} y={Y_TOP + 58} fill="var(--ink-2)">{t('scurve.gap')}</text>
+      </g>
+    </svg>
+  </div>
+
+  <p class="border-t border-rule px-5 py-3 text-xs text-ink-2">{t('scurve.footnote')}</p>
+</figure>

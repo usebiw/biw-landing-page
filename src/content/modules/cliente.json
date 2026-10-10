@@ -1,0 +1,7 @@
+{
+  "group": "dinero",
+  "order": 7,
+  "name": "Actas al cliente",
+  "summary": "Lo cobrado al dueño de la obra, ítem por ítem y con el acumulado.",
+  "locale": "es"
+}

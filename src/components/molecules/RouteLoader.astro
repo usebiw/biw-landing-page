@@ -2,8 +2,8 @@
 /**
  * RouteLoader.astro — the waiting state for client-side route changes
  * (ES ↔ EN, landing ↔ privacy page) under Astro's <ClientRouter />.
- * No spinner: a thin electric-blue progress bar runs across the top edge
- * while the current page frosts over (global.css `html[data-navigating]`)
+ * No spinner: a thin blue progress bar runs across the top edge
+ * while the current page fades back (global.css `html[data-navigating]`)
  * and a skeleton of the incoming layout shimmers in its place.
  *
  * - The bar is `transition:persist` so it survives the DOM swap and can
@@ -24,33 +24,23 @@ const { label } = Astro.props;
 
 <div class="route-bar" data-route-bar transition:persist="route-bar" aria-hidden="true"></div>
 
-<div class="route-skeleton" aria-hidden="true">
-  <div class="mx-auto grid h-full max-w-7xl gap-12 px-6 pt-28 lg:grid-cols-[55%_45%] lg:items-center lg:pt-0">
-    <div class="flex flex-col gap-4">
-      <div class="skeleton h-14 w-[85%] rounded-xl md:h-20"></div>
-      <div class="skeleton h-14 w-[70%] rounded-xl md:h-20"></div>
-      <div class="skeleton h-14 w-[55%] rounded-xl md:h-20"></div>
+<div class="route-skeleton bg-paper/60" aria-hidden="true">
+  <div class="mx-auto grid h-full max-w-7xl gap-12 px-6 pt-32 lg:grid-cols-12">
+    <div class="flex flex-col gap-4 lg:col-span-6">
+      <div class="skeleton h-12 w-[85%] md:h-16"></div>
+      <div class="skeleton h-12 w-[60%] md:h-16"></div>
       <div class="mt-4 flex flex-col gap-2.5">
-        <div class="skeleton h-3.5 w-[90%] rounded-md"></div>
-        <div class="skeleton h-3.5 w-[65%] rounded-md"></div>
+        <div class="skeleton h-3.5 w-[90%]"></div>
+        <div class="skeleton h-3.5 w-[70%]"></div>
       </div>
       <div class="mt-6 flex gap-3">
-        <div class="skeleton h-12 w-40 rounded-lg"></div>
-        <div class="skeleton h-12 w-52 rounded-lg"></div>
+        <div class="skeleton h-12 w-36"></div>
+        <div class="skeleton h-12 w-48"></div>
       </div>
     </div>
-    <div class="glass-light hidden flex-col gap-4 rounded-2xl p-6 lg:flex">
-      <div class="flex justify-between">
-        <div class="skeleton h-4 w-44 rounded-md"></div>
-        <div class="skeleton h-4 w-24 rounded-md"></div>
-      </div>
-      {[92, 74, 58].map((w) => (
-        <div class="flex flex-col gap-2">
-          <div class="skeleton h-3 rounded-md" style={`width:${w / 2}%`}></div>
-          <div class="skeleton h-2.5 rounded-lg" style={`width:${w}%`}></div>
-        </div>
-      ))}
-      <div class="skeleton mt-2 h-16 rounded-lg"></div>
+    <div class="sheet hidden h-80 flex-col gap-4 p-6 lg:col-span-6 lg:flex">
+      <div class="skeleton h-4 w-56"></div>
+      {[92, 74, 58, 80].map((w) => <div class="skeleton h-3" style={`width:${w}%`}></div>)}
     </div>
   </div>
   <p class="sr-only" role="status">{label}</p>
@@ -66,10 +56,7 @@ const { label } = Astro.props;
     transform-origin: left;
     transform: scaleX(0);
     opacity: 0;
-    background: linear-gradient(90deg, var(--color-biw-600), var(--color-biw-400), #b9ccff);
-    box-shadow:
-      0 0 12px rgb(77 123 255 / 0.9),
-      0 0 2px rgb(185 204 255 / 1);
+    background: var(--accent);
     pointer-events: none;
   }
 
@@ -160,7 +147,8 @@ const { label } = Astro.props;
     // carry the user's theme across so the new page never flashes the
     // other theme mid-swap.
     event.newDocument.documentElement.dataset.theme =
-      document.documentElement.dataset.theme === 'light' ? 'light' : 'dark';
+      document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light';
+    event.newDocument.documentElement.dataset.js = '';
   });
 
   document.addEventListener('astro:after-swap', () => {

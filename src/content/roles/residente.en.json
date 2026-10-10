@@ -1,0 +1,8 @@
+{
+  "roleKey": "residente",
+  "order": 3,
+  "name": "Site engineer",
+  "does": "Logs the day's progress with photos, incidents, weather and stoppages.",
+  "sees": "Their project.",
+  "locale": "en"
+}

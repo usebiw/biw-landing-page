@@ -1,6 +1,0 @@
-{
-  "order": 3,
-  "question": "¿Qué tan segura es la plataforma?",
-  "answer": "BIW ya tiene hardening de autenticación implementado: detección de reuso de refresh token, bloqueo de cuenta por email y control de proxy-headers. Además, adelantamos una auditoría de seguridad OWASP antes del lanzamiento comercial.",
-  "locale": "es"
-}

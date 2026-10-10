@@ -1,0 +1,8 @@
+{
+  "roleKey": "gerencia",
+  "order": 1,
+  "name": "Gerencia",
+  "does": "Aprueba cambios de alcance, de presupuesto y las órdenes de pago que superan el umbral.",
+  "sees": "Todas las obras: avance, ejecución y margen.",
+  "locale": "es"
+}

@@ -1,0 +1,8 @@
+{
+  "roleKey": "director",
+  "order": 2,
+  "name": "Director de obra",
+  "does": "Aprueba cortes, órdenes de pago, horas extra y la nómina de sus obras.",
+  "sees": "Las obras que dirige.",
+  "locale": "es"
+}

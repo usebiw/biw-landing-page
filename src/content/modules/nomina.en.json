@@ -1,0 +1,7 @@
+{
+  "group": "gente",
+  "order": 10,
+  "name": "Site and office payroll",
+  "summary": "Calculated from attendance, with statutory benefits, the director's review and pay stubs.",
+  "locale": "en"
+}

@@ -1,0 +1,8 @@
+{
+  "roleKey": "financiero",
+  "order": 4,
+  "name": "Financiero",
+  "does": "Lleva presupuesto, facturas, órdenes de pago, pagos y costos.",
+  "sees": "Todas las obras, para pagar y costear.",
+  "locale": "es"
+}

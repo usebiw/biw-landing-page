@@ -1,8 +1,8 @@
 # BIW — Landing page
 
-Landing de marketing de **BIW (Building Integrated Workflow)**, plataforma de control y seguimiento de obras de construcción. Sitio estático, bilingüe (español/inglés), con tema oscuro (por defecto) y claro.
+Landing de marketing de **BIW (Building Integrated Workflow)**, plataforma de control y seguimiento de obras de construcción. Sitio estático, bilingüe (español/inglés), con tema claro tipo papel (por defecto) y oscuro opcional. Dirección visual «documento de obra»: ver `DESIGN.md`.
 
-**Stack:** Astro 7 (output estático) · React 19 (solo 2 islands) · Tailwind CSS v4 · TypeScript strict · Vitest.
+**Stack:** Astro 7 (output estático) · React 19 (una sola island: el formulario) · Tailwind CSS v4 · TypeScript strict · Vitest.
 
 ## Requisitos
 
@@ -49,7 +49,7 @@ src/
 │   ├── i18n.ts       # Diccionario de UI (headings, labels, aria, errores) + helpers de locale
 │   ├── validation.ts # Validación del formulario de contacto
 │   └── whatsapp.ts
-├── styles/global.css # Tokens de color, variables de tema claro/oscuro, utilidades glass
+├── styles/global.css # Tokens de color (papel/tinta/azul del logo), tema claro/oscuro, utilidades sheet/figures
 ├── components/       # Atomic design: atoms / molecules / organisms / templates / seo
 ├── layouts/BaseLayout.astro
 └── pages/
@@ -59,14 +59,14 @@ src/
 ```
 
 - **Textos:** el contenido de producto vive en `src/content/`; los textos de interfaz en `src/lib/i18n.ts`. Nada de copy hardcodeado en componentes.
-- **Temas:** los colores que cambian con el tema usan variables CSS (`var(--surface-canvas)`, `var(--text-primary)`, …) definidas en `global.css`.
+- **Temas:** los colores que cambian con el tema usan las utilidades semánticas de `global.css` (`bg-paper`, `text-ink-2`, `border-rule`, …), nunca un hex suelto.
 - **Agregar un idioma:** nuevo locale en `astro.config.mjs`, carpeta `src/pages/<locale>/`, archivo hermano `.<locale>.json` por cada entrada de contenido y columna nueva en el diccionario de `i18n.ts`.
 
 ## Variables de entorno
 
 | Variable               | Uso                                                                                                   |
 | :--------------------- | :---------------------------------------------------------------------------------------------------- |
-| `PUBLIC_DEMO_ENDPOINT` | URL que recibe el formulario "Contáctanos" (`POST` JSON). Sin definir, el envío se simula localmente. |
+| `PUBLIC_DEMO_ENDPOINT` | URL que recibe el formulario "Contáctenos" (`POST` JSON). Sin definir, el envío se simula localmente. |
 
 ## Pendientes antes de producción
 
@@ -74,8 +74,10 @@ src/
 - Imagen Open Graph 1200×630 (`ogImage` en `site.json`).
 - Backend para el formulario (`PUBLIC_DEMO_ENDPOINT`).
 - Revisar el copy de `src/content/` contra la especificación en Notion (se redactó a partir de un extracto).
-- Reemplazar fotos ilustrativas de Unsplash por fotos propias de obra. Cualquier host de imágenes remoto nuevo debe agregarse a `image.remotePatterns` en `astro.config.mjs`.
-- Confirmar dominio final (`site` en `astro.config.mjs`, hoy `https://biw.siteops.tech`).
+- Fotos propias de obra y/o sección de equipo cuando existan (hoy la landing no usa fotos: las de stock se quitaron a propósito). Un host de imágenes remoto nuevo debe agregarse a `image.remotePatterns` en `astro.config.mjs`.
+- Confirmar con el equipo los pasos de implementación (`src/content/steps/`) y la frase «Le escribiremos en el próximo día hábil» del formulario: son promesas de servicio.
+- Datos legales de la política de privacidad (razón social, NIT, ciudad, correo) en `PrivacyPage.astro`.
+- Confirmar dominio final (`site` en `astro.config.mjs`, hoy `https://biw.siteops.tech`; el producto ya está en `usebiw.com`).
 
 ## Documentación del proyecto
 

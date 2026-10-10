@@ -1,0 +1,7 @@
+{
+  "group": "obra",
+  "order": 4,
+  "name": "Weather and stoppages",
+  "summary": "Daily record of rain and work stoppages, with the man-days lost.",
+  "locale": "en"
+}

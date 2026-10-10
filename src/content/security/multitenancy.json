@@ -1,7 +1,0 @@
-{
-  "order": 1,
-  "icon": "building",
-  "title": "Multitenancy por subdominio",
-  "description": "Cada empresa opera en su propio subdominio (<empresa>.siteops.tech), con email único por compañía y aislamiento de datos mediante Row Level Security (RLS).",
-  "locale": "es"
-}

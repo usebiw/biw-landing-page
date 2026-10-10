@@ -1,15 +1,19 @@
 ---
 /**
- * Logo.astro — wordmark "BIW" + blue dot + tracked caption
- * "BUILDING INTEGRATED WORKFLOW" (variant full), inherited verbatim
- * from the production login screen.
+ * Logo.astro — official BIW logo ("BiW" with the blue dot on the i), the
+ * same PNGs the web app uses (biw-frontend/public/brand), plus the tracked
+ * caption "BUILDING INTEGRATED WORKFLOW" (variant full).
+ *
+ * There is no vector of the real logo yet: assets/brand/svg is the old
+ * typographic lockup and must not be used. Two raster variants exist —
+ * white letters (for dark grounds) and ink letters (for light grounds).
  */
 interface Props {
   variant?: 'full' | 'mark';
   /**
-   * Default `auto` tracks the live theme toggle via CSS vars — use this
-   * everywhere the logo sits on the page's own canvas (header, footer,
-   * 404). Pass `onDark`/`onLight` only to force a fixed color regardless
+   * Default `auto` tracks the live theme toggle (html[data-theme]) — use
+   * this everywhere the logo sits on the page's own canvas (header, footer,
+   * 404). Pass `onDark`/`onLight` only to force a fixed variant regardless
    * of theme, for a surface that never repaints (none currently do).
    */
   tone?: 'auto' | 'onDark' | 'onLight';
@@ -18,26 +22,46 @@ interface Props {
 
 const { variant = 'full', tone = 'auto', class: className = '' } = Astro.props;
 
-const textColor =
-  tone === 'onDark' ? 'text-white' : tone === 'onLight' ? 'text-ink-950' : 'text-[var(--text-primary)]';
 const captionColor =
-  tone === 'onDark'
-    ? 'text-slate-500'
-    : tone === 'onLight'
-      ? 'text-ink-950/60'
-      : 'text-[var(--text-secondary)]';
+  tone === 'onDark' ? 'text-[#82878f]' : tone === 'onLight' ? 'text-[#767b84]' : 'text-ink-3';
+
+// 512×242 source → 68×32. Explicit width: the flex-col parent stretches
+// children to the caption's width, which squashes a `w-auto` image.
+const imgClass = 'h-8 w-[68px] max-w-none';
+const darkSrc = '/brand/horizontal-dark-512-transparent.png';
+const lightSrc = '/brand/horizontal-light-512-transparent.png';
 ---
 
-<div class={['inline-flex flex-col gap-1', className].filter(Boolean).join(' ')}>
-  <span class={['inline-flex items-center gap-1.5 font-display text-2xl font-extrabold tracking-tight', textColor].filter(Boolean).join(' ')}>
-    BIW
-    <span class="size-1.5 rounded-full bg-biw-500"></span>
-  </span>
+<div class={['inline-flex flex-col gap-1.5', className].filter(Boolean).join(' ')}>
+  {tone === 'onDark' && <img src={darkSrc} alt="BIW" width="68" height="32" class={imgClass} />}
+  {tone === 'onLight' && <img src={lightSrc} alt="BIW" width="68" height="32" class={imgClass} />}
+  {
+    tone === 'auto' && (
+      <>
+        <img src={lightSrc} alt="BIW" width="68" height="32" class={['logo-on-light', imgClass].join(' ')} />
+        <img src={darkSrc} alt="BIW" width="68" height="32" class={['logo-on-dark', imgClass].join(' ')} />
+      </>
+    )
+  }
   {
     variant === 'full' && (
-      <span class={['font-sans text-[0.6rem] font-semibold uppercase tracking-[0.22em]', captionColor].filter(Boolean).join(' ')}>
+      <span class={['font-sans text-[0.6rem] font-semibold uppercase tracking-[0.2em]', captionColor].filter(Boolean).join(' ')}>
         Building Integrated Workflow
       </span>
     )
   }
 </div>
+
+<style>
+  /* Paper (light) is the default theme: ink letters. [data-theme='dark']
+     swaps to the white-letter variant. */
+  .logo-on-dark {
+    display: none;
+  }
+  :global(html[data-theme='dark']) .logo-on-light {
+    display: none;
+  }
+  :global(html[data-theme='dark']) .logo-on-dark {
+    display: block;
+  }
+</style>

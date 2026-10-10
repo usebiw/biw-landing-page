@@ -1,0 +1,7 @@
+{
+  "order": 3,
+  "area": "Cortes de contratista",
+  "today": "Las cantidades que se pasan de lo contratado se descubren al liquidar el contrato.",
+  "withBiw": "El corte no deja pasar cantidades por encima del contrato sin una solicitud aprobada por el director. Anticipo y retegarantía se descuentan solos.",
+  "locale": "es"
+}

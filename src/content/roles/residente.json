@@ -1,0 +1,8 @@
+{
+  "roleKey": "residente",
+  "order": 3,
+  "name": "Residente",
+  "does": "Registra el avance del día con fotos, las incidencias, el clima y las paradas.",
+  "sees": "Su obra.",
+  "locale": "es"
+}

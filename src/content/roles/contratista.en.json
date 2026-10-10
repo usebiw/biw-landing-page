@@ -1,0 +1,8 @@
+{
+  "roleKey": "contratista",
+  "order": 6,
+  "name": "Subcontractor",
+  "does": "Checks their contracts, their progress bills and the status of their payments.",
+  "sees": "Only their own. Never another subcontractor's.",
+  "locale": "en"
+}

@@ -1,0 +1,7 @@
+{
+  "order": 3,
+  "area": "Subcontractor billing",
+  "today": "Quantities that exceed the contract are discovered when the contract is closed out.",
+  "withBiw": "A progress bill can't include quantities beyond the contract without a request approved by the director. Advance and retention are deducted automatically.",
+  "locale": "en"
+}

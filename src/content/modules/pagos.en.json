@@ -1,0 +1,7 @@
+{
+  "group": "dinero",
+  "order": 8,
+  "name": "Purchasing and payment orders",
+  "summary": "Purchase orders, invoices and payments with their approval route.",
+  "locale": "en"
+}

@@ -1,0 +1,7 @@
+{
+  "group": "dinero",
+  "order": 7,
+  "name": "Owner billing",
+  "summary": "What's been billed to the project owner, item by item, with the running total.",
+  "locale": "en"
+}

@@ -1,0 +1,121 @@
+---
+/**
+ * StructuralDetail.astro — the construction drawing: a structural section
+ * (footings, columns with their rebar and stirrups, beams and a waffle
+ * slab with its voids), labeled with the same items the acta de corte
+ * bills (2.01–2.04). On reveal the steel is traced first, then the
+ * concrete is "poured" bottom-up (`data-rise`), then labels and the
+ * dimension line appear.
+ */
+import { useTranslations, type Locale } from '../../lib/i18n';
+
+const locale = (Astro.currentLocale === 'en' ? 'en' : 'es') as Locale;
+const t = useTranslations(locale);
+const items = t('corte.items');
+
+const SLAB_TOP = 60;
+const SLAB_BOT = 100; // e = 0,40 m
+const BEAM_BOT = 130;
+const FLOOR = 330;
+const FOOT_BOT = 372;
+
+const cols = [
+  { x: 210, footX: 120, footW: 230 },
+  { x: 930, footX: 840, footW: 230 },
+];
+const COL_W = 50;
+
+// waffle-slab voids between ribs
+const voids = Array.from({ length: 9 }, (_, i) => 320 + i * 64).filter((x) => x < 870);
+
+const bars = (x: number) => [x + 8, x + 18, x + COL_W - 18, x + COL_W - 8];
+---
+
+<figure class="sheet spotlight lift text-[0.8125rem]" data-reveal data-spotlight>
+  <figcaption class="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 border-b border-rule px-5 py-4">
+    <p>
+      <span class="sheet-label">BIW</span>
+      <span class="ml-3 font-display text-[0.9375rem] font-bold [font-stretch:112%]">{t('detail.title')}</span>
+    </p>
+    <p class="text-xs text-ink-3">{t('detail.scale')}</p>
+  </figcaption>
+
+  <div class="overflow-x-auto px-2 py-4">
+    <svg viewBox="0 0 1200 400" class="block h-auto w-full min-w-[640px]" role="img" aria-label={t('detail.aria')}>
+      <defs>
+        <pattern id="concrete" width="22" height="22" patternUnits="userSpaceOnUse">
+          <rect width="22" height="22" fill="var(--paper-2)" />
+          <circle cx="4" cy="5" r="1.1" fill="var(--ink-3)" />
+          <circle cx="15" cy="13" r="0.9" fill="var(--ink-3)" />
+          <path d="M9 17 l3 -4 l2 4 Z" fill="none" stroke="var(--ink-3)" stroke-width="0.7" />
+          <path d="M16 3 l2 -2 l1 3 Z" fill="none" stroke="var(--ink-3)" stroke-width="0.6" />
+        </pattern>
+        <pattern id="soil" width="14" height="14" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+          <line x1="0" y1="0" x2="0" y2="14" stroke="var(--ink-3)" stroke-width="0.8" opacity="0.5" />
+        </pattern>
+      </defs>
+
+      <!-- soil -->
+      <rect x="40" y={FLOOR} width="1120" height="60" fill="url(#soil)" />
+      <path d={`M40 ${FLOOR} H1160`} pathLength="1" data-draw stroke="var(--ink)" stroke-width="1.5" fill="none" />
+
+      <!-- concrete, poured bottom-up -->
+      <g>
+        {cols.map((c, i) => <rect x={c.footX} y={FLOOR} width={c.footW} height={FOOT_BOT - FLOOR} fill="url(#concrete)" data-rise style={`--d:${0.9 + i * 0.1}s`} />)}
+        {cols.map((c, i) => <rect x={c.x} y={BEAM_BOT} width={COL_W} height={FLOOR - BEAM_BOT} fill="url(#concrete)" data-rise style={`--d:${1.1 + i * 0.1}s`} />)}
+        <rect x="120" y={SLAB_BOT} width="960" height={BEAM_BOT - SLAB_BOT} fill="url(#concrete)" data-rise style="--d:1.5s" class="beam" />
+        <rect x="120" y={SLAB_TOP} width="960" height={SLAB_BOT - SLAB_TOP} fill="url(#concrete)" data-rise style="--d:1.6s" />
+      </g>
+      <!-- the beam only runs between and over the columns; voids sit in the slab -->
+      <rect x="320" y={SLAB_BOT} width="560" height={BEAM_BOT - SLAB_BOT} fill="var(--sheet)" data-after style="--i:3" />
+      {voids.map((vx) => <rect x={vx} y={SLAB_TOP + 10} width="44" height={SLAB_BOT - SLAB_TOP - 10} fill="var(--sheet)" stroke="var(--ink-3)" stroke-width="0.8" data-after style="--i:4" />)}
+
+      <!-- outlines -->
+      <g stroke="var(--ink)" stroke-width="1.4" fill="none">
+        {cols.map((c) => <path d={`M${c.footX} ${FLOOR} V${FOOT_BOT} H${c.footX + c.footW} V${FLOOR}`} pathLength="1" data-draw style="--d:0.15s" />)}
+        {cols.map((c) => <path d={`M${c.x} ${FLOOR} V${BEAM_BOT} M${c.x + COL_W} ${FLOOR} V${BEAM_BOT}`} pathLength="1" data-draw style="--d:0.25s" />)}
+        <path d={`M120 ${BEAM_BOT} H320 V${SLAB_BOT} H880 V${BEAM_BOT} H1080 V${SLAB_TOP} H120 Z`} pathLength="1" data-draw style="--d:0.35s" />
+      </g>
+
+      <!-- rebar: longitudinal bars with hooks, then stirrups -->
+      <g stroke="var(--accent)" stroke-width="2" fill="none" stroke-linecap="round">
+        {cols.flatMap((c) => bars(c.x).map((bx, j) => <path d={`M${bx} ${SLAB_TOP + 8} V${FOOT_BOT - 8} h${j < 2 ? -22 : 22}`} pathLength="1" data-draw style={`--d:${0.45 + j * 0.05}s`} />))}
+        <path d={`M128 ${SLAB_TOP + 8} H1072 M128 ${BEAM_BOT - 8} H312 M888 ${BEAM_BOT - 8} H1072 M128 ${SLAB_BOT - 6} H1072`} pathLength="1" data-draw style="--d:0.7s" />
+        {cols.map((c) => <path d={`M${c.footX + 10} ${FOOT_BOT - 8} H${c.footX + c.footW - 10}`} pathLength="1" data-draw style="--d:0.6s" />)}
+      </g>
+      <g stroke="var(--accent)" stroke-width="1" fill="none">
+        {
+          cols.flatMap((c) =>
+            Array.from({ length: 10 }, (_, k) => BEAM_BOT + 14 + k * 19).map((sy, k) => (
+              <rect x={c.x + 4} y={sy} width={COL_W - 8} height="6" pathLength="1" data-draw style={`--d:${0.75 + k * 0.03}s`} />
+            )),
+          )
+        }
+      </g>
+
+      <!-- dimension: slab thickness -->
+      <g data-after style="--i:5" stroke="var(--ink)" stroke-width="1" font-size="13">
+        <path d={`M1110 ${SLAB_TOP} V${SLAB_BOT} M1102 ${SLAB_TOP} h16 M1102 ${SLAB_BOT} h16`} />
+        <text x="1124" y={(SLAB_TOP + SLAB_BOT) / 2 + 5} stroke="none" fill="var(--ink)" class="figures">0,40</text>
+        <path d={`M60 ${FLOOR} h40 M60 ${SLAB_BOT} h40`} stroke-dasharray="3 3" />
+        <text x="60" y={FLOOR - 6} stroke="none" fill="var(--ink-3)" class="figures">N+0,00</text>
+        <text x="60" y={SLAB_BOT - 6} stroke="none" fill="var(--ink-3)" class="figures">N+3,20</text>
+      </g>
+
+      <!-- labels tied to the acta items -->
+      <g data-after style="--i:6" font-size="14" fill="none">
+        <path d={`M600 ${SLAB_TOP} V34 H640`} stroke="var(--ink)" stroke-width="1" />
+        <text x="646" y="38" fill="var(--ink)"><tspan font-weight="700" class="figures">2.03</tspan> {items[2]}</text>
+
+        <path d={`M${cols[0].x + COL_W - 8} 200 H420`} stroke="var(--ink)" stroke-width="1" />
+        <text x="428" y="204" fill="var(--ink)"><tspan font-weight="700" class="figures">2.02</tspan> {items[1]}</text>
+
+        <path d={`M${cols[0].x + COL_W} 262 H420`} stroke="var(--ink)" stroke-width="1" />
+        <text x="428" y="266" fill="var(--ink)"><tspan font-weight="700" class="figures">2.01</tspan> {items[0]}</text>
+
+        <path d={`M900 118 H870 V150 H836`} stroke="var(--ink)" stroke-width="1" />
+        <text x="830" y="154" text-anchor="end" fill="var(--ink)"><tspan font-weight="700" class="figures">2.04</tspan> {items[3]}</text>
+      </g>
+    </svg>
+  </div>
+</figure>

@@ -12,6 +12,9 @@ import { file, glob } from 'astro/loaders';
  * locale: 'es') and add an English sibling with an `.en` suffix
  * (`modules/avance.en.json`, locale: 'en') — organisms filter
  * `getCollection(name, (e) => e.data.locale === Astro.currentLocale)`.
+ *
+ * Every claim here must be something BIW does today (see PRODUCT.md):
+ * no offline, no geofencing, no invented customers or numbers.
  */
 
 const localeField = z.enum(['es', 'en']);
@@ -38,96 +41,74 @@ const hero = defineCollection({
   schema: z.object({
     locale: localeField,
     headline: z.string(),
-    headlineAccent: z.string().describe('the bold/accent word(s) inside headline'),
     subcopy: z.string(),
     ctaPrimary: z.string(),
     ctaWhatsapp: z.string(),
-    chips: z.array(z.string()).length(3),
+    /** One plain line under the CTAs naming the local specifics BIW handles. */
+    localNote: z.string(),
   }),
 });
 
-const pillars = defineCollection({
-  loader: glob({ pattern: '**/*.json', base: `./src/content/pillars` }),
-  schema: z.object({
-    locale: localeField,
-    title: z.string(),
-    description: z.string(),
-    icon: z.enum(['visibility', 'control', 'decision']),
-  }),
-});
-
-const modules = defineCollection({
-  loader: glob({ pattern: '**/*.json', base: `./src/content/modules` }),
+/** "Hoy" vs. "Con BIW" — how each job is done today and what changes. */
+const comparison = defineCollection({
+  loader: glob({ pattern: '**/*.json', base: './src/content/comparison' }),
   schema: z.object({
     locale: localeField,
     order: z.number(),
+    area: z.string(),
+    today: z.string(),
+    withBiw: z.string(),
+  }),
+});
+
+/** Platform index, grouped like the chapters of a budget. */
+const modules = defineCollection({
+  loader: glob({ pattern: '**/*.json', base: './src/content/modules' }),
+  schema: z.object({
+    locale: localeField,
+    group: z.enum(['obra', 'dinero', 'gente', 'archivo']),
+    order: z.number(),
     name: z.string(),
     summary: z.string(),
-    detail: z.string(),
-    icon: z.string(),
-    status: z.enum(['live', 'beta', 'roadmap']).default('live'),
   }),
 });
 
 const roles = defineCollection({
-  loader: glob({ pattern: '**/*.json', base: `./src/content/roles` }),
+  loader: glob({ pattern: '**/*.json', base: './src/content/roles' }),
   schema: z.object({
     locale: localeField,
-    /** Stable, locale-independent key (e.g. "gerencia-general") so
-     * ProductDemo.tsx can look up its synthetic per-role snapshot without
-     * depending on the localized display name. Same value in the es/en
-     * sibling files for the same role. */
+    /** Stable, locale-independent key, identical in the es/en siblings. */
     roleKey: z.string(),
     order: z.number(),
     name: z.string(),
-    access: z.string(),
-    responsibilities: z.array(z.string()),
+    does: z.string(),
+    sees: z.string(),
   }),
 });
 
-const flows = defineCollection({
-  loader: glob({ pattern: '**/*.json', base: `./src/content/flows` }),
-  schema: z.object({
-    locale: localeField,
-    order: z.number(),
-    name: z.string(),
-    description: z.string(),
-    steps: z.array(z.string()).min(2),
-  }),
-});
-
-const facts = defineCollection({
-  loader: glob({ pattern: '**/*.json', base: `./src/content/facts` }),
-  schema: z.object({
-    locale: localeField,
-    value: z.string(),
-    label: z.string(),
-  }),
-});
-
-const security = defineCollection({
-  loader: glob({ pattern: '**/*.json', base: `./src/content/security` }),
+/** How a new company gets onto BIW, in order. */
+const steps = defineCollection({
+  loader: glob({ pattern: '**/*.json', base: './src/content/steps' }),
   schema: z.object({
     locale: localeField,
     order: z.number(),
     title: z.string(),
-    description: z.string(),
-    icon: z.string(),
+    body: z.string(),
   }),
 });
 
-const roadmap = defineCollection({
-  loader: glob({ pattern: '**/*.json', base: `./src/content/roadmap` }),
+const security = defineCollection({
+  loader: glob({ pattern: '**/*.json', base: './src/content/security' }),
   schema: z.object({
     locale: localeField,
     order: z.number(),
-    name: z.string(),
+    title: z.string(),
     description: z.string(),
   }),
 });
 
 const faqs = defineCollection({
-  loader: glob({ pattern: '**/*.json', base: `./src/content/faqs` }),
+  loader: glob({ pattern: '**/*.json', base: './src/content/faqs' }),
   schema: z.object({
     locale: localeField,
     order: z.number(),
@@ -139,12 +120,10 @@ const faqs = defineCollection({
 export const collections = {
   site,
   hero,
-  pillars,
+  comparison,
   modules,
   roles,
-  flows,
-  facts,
+  steps,
   security,
-  roadmap,
   faqs,
 };

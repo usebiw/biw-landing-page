@@ -1,0 +1,7 @@
+{
+  "group": "obra",
+  "order": 3,
+  "name": "Incidents",
+  "summary": "Reports with evidence, response times by severity and the director's decision.",
+  "locale": "en"
+}

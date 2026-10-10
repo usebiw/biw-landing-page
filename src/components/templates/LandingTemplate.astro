@@ -1,138 +1,39 @@
 ---
 /**
  * LandingTemplate.astro — assembles every organism in scroll order inside
- * <main>. Fetches the collection data each organism needs to hand down to
- * the React islands (ProductDemo, DemoCta), since islands cannot call
- * getCollection themselves.
+ * <main>. Sections are numbered like the sheets of a drawing set
+ * (01 Comparison … 08 Contact); the number lives in each organism's
+ * SectionHead, so keep it in step with this order.
  */
-import { getCollection, getEntry } from 'astro:content';
-import { useTranslations, getLocalizedPath, type Locale } from '../../lib/i18n';
-import { getWhatsappHref } from '../../lib/whatsapp';
-
 import SiteHeader from '../organisms/SiteHeader.astro';
 import Hero from '../organisms/Hero.astro';
-import ModuleTicker from '../organisms/ModuleTicker.astro';
-import Pillars from '../organisms/Pillars.astro';
-import ModulesList from '../organisms/ModulesList.astro';
-import ProductDemo from '../organisms/ProductDemo';
-import RolesSection from '../organisms/RolesSection.astro';
-import ApprovalFlows from '../organisms/ApprovalFlows.astro';
-import FactsBand from '../organisms/FactsBand.astro';
+import SiteElevation from '../organisms/SiteElevation.astro';
+import SurveyTape from '../organisms/SurveyTape.astro';
+import Comparison from '../organisms/Comparison.astro';
+import ModulesIndex from '../organisms/ModulesIndex.astro';
+import CorteSection from '../organisms/CorteSection.astro';
+import RolesTable from '../organisms/RolesTable.astro';
+import Implementation from '../organisms/Implementation.astro';
 import SecuritySection from '../organisms/SecuritySection.astro';
-import AiRoadmap from '../organisms/AiRoadmap.astro';
-import ProjectShowcase from '../organisms/ProjectShowcase.astro';
 import Faq from '../organisms/Faq.astro';
-import DemoCta from '../organisms/DemoCta';
+import ContactSection from '../organisms/ContactSection.astro';
 import SiteFooter from '../organisms/SiteFooter.astro';
-import SectionHeader from '../molecules/SectionHeader.astro';
-import Atmosphere from '../molecules/Atmosphere.astro';
-import Badge from '../atoms/Badge.astro';
-import Icon from '../atoms/Icon.astro';
-
-const locale = (Astro.currentLocale === 'en' ? 'en' : 'es') as Locale;
-const t = useTranslations(locale);
-const site = await getEntry('site', `site-${locale}`);
-const hero = await getEntry('hero', `hero-${locale}`);
-const roles = (await getCollection('roles', (e) => e.data.locale === locale)).sort(
-  (a, b) => a.data.order - b.data.order,
-);
-const demoRoles = roles.map((r) => ({ roleKey: r.data.roleKey, name: r.data.name, access: r.data.access }));
-
-const whatsappHref = getWhatsappHref(site!.data.whatsappNumber, site!.data.whatsappMessage);
 ---
 
 <SiteHeader />
 
 <main>
   <Hero />
-  <ModuleTicker />
-  <Pillars />
-
-  <ModulesList />
-
-  <section id="producto-en-accion" class="relative isolate overflow-hidden">
-    <Atmosphere variant="center" />
-    <div class="relative z-10 mx-auto max-w-6xl px-6 py-24 md:py-32">
-      <SectionHeader title={t('productDemo.heading')} intro={t('productDemo.intro')} align="center">
-        <Badge slot="aside" tone="blue">{t('productDemo.sampleData')}</Badge>
-      </SectionHeader>
-      <div class="mt-14">
-        <ProductDemo
-          client:visible
-          roles={demoRoles}
-          locale={locale}
-          sampleDataLabel={t('productDemo.sampleData')}
-          tabsAriaLabel={t('productDemo.tabsAriaLabel')}
-          legend={{
-            real: t('productDemo.legendReal'),
-            planned: t('productDemo.legendPlanned'),
-            budget: t('productDemo.legendBudget'),
-          }}
-        />
-      </div>
-    </div>
-  </section>
-
-  <RolesSection />
-  <ApprovalFlows />
-  <FactsBand />
+  <SiteElevation />
+  <Comparison />
+  <SurveyTape />
+  <ModulesIndex />
+  <CorteSection />
+  <RolesTable />
+  <Implementation />
   <SecuritySection />
-  <AiRoadmap />
-  <ProjectShowcase />
   <Faq />
-
-  <section id="demo" class="relative isolate overflow-hidden">
-    <Atmosphere variant="right" />
-    <div class="relative z-10 mx-auto grid max-w-7xl gap-12 px-6 py-24 md:py-32 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16">
-      <div class="lg:sticky lg:top-28 lg:self-start">
-        <SectionHeader title={t('contact.heading')} intro={t('contact.intro')} />
-        <div class="mt-10 flex flex-col gap-3">
-          <a
-            href={whatsappHref}
-            data-spotlight
-            class="glass-light glass-edge glass-interactive spotlight group relative flex items-center gap-4 rounded-2xl p-5"
-          >
-            <span class="inline-flex size-12 shrink-0 items-center justify-center rounded-xl border border-biw-400/30 bg-biw-500/15 shadow-[0_0_24px_rgba(20,80,255,0.35)]">
-              <Icon name="whatsapp" class="size-5 text-biw-400" />
-            </span>
-            <span class="flex-1">
-              <span class="block text-xs font-semibold uppercase tracking-[0.1em] text-[var(--text-secondary)]">{t('contact.whatsappTitle')}</span>
-              <span class="mt-0.5 block font-display text-base font-bold text-[var(--text-primary)]">{t('contact.whatsappBody')}</span>
-            </span>
-            <Icon name="arrow-right" class="size-4 text-[var(--text-secondary)] transition-transform duration-300 group-hover:translate-x-1 group-hover:text-biw-400" />
-          </a>
-          <a
-            href={getLocalizedPath('/privacidad', locale)}
-            data-spotlight
-            class="glass-light glass-edge glass-interactive spotlight group relative flex items-center gap-4 rounded-2xl p-5"
-          >
-            <span class="inline-flex size-12 shrink-0 items-center justify-center rounded-xl border border-[var(--border-hairline)] bg-[var(--surface-card)]">
-              <Icon name="lock" class="size-5 text-biw-400" />
-            </span>
-            <span class="flex-1">
-              <span class="block text-xs font-semibold uppercase tracking-[0.1em] text-[var(--text-secondary)]">{t('contact.privacyTitle')}</span>
-              <span class="mt-0.5 block text-sm text-[var(--text-primary)]/85">{t('contact.privacyBody')}</span>
-            </span>
-            <Icon name="arrow-right" class="size-4 text-[var(--text-secondary)] transition-transform duration-300 group-hover:translate-x-1 group-hover:text-biw-400" />
-          </a>
-        </div>
-      </div>
-
-      <div class="relative">
-        <div class="glow-sphere left-1/2 top-1/3 size-[26rem] -translate-x-1/2 opacity-40" aria-hidden="true"></div>
-        <div class="glass-strong glass-edge relative rounded-3xl p-6 md:p-9">
-          <p class="mb-7 font-display text-xl font-bold tracking-tight text-[var(--text-primary)]">{t('contact.formTitle')}</p>
-          <DemoCta
-            client:idle
-            locale={locale}
-            whatsappHref={whatsappHref}
-            whatsappLabel={hero!.data.ctaWhatsapp}
-            privacyHref={getLocalizedPath('/privacidad', locale)}
-          />
-        </div>
-      </div>
-    </div>
-  </section>
+  <ContactSection />
 </main>
 
 <SiteFooter />

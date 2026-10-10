@@ -1,0 +1,7 @@
+{
+  "group": "dinero",
+  "order": 5,
+  "name": "Budget and unit-price analysis",
+  "summary": "Chapters, line items and unit-price breakdowns, with alerts at 80 % and a lock at 110 %.",
+  "locale": "en"
+}

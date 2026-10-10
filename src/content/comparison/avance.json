@@ -1,0 +1,7 @@
+{
+  "order": 1,
+  "area": "Avance de obra",
+  "today": "Cada residente manda su Excel el viernes y alguien en oficina lo consolida a mano.",
+  "withBiw": "El residente registra el avance del día por actividad, con foto. El acumulado se calcula solo y se compara contra lo programado; si el retraso pasa del 5 %, el director se entera.",
+  "locale": "es"
+}

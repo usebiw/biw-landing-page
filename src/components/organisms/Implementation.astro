@@ -1,0 +1,80 @@
+---
+/**
+ * Implementation.astro — how a company gets onto BIW, as a numbered
+ * sequence on a vertical rule, plus a short list of the Colombian
+ * specifics BIW handles out of the box. This is where the landing shows
+ * there are people behind the product: a process with a pilot and
+ * accompaniment, not a "sign up" button.
+ */
+import { getCollection } from 'astro:content';
+import { useTranslations, type Locale } from '../../lib/i18n';
+import SectionHead from '../molecules/SectionHead.astro';
+import Icon from '../atoms/Icon.astro';
+
+const locale = (Astro.currentLocale === 'en' ? 'en' : 'es') as Locale;
+const t = useTranslations(locale);
+const steps = (await getCollection('steps', (e) => e.data.locale === locale)).sort((a, b) => a.data.order - b.data.order);
+const local = t('steps.local');
+---
+
+<section id="implementacion" class="scope-ink relative isolate overflow-hidden" aria-labelledby="implementacion-title">
+<div class="drift-blob -right-40 top-20 size-[34rem] [--blob:rgb(51_102_255/0.22)]" aria-hidden="true"></div>
+<div class="mx-auto max-w-7xl px-6 py-16 md:py-24">
+  <SectionHead id="implementacion-title" number="05" label={t('steps.label')} title={t('steps.heading')} intro={t('steps.intro')} />
+
+  <div class="mt-14 grid gap-14 lg:grid-cols-12 lg:gap-8">
+    <ol class="lg:col-span-6 lg:col-start-4">
+      {
+        steps.map((step, i) => (
+          <li class="step relative grid grid-cols-[2.5rem_1fr] gap-x-4 pb-10 last:pb-0" data-reveal style={`--i:${i}`}>
+            {i < steps.length - 1 && <span class="step-line absolute bottom-0 left-[1.25rem] top-10 w-px bg-accent" aria-hidden="true" />}
+            <span class="step-num figures flex size-10 items-center justify-center border border-ink bg-paper text-sm font-semibold text-ink">
+              {String(step.data.order).padStart(2, '0')}
+            </span>
+            <div class="pt-1.5">
+              <h3 class="text-lg text-ink">{step.data.title}</h3>
+              <p class="mt-2 max-w-[52ch] leading-relaxed text-ink-2">{step.data.body}</p>
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+
+    <aside class="self-start border-t-2 border-rule-strong pt-5 lg:col-span-3" data-reveal style="--i:2">
+      <h3 class="text-base text-ink">{t('steps.localTitle')}</h3>
+      <ul class="mt-4 flex flex-col">
+        {local.map((line) => (
+          <li class="flex gap-3 border-b border-rule py-3 text-sm text-ink-2 last:border-b-0">
+            <Icon name="check" class="mt-0.5 size-4 shrink-0 text-accent" />
+            {line}
+          </li>
+        ))}
+      </ul>
+    </aside>
+  </div>
+</div>
+</section>
+
+<style>
+  .step-num {
+    transition:
+      background-color 0.4s ease,
+      border-color 0.4s ease,
+      color 0.4s ease;
+    transition-delay: calc(0.3s + var(--i, 0) * 80ms);
+  }
+  :global(.is-in) > .step-num {
+    background-color: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+  }
+  :global(html[data-js]) .step-line {
+    transform: scaleY(0);
+    transform-origin: top;
+    transition: transform 0.8s var(--ease-out);
+    transition-delay: calc(0.5s + var(--i, 0) * 80ms);
+  }
+  :global(html[data-js]) :global(.is-in) > .step-line {
+    transform: scaleY(1);
+  }
+</style>

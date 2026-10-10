@@ -1,6 +1,6 @@
 {
   "order": 2,
-  "question": "Can we migrate data from our current job sites (Excel, other software)?",
-  "answer": "Yes. During implementation we help you load existing budgets, schedules, and contractors so the site starts on BIW without losing its history.",
+  "question": "Can we bring in what we already have in spreadsheets?",
+  "answer": "Yes. During onboarding we load budgets, schedules, subcontractors and staff from your files, so the project starts in BIW with its history.",
   "locale": "en"
 }

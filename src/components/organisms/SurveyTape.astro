@@ -1,0 +1,111 @@
+---
+/**
+ * SurveyTape.astro — the platform's modules laid along a surveyor's tape,
+ * one station per module with its chainage (abscisa) K0+000, K0+100…
+ * Not an autoplay marquee: the tape only moves when the reader scrolls
+ * (scroll-linked translate in the script below). Under reduced motion it
+ * is a plain horizontally scrollable strip.
+ */
+import { getCollection } from 'astro:content';
+import { useTranslations, type Locale } from '../../lib/i18n';
+
+const locale = (Astro.currentLocale === 'en' ? 'en' : 'es') as Locale;
+const t = useTranslations(locale);
+const modules = (await getCollection('modules', (e) => e.data.locale === locale)).sort((a, b) => a.data.order - b.data.order);
+const groupCode = { obra: 1, dinero: 2, gente: 3, archivo: 4 } as const;
+const counters: Record<string, number> = {};
+const stations = modules.map((m, i) => {
+  const g = groupCode[m.data.group];
+  counters[g] = (counters[g] ?? 0) + 1;
+  return { code: `${g}.${counters[g]}`, name: m.data.name, chainage: `K0+${String(i * 100).padStart(3, '0')}` };
+});
+---
+
+<section class="survey-tape relative overflow-hidden border-y border-rule bg-paper-2 py-8" aria-label={t('tape.label')} data-tape>
+  <p class="mx-auto mb-5 flex max-w-7xl items-center gap-3 px-6 text-xs text-ink-3">
+    <span class="h-px w-8 bg-ink-3" aria-hidden="true"></span>
+    {t('tape.caption')}
+  </p>
+  <div class="tape-viewport">
+    <ol class="tape-track relative flex w-max pl-6 pr-[30vw]" data-tape-track>
+      {
+        stations.map((s) => (
+          <li class="station relative w-[17rem] shrink-0 pb-[3.25rem]">
+            <p class="pl-4 pr-6 text-sm leading-snug">
+              <span class="figures mr-1.5 text-ink-3">{s.code}</span>
+              <span class="font-semibold text-ink">{s.name}</span>
+            </p>
+            <span class="absolute bottom-[2.75rem] left-0 h-4 w-px bg-accent" aria-hidden="true" />
+            <span class="absolute bottom-[2.6rem] left-[-4px] size-[9px] rotate-45 bg-accent" aria-hidden="true" />
+            <span class="figures absolute bottom-0 left-1.5 text-[0.6875rem] font-semibold text-ink-2">{s.chainage}</span>
+          </li>
+        ))
+      }
+      <li class="tape-ruler absolute inset-x-0 bottom-5 h-6" aria-hidden="true"></li>
+    </ol>
+  </div>
+</section>
+
+<style>
+  /* The tape: a white band with minor ticks every 0.85rem and a heavier
+     tick every station (17rem), like a surveyor's measuring tape. */
+  .tape-ruler {
+    background-color: var(--sheet);
+    border-block: 1px solid var(--ink);
+    background-image:
+      linear-gradient(90deg, var(--ink) 1.5px, transparent 1.5px),
+      linear-gradient(90deg, var(--ink-3) 1px, transparent 1px);
+    background-size:
+      17rem 100%,
+      0.85rem 45%;
+    background-repeat: repeat-x;
+    background-position:
+      1.5rem 0,
+      1.5rem 0;
+  }
+
+  .tape-track {
+    will-change: transform;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .tape-viewport {
+      overflow-x: auto;
+    }
+  }
+</style>
+
+<script>
+  // Scroll-linked tape: as the band crosses the viewport, the track slides
+  // left by up to its overflow. Re-binds on every `astro:page-load`.
+  let controller: AbortController | null = null;
+
+  document.addEventListener('astro:page-load', () => {
+    controller?.abort();
+    controller = new AbortController();
+    const { signal } = controller;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    const band = document.querySelector<HTMLElement>('[data-tape]');
+    const track = band?.querySelector<HTMLElement>('[data-tape-track]');
+    if (!band || !track) return;
+    const host = band;
+    const rail = track;
+
+    let frame = 0;
+    const update = () => {
+      frame = 0;
+      const rect = host.getBoundingClientRect();
+      const vh = window.innerHeight;
+      const p = Math.min(1, Math.max(0, (vh - rect.top) / (vh + rect.height)));
+      const max = Math.max(0, rail.scrollWidth - host.clientWidth);
+      rail.style.transform = `translate3d(${-p * max}px, 0, 0)`;
+    };
+    const onScroll = () => {
+      if (!frame) frame = requestAnimationFrame(update);
+    };
+    window.addEventListener('scroll', onScroll, { passive: true, signal });
+    window.addEventListener('resize', onScroll, { passive: true, signal });
+    update();
+  });
+</script>

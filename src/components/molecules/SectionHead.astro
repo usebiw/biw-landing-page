@@ -1,0 +1,42 @@
+---
+/**
+ * SectionHead.astro — the opening of every landing section, laid out like
+ * the title strip of a drawing sheet: a heavy ink rule, the sheet number
+ * and name on the left, the heading and intro on the right. Always
+ * left-aligned; no gradients, no eyebrow pill. The rule draws itself in
+ * when the section scrolls into view.
+ */
+interface Props {
+  number: string;
+  label: string;
+  title: string;
+  intro?: string;
+  id?: string;
+}
+
+const { number, label, title, intro, id } = Astro.props;
+---
+
+<header class="relative grid gap-6 pt-6 md:grid-cols-12 md:gap-8" data-reveal>
+  <span class="section-rule absolute inset-x-0 top-0 h-0.5 bg-rule-strong" aria-hidden="true"></span>
+  <p class="flex items-baseline gap-3 text-sm md:col-span-3">
+    <span class="figures font-semibold text-accent-ink">{number}</span>
+    <span class="text-ink-3">{label}</span>
+  </p>
+  <div class="md:col-span-9">
+    <h2 id={id} class="max-w-[22ch] text-[2rem] text-ink md:text-[2.75rem]">{title}</h2>
+    {intro && <p class="mt-5 max-w-[60ch] text-lg leading-relaxed text-ink-2">{intro}</p>}
+  </div>
+</header>
+
+<style>
+  /* The heavy rule is drawn left to right as the section arrives. */
+  :global(html[data-js]) .section-rule {
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.9s var(--ease-out);
+  }
+  :global(html[data-js]) :global(.is-in) > .section-rule {
+    transform: scaleX(1);
+  }
+</style>

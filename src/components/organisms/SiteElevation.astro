@@ -1,0 +1,283 @@
+---
+/**
+ * SiteElevation.astro — full-bleed construction elevation drawn like a
+ * plan sheet. Three towers (delivered / in structure / foundations), a
+ * tower crane, a concrete mixer with a turning drum, workers in hard hats
+ * and a site office.
+ *
+ * Motion: static strokes trace themselves on reveal (`data-draw`,
+ * global.css). Tower 2 is built by the reader's scroll: the script below
+ * maps how far the section has travelled through the viewport to the
+ * number of finished floors, moves the formwork floor, the crew and the
+ * crane hook up with it, and updates the "actual %" label. Reduced motion
+ * shows the final state.
+ */
+import { useTranslations, type Locale } from '../../lib/i18n';
+
+const locale = (Astro.currentLocale === 'en' ? 'en' : 'es') as Locale;
+const t = useTranslations(locale);
+
+const GROUND = 500;
+const FLOOR = 30;
+
+const t1 = { x: 90, w: 260, floors: 10 };
+const t2 = { x: 470, w: 300, floors: 12, from: 3, to: 8 };
+const t3 = { x: 1250, w: 250 };
+
+const t1Top = GROUND - FLOOR * t1.floors;
+const t2Top = GROUND - FLOOR * t2.floors;
+const plannedPct = 70;
+const plannedY = GROUND - FLOOR * t2.floors * (plannedPct / 100);
+const finalPct = Math.round((t2.to / t2.floors) * 100);
+
+const columns = (x: number, w: number, n: number) => Array.from({ length: n - 1 }, (_, i) => x + ((i + 1) * w) / n);
+
+// A worker pictogram: hard hat, head, body, legs. (x, y) = feet.
+const worker = (x: number, y: number) =>
+  `M${x - 7} ${y - 33} a7 5 0 0 1 14 0 Z M${x} ${y - 29} m-4 0 a4 4 0 1 0 8 0 a4 4 0 1 0 -8 0 M${x} ${y - 25} V${y - 10} M${x} ${y - 21} L${x - 7} ${y - 14} M${x} ${y - 21} L${x + 7} ${y - 16} M${x} ${y - 10} L${x - 5} ${y} M${x} ${y - 10} L${x + 5} ${y}`;
+---
+
+<section class="relative overflow-hidden border-y border-rule bg-paper" aria-labelledby="elevation-title">
+  <figure class="text-ink-3" data-reveal data-build data-floors={t2.floors} data-from={t2.from} data-to={t2.to}>
+    <svg viewBox="0 0 1600 600" class="block h-auto w-full min-w-[760px] max-sm:-ml-[22%]" role="img" aria-labelledby="elevation-title">
+      <title id="elevation-title">{t('elevation.title')}</title>
+      <defs>
+        <pattern id="ground-hatch" width="16" height="16" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+          <line x1="0" y1="0" x2="0" y2="16" stroke="currentColor" stroke-width="1" opacity="0.4" />
+        </pattern>
+      </defs>
+
+      <!-- Ground -->
+      <rect x="0" y={GROUND} width="1600" height="16" fill="url(#ground-hatch)" />
+      <path d={`M0 ${GROUND} H1600`} pathLength="1" data-draw stroke="var(--ink)" stroke-width="1.5" fill="none" />
+
+      <!-- Tower 1 · delivered -->
+      {Array.from({ length: t1.floors }, (_, i) => <rect x={t1.x} y={GROUND - FLOOR * (i + 1)} width={t1.w} height={FLOOR} fill="var(--accent-soft)" data-rise style={`--d:${0.3 + i * 0.05}s`} />)}
+      <path d={`M${t1.x} ${GROUND} V${t1Top} H${t1.x + t1.w} V${GROUND}`} pathLength="1" data-draw style="--d:0.15s" stroke="var(--ink-2)" stroke-width="1.5" fill="none" />
+      {Array.from({ length: t1.floors - 1 }, (_, i) => <path d={`M${t1.x} ${GROUND - FLOOR * (i + 1)} H${t1.x + t1.w}`} pathLength="1" data-draw style={`--d:${0.35 + i * 0.04}s`} stroke="currentColor" stroke-width="0.8" fill="none" />)}
+      {columns(t1.x, t1.w, 6).map((x) => <path d={`M${x} ${GROUND} V${t1Top}`} pathLength="1" data-draw style="--d:0.5s" stroke="currentColor" stroke-width="0.8" fill="none" />)}
+      <path d={`M${t1.x - 14} ${t1Top - 14} H${t1.x + t1.w + 14}`} pathLength="1" data-draw style="--d:0.6s" stroke="var(--ink-2)" stroke-width="1.5" fill="none" />
+
+      <!-- Tower 2 · planned envelope -->
+      <rect x={t2.x} y={t2Top} width={t2.w} height={FLOOR * t2.floors} fill="none" stroke="currentColor" stroke-width="0.8" stroke-dasharray="4 5" data-after style="--i:2" />
+
+      <!-- Tower 2 · floors, built by scroll -->
+      {
+        Array.from({ length: t2.floors }, (_, i) => (
+          <rect class="t2-floor" data-floor={i} x={t2.x} y={GROUND - FLOOR * (i + 1)} width={t2.w} height={FLOOR} stroke-width="0.8" />
+        ))
+      }
+      {columns(t2.x, t2.w, 6).map((x) => <path class="t2-col" d={`M${x} ${GROUND} V${t2Top}`} stroke="var(--accent)" stroke-width="0.7" fill="none" />)}
+
+      <!-- formwork floor + crew, moved up by the script -->
+      <g class="t2-work" style={`--wy:${-FLOOR * t2.to}px`}>
+        <rect x={t2.x - 6} y={GROUND - FLOOR} width={t2.w + 12} height={FLOOR} fill="none" stroke="var(--accent)" stroke-width="1.5" stroke-dasharray="7 5" />
+        {[t2.x - 6, t2.x + t2.w + 6].map((x) => <path d={`M${x} ${GROUND - FLOOR} V${GROUND - FLOOR - 26}`} stroke="var(--ink-2)" stroke-width="1" />)}
+        <path d={`M${t2.x - 6} ${GROUND - FLOOR - 14} H${t2.x + t2.w + 6}`} stroke="var(--ink-2)" stroke-width="0.8" />
+        <g stroke="var(--ink)" stroke-width="1.6" fill="none" stroke-linecap="round">
+          <path d={worker(t2.x + 70, GROUND - FLOOR)} />
+          <path d={worker(t2.x + 190, GROUND - FLOOR)} />
+        </g>
+        <g fill="var(--accent)">
+          <path d={`M${t2.x + 63} ${GROUND - FLOOR - 33} a7 5 0 0 1 14 0 Z`} />
+          <path d={`M${t2.x + 183} ${GROUND - FLOOR - 33} a7 5 0 0 1 14 0 Z`} />
+        </g>
+      </g>
+
+      <!-- actual vs. planned ticks -->
+      <g data-after style="--i:4">
+        <path d={`M${t2.x + t2.w + 26} ${GROUND} V${t2Top}`} stroke="currentColor" stroke-width="0.8" fill="none" />
+        <path class="t2-real-tick" d={`M${t2.x + t2.w + 16} ${GROUND} H${t2.x + t2.w + 40}`} stroke="var(--accent)" stroke-width="2.5" style={`--ry:${-FLOOR * t2.to}px`} />
+        <path d={`M${t2.x + t2.w + 16} ${plannedY} H${t2.x + t2.w + 40}`} stroke="var(--ink-2)" stroke-width="1.5" stroke-dasharray="4 3" />
+        <text x={t2.x + t2.w + 48} y={plannedY - 6} font-size="15" fill="var(--ink-2)">{t('elevation.plannedLabel')} {plannedPct}&nbsp;%</text>
+        <text class="t2-real-label figures" x={t2.x + t2.w + 48} y={GROUND + 5} font-size="15" font-weight="700" fill="var(--accent-ink)" style={`--ry:${-FLOOR * t2.to}px`}>
+          {t('elevation.realLabel')} <tspan data-real-pct>{finalPct}</tspan>&nbsp;%
+        </text>
+      </g>
+
+      <!-- Tower crane -->
+      <g stroke="var(--ink-2)" fill="none" stroke-width="1.2">
+        <path d={`M972 ${GROUND} V58 M988 ${GROUND} V58`} pathLength="1" data-draw style="--d:0.9s" />
+        <path d={Array.from({ length: 15 }, (_, i) => `M972 ${GROUND - i * 29.5} L988 ${GROUND - (i + 1) * 29.5}`).join(' ')} pathLength="1" data-draw style="--d:1.05s" stroke-width="0.7" />
+        <path d="M520 58 H1320 M520 70 H980" pathLength="1" data-draw style="--d:1.2s" />
+        <path d="M980 70 L980 28 L1320 58 M980 28 L560 58" pathLength="1" data-draw style="--d:1.35s" stroke-width="0.7" />
+      </g>
+      <rect x="1250" y="58" width="50" height="24" fill="var(--ink-2)" data-after style="--i:2" />
+      <rect x="966" y="70" width="28" height="20" fill="none" stroke="var(--ink-2)" stroke-width="1.2" data-after style="--i:2" />
+      <g class="t2-hook">
+        <g class="sway" style="transform-origin: 620px 62px">
+          <rect x="612" y="58" width="16" height="8" fill="var(--ink-2)" />
+          <path class="t2-cable" d="M620 66 V200" stroke="var(--ink-2)" stroke-width="1" />
+          <g class="t2-load">
+            <path d="M620 200 l-18 14 M620 200 l18 14" stroke="var(--ink-2)" stroke-width="1" />
+            <rect x="590" y="214" width="60" height="6" fill="var(--accent)" />
+            <rect x="590" y="222" width="60" height="6" fill="var(--accent)" opacity="0.7" />
+          </g>
+        </g>
+      </g>
+
+      <!-- Concrete mixer truck -->
+      <g data-after style="--i:3">
+        <g transform="translate(40 0)">
+        <path d={`M980 ${GROUND - 14} H1140 V${GROUND - 40} H1112 L1100 ${GROUND - 62} H1080 V${GROUND - 14}`} stroke="var(--ink-2)" stroke-width="1.3" fill="var(--sheet)" />
+        <rect x="1106" y={GROUND - 56} width="16" height="14" fill="var(--accent-soft)" stroke="var(--ink-2)" stroke-width="1" />
+        <clipPath id="drum-clip"><ellipse cx="1026" cy={GROUND - 44} rx="43" ry="25" /></clipPath>
+        <ellipse cx="1026" cy={GROUND - 44} rx="44" ry="26" fill="var(--sheet)" stroke="var(--ink-2)" stroke-width="1.3" />
+        <g clip-path="url(#drum-clip)">
+          <g class="drum-stripes">
+            {Array.from({ length: 10 }, (_, k) => 930 + k * 24).map((sx) => <path d={`M${sx} ${GROUND - 74} l36 60`} stroke="var(--accent)" stroke-width="3" />)}
+          </g>
+        </g>
+        <ellipse cx="1026" cy={GROUND - 44} rx="44" ry="26" fill="none" stroke="var(--ink-2)" stroke-width="1.3" />
+        {[1002, 1046, 1120].map((cx) => <circle cx={cx} cy={GROUND - 9} r="9" fill="var(--paper)" stroke="var(--ink)" stroke-width="1.5" />)}
+        </g>
+      </g>
+
+      <!-- Ground crew -->
+      <g data-after style="--i:5" stroke="var(--ink)" stroke-width="1.6" fill="none" stroke-linecap="round">
+        <path d={worker(1206, GROUND)} />
+        <path d={worker(1310, GROUND)} />
+        <path d="M1317 470 L1338 444 M1338 444 l10 4 l-4 8" stroke="var(--signal)" />
+      </g>
+      <g data-after style="--i:5" fill="var(--accent)">
+        <path d={`M1199 ${GROUND - 33} a7 5 0 0 1 14 0 Z`} />
+        <path d={`M1303 ${GROUND - 33} a7 5 0 0 1 14 0 Z`} />
+      </g>
+
+      <!-- Tower 3 · foundations -->
+      <rect x={t3.x} y={GROUND} width={t3.w} height="20" fill="var(--paper)" stroke="var(--accent)" stroke-width="1.5" stroke-dasharray="7 5" data-after style="--i:5" />
+      {Array.from({ length: 7 }, (_, i) => t3.x + 20 + i * 35).map((x, i) => <path d={`M${x} ${GROUND + 20} V${GROUND + 62}`} pathLength="1" data-draw style={`--d:${1.5 + i * 0.06}s`} stroke="var(--accent)" stroke-width="2" fill="none" />)}
+
+      <!-- Site office -->
+      <path d={`M1514 ${GROUND} V452 H1576 V${GROUND} M1506 452 H1582`} pathLength="1" data-draw style="--d:1.7s" stroke="var(--ink-2)" stroke-width="1.2" fill="none" />
+      <path d={`M1534 ${GROUND} V470 H1550 V${GROUND}`} pathLength="1" data-draw style="--d:1.8s" stroke="currentColor" stroke-width="0.8" fill="none" />
+
+      <!-- Labels -->
+      <g data-after style="--i:6" font-size="16">
+        <text x={t1.x} y="550" font-weight="700" fill="var(--ink)">{t('elevation.t1')}</text>
+        <text x={t1.x} y="572" fill="var(--ink-2)">{t('elevation.t1Status')}</text>
+        <text x={t2.x} y="550" font-weight="700" fill="var(--ink)">{t('elevation.t2')}</text>
+        <text x={t2.x} y="572" fill="var(--ink-2)">{t('elevation.t2Status')}</text>
+        <text x={t3.x} y="585" font-weight="700" fill="var(--ink)">{t('elevation.t3')}</text>
+        <text x={t3.x + 70} y="585" fill="var(--ink-2)">{t('elevation.t3Status')}</text>
+        <text x="1582" y="442" text-anchor="end" font-size="13" fill="var(--ink-3)">{t('elevation.office')}</text>
+      </g>
+    </svg>
+
+    <figcaption class="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-x-8 gap-y-3 border-t border-rule px-6 py-4 text-xs text-ink-3">
+      <span>{t('elevation.caption')}</span>
+      <span class="flex flex-wrap items-center gap-x-5 gap-y-2">
+        <span class="inline-flex items-center gap-2"><span class="inline-block h-2.5 w-4 border border-accent bg-accent-soft"></span>{t('elevation.legendBuilt')}</span>
+        <span class="inline-flex items-center gap-2"><span class="inline-block h-2.5 w-4 border border-dashed border-accent"></span>{t('elevation.legendWorking')}</span>
+        <span class="inline-flex items-center gap-2"><span class="inline-block h-2.5 w-4 border border-dashed border-ink-3"></span>{t('elevation.legendPlanned')}</span>
+      </span>
+    </figcaption>
+  </figure>
+</section>
+
+<style>
+  .t2-floor {
+    fill: transparent;
+    stroke: transparent;
+    transition:
+      fill 0.35s ease,
+      stroke 0.35s ease;
+  }
+  .t2-floor[data-on] {
+    fill: var(--accent-soft);
+    stroke: var(--accent);
+  }
+  .t2-work,
+  .t2-real-tick,
+  .t2-real-label {
+    transition: transform 0.35s cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+  .t2-work {
+    transform: translateY(var(--wy));
+  }
+  .t2-real-tick,
+  .t2-real-label {
+    transform: translateY(var(--ry));
+  }
+
+  /* The mixer's drum turning: its stripes slide along the drum. */
+  .drum-stripes {
+    animation: drum-turn 1.6s linear infinite;
+  }
+  @keyframes drum-turn {
+    to {
+      transform: translateX(48px);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .drum-stripes {
+      animation: none;
+    }
+  }
+</style>
+
+<script>
+  // Scroll-linked construction of tower 2. Runs once per session and
+  // re-binds on every `astro:page-load` (ClientRouter).
+  const FLOOR = 30;
+  let controller: AbortController | null = null;
+
+  document.addEventListener('astro:page-load', () => {
+    controller?.abort();
+    controller = new AbortController();
+    const { signal } = controller;
+
+    const fig = document.querySelector<HTMLElement>('[data-build]');
+    if (!fig) return;
+    const host = fig;
+    const total = Number(host.dataset.floors);
+    const from = Number(host.dataset.from);
+    const to = Number(host.dataset.to);
+    const floors = Array.from(host.querySelectorAll<SVGRectElement>('.t2-floor'));
+    const work = host.querySelector<SVGGElement>('.t2-work');
+    const cable = host.querySelector<SVGPathElement>('.t2-cable');
+    const load = host.querySelector<SVGGElement>('.t2-load');
+    const tick = host.querySelector<SVGPathElement>('.t2-real-tick');
+    const label = host.querySelector<SVGTextElement>('.t2-real-label');
+    const pct = host.querySelector<SVGTSpanElement>('[data-real-pct]');
+
+    let last = -1;
+    function render(built: number) {
+      if (built === last) return;
+      last = built;
+      floors.forEach((f, i) => f.toggleAttribute('data-on', i < built));
+      const lift = `${-FLOOR * built}px`;
+      work?.style.setProperty('--wy', lift);
+      tick?.style.setProperty('--ry', lift);
+      label?.style.setProperty('--ry', lift);
+      // The load sits just above the working floor; the trolley stays on the jib.
+      const loadTop = 500 - FLOOR * (built + 1) - 70;
+      cable?.setAttribute('d', `M620 66 V${loadTop}`);
+      load?.setAttribute('transform', `translate(0 ${loadTop - 200})`);
+      if (pct) pct.textContent = String(Math.round((built / total) * 100));
+    }
+
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      render(to);
+      return;
+    }
+
+    let frame = 0;
+    const update = () => {
+      frame = 0;
+      const rect = host.getBoundingClientRect();
+      const vh = window.innerHeight;
+      // 0 when the drawing's top enters the bottom of the screen, 1 when its
+      // bottom reaches the upper third.
+      const p = Math.min(1, Math.max(0, (vh - rect.top) / (rect.height + vh * 0.66)));
+      render(Math.round(from + (to - from) * p));
+    };
+    const onScroll = () => {
+      if (!frame) frame = requestAnimationFrame(update);
+    };
+    window.addEventListener('scroll', onScroll, { passive: true, signal });
+    window.addEventListener('resize', onScroll, { passive: true, signal });
+    update();
+  });
+</script>
