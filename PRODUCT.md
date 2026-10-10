@@ -38,7 +38,7 @@ AWS/microservices architecture is the stage-2 (post-MVP) destination; the curren
 
 - No contact-submission backend exists yet; the form must validate client-side and post to a configurable endpoint (`PUBLIC_DEMO_ENDPOINT` env var), left undecided/placeholder.
 - No WhatsApp Business number supplied yet — placeholder in `site.json.whatsappNumber`.
-- No production domain confirmed yet for the landing's canonical/sitemap; placeholder `https://biw.siteops.tech` still in `astro.config.mjs`. The product moved to `usebiw.com` on 2026-09-06 (tenants at `<slug>.usebiw.com`), so the landing will live under that domain — set `site` once the exact host is decided.
+- **Domain:** the landing is served at `https://usebiw.com` (and `www`) from Vercel since 2026-10-10 (`site` in `astro.config.mjs`). The app moved off the root: system admins use `app.usebiw.com`, companies keep `<slug>.usebiw.com`.
 - Real customer logos, testimonials, and usage metrics do not exist yet — explicitly excluded, not to be fabricated.
 - **No login button/link anywhere on the landing** (2026-09-14 decision) — this site has no customer-facing auth entry point; visitors act via the contact form or WhatsApp only.
 - The primary CTA is **"Contáctenos"/"Contact us"**, not "Solicitar demo"/"Request a demo" (renamed 2026-09-14; usted form since 2026-10-10) — the form itself still gathers demo-relevant fields (company, role, active job sites), but the label and section framing are general contact, not a demo-specific ask.

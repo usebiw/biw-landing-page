@@ -7,7 +7,7 @@ import tailwindcss from '@tailwindcss/vite';
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://biw.siteops.tech',
+  site: 'https://usebiw.com',
   integrations: [
     react(),
     sitemap({

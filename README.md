@@ -77,7 +77,6 @@ src/
 - Fotos propias de obra y/o sección de equipo cuando existan (hoy la landing no usa fotos: las de stock se quitaron a propósito). Un host de imágenes remoto nuevo debe agregarse a `image.remotePatterns` en `astro.config.mjs`.
 - Confirmar con el equipo los pasos de implementación (`src/content/steps/`) y la frase «Le escribiremos en el próximo día hábil» del formulario: son promesas de servicio.
 - Datos legales de la política de privacidad (razón social, NIT, ciudad, correo) en `PrivacyPage.astro`.
-- Confirmar dominio final (`site` en `astro.config.mjs`, hoy `https://biw.siteops.tech`; el producto ya está en `usebiw.com`).
 
 ## Documentación del proyecto
 
